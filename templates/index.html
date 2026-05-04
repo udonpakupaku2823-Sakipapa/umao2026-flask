@@ -1,1 +1,15 @@
+<h2>レースを選択してください</h2>
 
+<form method="post">
+    <select name="race">
+        {% for o in options %}
+        <option value="{{o}}">{{o}}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="表示">
+</form>
+
+{% if filename %}
+    <h3>{{ race }}</h3>
+    <img src="/static/{{ filename }}" width="800">
+{% endif %}
