@@ -12,10 +12,6 @@ def resource_path(relative_path):
 
 app = Flask(__name__, static_folder=resource_path('static'))
 
-@app.route("/")
-def index():
-    return "App is running!"
-
 
 # 画像ファイル対応
 image_files = {
