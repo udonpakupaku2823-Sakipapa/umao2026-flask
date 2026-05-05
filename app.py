@@ -12,7 +12,9 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
-app = Flask(__name__, static_folder=resource_path('static'))
+#app = Flask(__name__, static_folder=resource_path('static'))
+app = Flask(__name__, static_folder='static', static_url_path='/static')
+
 
 
 # 画像ファイル対応
