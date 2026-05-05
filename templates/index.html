@@ -7,6 +7,8 @@
 <body>
     <h1>レースを選択してください</h1>
 
+    <p>アクセス数：{{ count }}</p> 
+
     <form method="POST">
         <select name="race">
             {% for opt in options %}
