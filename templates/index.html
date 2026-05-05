@@ -1,15 +1,25 @@
-<h2>レースを選択してください</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>レースを選択してください</title>
+</head>
+<body>
+    <h1>レースを選択してください</h1>
 
-<form method="post">
-    <select name="race">
-        {% for o in options %}
-        <option value="{{o}}">{{o}}</option>
-        {% endfor %}
-    </select>
-    <input type="submit" value="表示">
-</form>
+    <form method="POST">
+        <select name="race">
+            {% for opt in options %}
+                <option value="{{ opt }}">{{ opt }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">表示</button>
+    </form>
 
-{% if filename %}
-    <h3>{{ race }}</h3>
-    <img src="/static/{{ filename }}" width="800">
-{% endif %}
+    {% if filename %}
+        <h2>{{ race }}</h2>
+        <img src="{{ url_for('static', filename=filename) }}" width="600">
+    {% endif %}
+</body>
+</html>
+
