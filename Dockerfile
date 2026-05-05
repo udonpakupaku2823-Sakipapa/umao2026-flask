@@ -7,4 +7,4 @@ COPY . /app
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-CMD ["gunicorn", "EXE-chat:app"]
+CMD ["gunicorn", "EXE_chat:app"]
