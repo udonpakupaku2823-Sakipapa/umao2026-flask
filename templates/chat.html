@@ -52,6 +52,14 @@
             gap: 10px;
         }
 
+        #name {
+ 　         width: 4em;   /* 3文字〜4文字ぶんの幅 */
+        }
+
+        #msg {
+            flex: 1;
+        }
+
         input, button {
             padding: 10px;
             font-size: 16px;
@@ -133,10 +141,11 @@ db.collection("chat")
     <div id="chat-box"></div>
 
     <div id="input-area">
-        <input type="text" id="name" placeholder="名前を入力">
+        <input type="text" id="name" placeholder="名前入力">
         <input type="text" id="msg" placeholder="メッセージを入力">
         <button onclick="sendMessage()">送信</button>
     </div>
 </body>
 </html>
+
 
