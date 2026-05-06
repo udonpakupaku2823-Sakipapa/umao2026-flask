@@ -137,9 +137,9 @@ def index():
     })
 
     # ★ ここで options / filename / race を定義する
-    options = []
-    filename = None
-    race = None
+    #options = []
+    #filename = None
+    #race = None
         
 
     # 現在のカウントを取得（ここでは update しない）
@@ -172,6 +172,11 @@ def index():
         race = request.form.get("race")
         #filename = race + ".png"
         filename = image_files.get(race)
+
+    options = []
+    filename = ""
+    race = ""
+    count = 0
 
     return render_template("index.html",
                            options=options,
