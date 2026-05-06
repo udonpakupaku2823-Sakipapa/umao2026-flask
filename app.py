@@ -135,6 +135,11 @@ def index():
         "timestamp": datetime.datetime.now(),
         "ip": request.remote_addr
     })
+
+    # ★ ここで options / filename / race を定義する
+    options = []
+    filename = None
+    race = None
         
 
     # 現在のカウントを取得（ここでは update しない）
