@@ -1,13 +1,24 @@
 
 from flask import Flask, request, render_template, render_template_string
 
-
 import os
 import sys
 
+import firebase_admin
+from firebase_admin import credentials
+import json
+import tempfile
+
+json_str = os.environ["GOOGLE_APPLICATION_CREDENTIALS"].strip()
+with tempfile.NamedTemporaryFile(delete=False, mode="w", suffix=".json") as f:
+    f.write(json_str)
+    temp_json_path = f.name
+
+cred = credentials.Certificate(temp_json_path)
+firebase_admin.initialize_app(cred)
+
 from google.cloud import firestore
 db = firestore.Client()
-
 
 def resource_path(relative_path):
     try:
