@@ -1,8 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
+<style>
+body {
+    background-color: lightgreen;
+}    
+select {
+    font-size: 22px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: white;
+}
+
+button {
+    font-size: 22px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    background-color: lightgreen;
+    color: white;
+    border: none;
+}
+.chat-button {
+    display: block;
+    width: 90%;
+    margin: 20px auto;
+    padding: 15px;
+    background-color: lightgreen;
+    color: white;
+    text-align: center;
+    border-radius: 10px;
+    font-size: 20px;
+    text-decoration: none;
+ }
+    
+</style>    
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.05, maximum-scale=1.05">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>うま王2026</title>
 </head>
 <body>
@@ -24,23 +57,8 @@
         <img src="{{ url_for('static', filename=filename) }}" width="600">
     {% endif %}
 
+    
     <a href="/chat" class="chat-button">チャットへ</a>
-
-    <style>
-   .chat-button {
-      display: block;
-      width: 90%;
-      margin: 20px auto;
-      padding: 15px;
-      background-color: lightgreen;
-      color: white;
-      text-align: center;
-      border-radius: 10px;
-      font-size: 20px;
-      text-decoration: none;
-      }
-    </style>
- 
     
 </body>
 </html>
