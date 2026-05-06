@@ -131,10 +131,10 @@ def index():
         counter_ref.set({"count": admin_firestore.Increment(1)})
 
     # ★ アクセス履歴を保存（③：日時 + IP）
-    db.collection("access_logs").add({
-        "timestamp": datetime.datetime.now(),
-        "ip": request.remote_addr
-    })
+    #db.collection("access_logs").add({
+    #    "timestamp": datetime.datetime.now(),
+    #    "ip": request.remote_addr
+    #})
 
     # ★ ここで options / filename / race を定義する
     #options = []
@@ -173,10 +173,6 @@ def index():
         #filename = race + ".png"
         filename = image_files.get(race)
 
-    options = []
-    filename = ""
-    race = ""
-    count = 0
 
     return render_template("index.html",
                            options=options,
