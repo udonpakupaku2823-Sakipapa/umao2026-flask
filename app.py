@@ -162,7 +162,7 @@ def index():
     return render_template("index.html",
                            options=options,
                            filename=filename,
-                           race=race
+                           race=race,
                            count=count)
 
 if __name__ == "__main__":
