@@ -127,14 +127,14 @@ def index():
     
 
 # GET のときだけカウントアップ
-    if request.method == "GET":
-        counter_ref = db.collection("stats").document("page_counter")
-        counter_ref.update({"count": admin_firestore.Increment(1)})
+if request.method == "GET":
+    counter_ref = db.collection("stats").document("page_counter")
+    counter_ref.update({"count": admin_firestore.Increment(1)})
 
 # 現在のカウントを取得（ここでは update しない）
-    counter_ref = db.collection("stats").document("page_counter")
-    counter_doc = counter_ref.get()
-    count = counter_doc.to_dict().get("count", 0)
+counter_ref = db.collection("stats").document("page_counter")
+counter_doc = counter_ref.get()
+count = counter_doc.to_dict().get("count", 0)
 
     
     
