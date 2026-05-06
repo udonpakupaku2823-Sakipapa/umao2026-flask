@@ -75,11 +75,16 @@
 
         /* 送信ボタンは中央に配置 */
         #send-btn {
-            width: 50%;
-            margin: 0 auto;   /* ← 中央寄せ */
-            padding: 12px;
+            display: block;      /* ← 中央寄せの決め手 */
+            width: 100%;         /* ← スマホでも確実に中央 */
+            padding: 14px;
             font-size: 18px;
-            }
+            text-align: center;  /* ← ボタン内の文字も中央 */
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+        }
         
     </style>
 
