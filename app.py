@@ -168,3 +168,14 @@ def index():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+####チャットコーナー
+@app.route("/chat")
+def chat():
+    return render_template(
+        "chat.html",
+        FIREBASE_API_KEY=os.environ.get("FIREBASE_API_KEY"),
+        FIREBASE_AUTH_DOMAIN=os.environ.get("FIREBASE_AUTH_DOMAIN"),
+        FIREBASE_PROJECT_ID=os.environ.get("FIREBASE_PROJECT_ID")
+    )
