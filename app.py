@@ -20,7 +20,9 @@ import tempfile
 #    temp_json_path = f.name
 
 #cred = credentials.Certificate(temp_json_path)
-cred = credentials.Certificate("serviceAccount.json")
+#cred = credentials.Certificate("serviceAccount.json")
+cred = credentials.Certificate("/etc/secrets/serviceAccount.json")
+
 firebase_admin.initialize_app(cred)
 
 from google.cloud import firestore
