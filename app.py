@@ -19,7 +19,8 @@ with tempfile.NamedTemporaryFile(delete=False, mode="w", suffix=".json") as f:
     f.write(json_str)
     temp_json_path = f.name
 
-cred = credentials.Certificate(temp_json_path)
+#cred = credentials.Certificate(temp_json_path)
+cred = credentials.Certificate("serviceAccount.json")
 firebase_admin.initialize_app(cred)
 
 from google.cloud import firestore
