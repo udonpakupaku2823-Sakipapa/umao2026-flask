@@ -4,20 +4,20 @@ from flask import Flask, request, render_template, render_template_string
 import os
 import sys
 
-import base64
+#import base64
 import firebase_admin
 from firebase_admin import credentials
 import json
 import tempfile
 
 # Base64 から JSON を復元
-b64 = os.environ["GOOGLE_APPLICATION_CREDENTIALS_BASE64"]
-json_str = base64.b64decode(b64).decode("utf-8")
+#b64 = os.environ["GOOGLE_APPLICATION_CREDENTIALS_BASE64"]
+#json_str = base64.b64decode(b64).decode("utf-8")
 
 #json_str = os.environ["GOOGLE_APPLICATION_CREDENTIALS"].strip()
-with tempfile.NamedTemporaryFile(delete=False, mode="w", suffix=".json") as f:
-    f.write(json_str)
-    temp_json_path = f.name
+#with tempfile.NamedTemporaryFile(delete=False, mode="w", suffix=".json") as f:
+#    f.write(json_str)
+#    temp_json_path = f.name
 
 #cred = credentials.Certificate(temp_json_path)
 cred = credentials.Certificate("serviceAccount.json")
