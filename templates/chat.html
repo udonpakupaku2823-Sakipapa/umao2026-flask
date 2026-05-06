@@ -66,56 +66,72 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
-    <script>
-        // Render の Secrets から値を埋め込む
-        const firebaseConfig = {
-            apiKey: "{{ FIREBASE_API_KEY }}",
-            authDomain: "{{ FIREBASE_AUTH_DOMAIN }}",
-            projectId: "{{ FIREBASE_PROJECT_ID }}",
-        };
+<script>
+// ページ読み込み時に名前を復元
+window.onload = function() {
+    const savedName = localStorage.getItem("chatName");
+    if (savedName) {
+        document.getElementById("name").value = savedName;
+    }
+};
 
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+// Firebase 初期化
+const firebaseConfig = {
+    apiKey: "{{ FIREBASE_API_KEY }}",
+    authDomain: "{{ FIREBASE_AUTH_DOMAIN }}",
+    projectId: "{{ FIREBASE_PROJECT_ID }}",
+};
 
-        let username = "";
+const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-        function sendMessage() {
-            const msg = document.getElementById("msg").value;
-            if (!msg) return;
+// メッセージ送信
+function sendMessage() {
+    const name = document.getElementById("name").value;
+    const msg = document.getElementById("msg").value;
 
-            db.collection("chat").add({
-                name: username,
-                message: msg,
-                timestamp: new Date()
-            });
+    if (!msg || !name) return;
 
-            document.getElementById("msg").value = "";
-        }
+    // 名前を保存（次回から自動入力）
+    localStorage.setItem("chatName", name);
 
-        window.onload = function() {
-            username = prompt("名前を入力してください");
+    db.collection("chat").add({
+        name: name,
+        message: msg,
+        timestamp: new Date()
+    });
 
-            db.collection("chat")
-              .orderBy("timestamp")
-              .onSnapshot(snapshot => {
-                const chatBox = document.getElementById("chat-box");
-                chatBox.innerHTML = "";
+    document.getElementById("msg").value = "";
+}
 
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const div = document.createElement("div");
+// Firestore リアルタイム受信
+db.collection("chat")
+  .orderBy("timestamp")
+  .onSnapshot(snapshot => {
+    const chatBox = document.getElementById("chat-box");
+    chatBox.innerHTML = "";
 
-                    div.classList.add("message");
-                    div.classList.add(data.name === username ? "me" : "other");
-                    div.innerHTML = `<strong>${data.name}</strong><br>${data.message}`;
+    const currentName = document.getElementById("name").value;
 
-                    chatBox.appendChild(div);
-                });
+    snapshot.forEach(doc => {
+        const data = doc.data();
+        const div = document.createElement("div");
 
-                chatBox.scrollTop = chatBox.scrollHeight;
-            });
-        }
-    </script>
+        div.classList.add("message");
+        div.classList.add(data.name === currentName ? "me" : "other");
+        div.innerHTML = `<strong>${data.name}</strong><br>${data.message}`;
+
+        chatBox.appendChild(div);
+    });
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+});
+</script>
+    
+
+
+
+    
 </head>
 
 <body>
