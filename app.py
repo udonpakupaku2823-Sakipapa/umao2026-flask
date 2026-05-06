@@ -7,6 +7,7 @@ import sys
 #import base64
 import firebase_admin
 from firebase_admin import credentials
+from firebase_admin import firestore as admin_firestore
 import json
 import tempfile
 
@@ -25,8 +26,9 @@ cred = credentials.Certificate("/etc/secrets/serviceAccount.json")
 
 firebase_admin.initialize_app(cred)
 
-from google.cloud import firestore
-db = firestore.Client()
+#from google.cloud import firestore
+#db = firestore.Client()
+db = admin_firestore.client()
 
 def resource_path(relative_path):
     try:
