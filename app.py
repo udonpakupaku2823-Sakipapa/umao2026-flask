@@ -117,18 +117,22 @@ image_files = {
 }
 
 
-@app.route("/", methods=["GET", "POST"])
+#@app.route("/", methods=["GET", "POST"])
+#def index():
+
+@app.route("/", methods=["GET", "POST","HEAD"])
 def index():
+    if request.method == "HEAD":
+        return "", 200
     # Firestore カウンター +1
     counter_ref = db.collection("stats").document("page_counter")
-    counter_ref.update({"count": firestore.Increment(1)})
+    #counter_ref.update({"count": firestore.Increment(1)})
+    counter_ref.update({"count": admin_firestore.Increment(1)})
+
 
     # 現在のカウントを取得
     counter_doc = counter_ref.get()
     count = counter_doc.to_dict().get("count", 0)
-
-#@app.route("/", methods=["GET", "POST"])
-#def index():
     
     options = ["2026年うま王収支表（単勝）","2026年うま王収支表（馬連）","2026年うま王収支表（三連複）",
                "0503天皇賞（春）","0502京王杯スプリングＣ","0502ユニコーンＳ",
