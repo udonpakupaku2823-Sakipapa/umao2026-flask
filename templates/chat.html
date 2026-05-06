@@ -4,8 +4,124 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>チャット</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+
+        #chat-box {
+            height: 70vh;
+            overflow-y: scroll;
+            padding: 10px;
+            background-color: white;
+        }
+
+        .message {
+            margin: 10px 0;
+            max-width: 80%;
+            padding: 10px;
+            border-radius: 10px;
+            clear: both;
+        }
+
+        .me {
+            background-color: #dcf8c6;
+            float: right;
+        }
+
+        .other {
+            background-color: #ffffff;
+            float: left;
+            border: 1px solid #ddd;
+        }
+
+        #input-area {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: #fff;
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        input {
+            flex: 1;
+        }
+    </style>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+
+    <script>
+        // Render の Secrets から値を埋め込む
+        const firebaseConfig = {
+            apiKey: "{{ FIREBASE_API_KEY }}",
+            authDomain: "{{ FIREBASE_AUTH_DOMAIN }}",
+            projectId: "{{ FIREBASE_PROJECT_ID }}",
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let username = "";
+
+        function sendMessage() {
+            const msg = document.getElementById("msg").value;
+            if (!msg) return;
+
+            db.collection("chat").add({
+                name: username,
+                message: msg,
+                timestamp: new Date()
+            });
+
+            document.getElementById("msg").value = "";
+        }
+
+        window.onload = function() {
+            username = prompt("名前を入力してください");
+
+            db.collection("chat")
+              .orderBy("timestamp")
+              .onSnapshot(snapshot => {
+                const chatBox = document.getElementById("chat-box");
+                chatBox.innerHTML = "";
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const div = document.createElement("div");
+
+                    div.classList.add("message");
+                    div.classList.add(data.name === username ? "me" : "other");
+                    div.innerHTML = `<strong>${data.name}</strong><br>${data.message}`;
+
+                    chatBox.appendChild(div);
+                });
+
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+        }
+    </script>
 </head>
+
 <body>
-    <h2>チャットページ（準備中）</h2>
+    <div id="chat-box"></div>
+
+    <div id="input-area">
+        <input type="text" id="msg" placeholder="メッセージを入力">
+        <button onclick="sendMessage()">送信</button>
+    </div>
 </body>
 </html>
+
