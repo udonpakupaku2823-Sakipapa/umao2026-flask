@@ -128,7 +128,9 @@ def index():
     if request.method == "GET":
         counter_ref = db.collection("stats").document("page_counter")
         #counter_ref.update({"count": admin_firestore.Increment(1)})
-        counter_ref.set({"count": admin_firestore.Increment(1)})
+        #counter_ref.set({"count": admin_firestore.Increment(1)})
+        counter_ref.set({"count": admin_firestore.Increment(1)}, merge=True)
+
 
     # ★ アクセス履歴を保存（③：日時 + IP）
     #db.collection("access_logs").add({
