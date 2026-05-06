@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=0.8">
     <title>チャット</title>
 
     <style>
@@ -49,6 +49,13 @@
             background: #fff;
             padding: 10px;
             display: flex;
+            flex-direction: column;   /* ← 2段にする */
+            gap: 10px;
+        }
+
+        /* 1段目（名前 + メッセージ）を横並びにする */
+        #input-row {
+            display: flex;
             gap: 10px;
         }
 
@@ -56,7 +63,6 @@
             width: 4em;
             flex: 0 0 auto;
         }
-
 
         #msg {
             flex: 1;
@@ -67,6 +73,14 @@
             font-size: 16px;
         }
 
+        /* 送信ボタンは中央に配置 */
+        #send-btn {
+            width: 50%;
+            margin: 0 auto;   /* ← 中央寄せ */
+            padding: 12px;
+            font-size: 18px;
+            }
+        
     </style>
 
     <!-- Firebase SDK -->
@@ -139,10 +153,11 @@ db.collection("chat")
 <body>
     <div id="chat-box"></div>
 
-    <div id="input-area">
-        <input type="text" id="name" placeholder="名前入力">
-        <input type="text" id="msg" placeholder="メッセージを入力">
-        <button onclick="sendMessage()">送信</button>
+       <div id="input-row">
+           <input id="name" placeholder="名前">
+           <input id="msg" placeholder="メッセージ">
+       </div>
+       <button id="send-btn" onclick="sendMessage()">送信</button>
     </div>
 </body>
 </html>
