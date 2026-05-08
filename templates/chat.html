@@ -85,6 +85,13 @@
             border: none;
             border-radius: 6px;
         }
+        .time {
+            font-size: 0.7em;
+            color: #555;
+            float: right;
+            margin-top: 4px;
+        }
+
         
     </style>
 
@@ -139,16 +146,33 @@ db.collection("chat")
 
     const currentName = document.getElementById("name").value;
 
-    snapshot.forEach(doc => {
-        const data = doc.data();
-        const div = document.createElement("div");
+snapshot.forEach(doc => {
+    const data = doc.data();
+    const div = document.createElement("div");
 
-        div.classList.add("message");
-        div.classList.add(data.name === currentName ? "me" : "other");
-        div.innerHTML = `<strong>${data.name}</strong><br>${data.message}`;
+    // 時刻の整形（MMDD HH:MM）
+    let timeStr = "";
+    if (data.timestamp && data.timestamp.toDate) {
+        const ts = data.timestamp.toDate();
+        const MM = String(ts.getMonth() + 1).padStart(2, '0');
+        const DD = String(ts.getDate()).padStart(2, '0');
+        const HH = String(ts.getHours()).padStart(2, '0');
+        const mm = String(ts.getMinutes()).padStart(2, '0');
+        timeStr = `${MM}${DD} ${HH}:${mm}`;
+    }
 
-        chatBox.appendChild(div);
-    });
+    div.classList.add("message");
+    div.classList.add(data.name === currentName ? "me" : "other");
+
+    div.innerHTML = `
+        <strong>${data.name}</strong><br>
+        ${data.message}<br>
+        <span class="time">${timeStr}</span>
+    `;
+
+    chatBox.appendChild(div);
+});
+
     chatBox.scrollTop = chatBox.scrollHeight;
 });      
 </script>
