@@ -10,6 +10,7 @@ from firebase_admin import credentials
 from firebase_admin import firestore as admin_firestore
 import json
 import tempfile
+import datetime
 
 # Base64 から JSON を復元
 #b64 = os.environ["GOOGLE_APPLICATION_CREDENTIALS_BASE64"]
@@ -138,10 +139,10 @@ def index():
 
 
     # ★ アクセス履歴を保存（③：日時 + IP）
-    #db.collection("access_logs").add({
-    #    "timestamp": datetime.datetime.now(),
-    #    "ip": request.remote_addr
-    #})
+    db.collection("access_logs").add({
+        "timestamp": datetime.datetime.now(),
+        "ip": request.remote_addr
+    })
 
     # ★ ここで options / filename / race を定義する
     #options = []
