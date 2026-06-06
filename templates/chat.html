@@ -2,193 +2,136 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.8">
     <title>チャット</title>
+</head>
+<body>
 
-    <style>
-        html {
-            background-color: lightyellow;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: lightyellow;
-        }
+<style>
+    body {
+        background: linear-gradient(
+            to bottom,
+            #f5e9d4 0%,
+            #e8d3b0 40%,
+            #d9b98a 100%
+        );
+        margin: 0;
+        font-family: sans-serif;
+        text-align: left;
+        padding: 20px;
+    }
 
-        #chat-box {
-            background-color: transparent;
-            height: 70vh;
-            overflow-y: scroll;
-            padding: 10px;
-        }
+    .chat-box {
+        background: rgba(255, 255, 255, 0.8);
+        padding: 15px;
+        border-radius: 10px;
+        max-width: 800px;
+        margin-bottom: 20px;
+    }
 
-        .message {
-            margin: 10px 0;
-            max-width: 80%;
-            padding: 10px;
-            border-radius: 10px;
-            clear: both;
-        }
+    .back-button {
+        display: inline-block;
+        padding: 10px 16px;
+        background-color: #8b5a2b;
+        color: white;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 18px;
+    }
+</style>
 
-        .me {
-            background-color: #dcf8c6;
-            float: right;
-        }
+<h2>チャット</h2>
 
-        .other {
-            background-color: skyblue;
-            float: left;
-            border: 1px solid #ddd;
-        }
+<div id="messages" style="border:1px solid #ccc; height:300px; overflow-y:scroll; padding:10px;"></div>
 
-        #input-area {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background: #fff;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;   /* ← 2段にする */
-            gap: 10px;
-        }
+<input type="text" id="message-input" placeholder="メッセージを入力" style="width:70%;">
+<button onclick="sendMessage()">送信</button>
 
-        /* 1段目（名前 + メッセージ）を横並びにする */
-        #input-row {
-            display: flex;
-            gap: 10px;
-        }
-
-        #name {
-            width: 4em;
-            flex: 0 0 auto;
-        }
-
-        #msg {
-            flex: 1;
-        }
-
-        input, button {
-            padding: 10px;
-            font-size: 16px;
-        }
-
-        /* 送信ボタンは中央に配置 */
-        #send-btn {
-            display: block;      /* ← 中央寄せの決め手 */
-            width: 100%;         /* ← スマホでも確実に中央 */
-            padding: 14px;
-            font-size: 18px;
-            text-align: center;  /* ← ボタン内の文字も中央 */
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 6px;
-        }
-        .time {
-            font-size: 0.7em;
-            color: #555;
-            float: right;
-            margin-top: 4px;
-        }
-
-        
-    </style>
-
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
-// ページ読み込み時に名前を復元
-window.onload = function() {
-    const savedName = localStorage.getItem("chatName");
-    if (savedName) {
-        document.getElementById("name").value = savedName;
-    }
-};
-
-// Firebase 初期化
 const firebaseConfig = {
-    apiKey: "{{ FIREBASE_API_KEY }}",
-    authDomain: "{{ FIREBASE_AUTH_DOMAIN }}",
-    projectId: "{{ FIREBASE_PROJECT_ID }}",
+    apiKey: "AIzaSyA35u3UqBqCufnf0aIUgTaRJNwk85pUrtQ",
+    authDomain: "dore-chat-base.firebaseapp.com",
+    projectId: "dore-chat-base",
+    storageBucket: "dore-chat-base.appspot.com",
+    messagingSenderId: "171117636172",
+    appId: "1:171117636172:web:fc100e2d5f2d18f6c0a2e9"
 };
 
-const app = firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// メッセージ送信
+const nickname = localStorage.getItem("nickname") || "名無し";
+
+// メッセージ読み込み（リアルタイム）
+db.collection("chat")
+  .orderBy("timestamp")
+  .onSnapshot((snapshot) => {
+      const box = document.getElementById("messages");
+      box.innerHTML = "";
+
+      snapshot.forEach((doc) => {
+          const d = doc.data();
+
+          // Firestore timestamp → JS Date
+          const time = d.timestamp ? d.timestamp.toDate() : null;
+
+          // 日付（MMDD）と時刻（HH:MM）
+          const MM = time ? String(time.getMonth() + 1).padStart(2, "0") : "--";
+          const DD = time ? String(time.getDate()).padStart(2, "0") : "--";
+          const hh = time ? String(time.getHours()).padStart(2, "0") : "--";
+          const mm = time ? String(time.getMinutes()).padStart(2, "0") : "--";
+
+          const timeStr = `${MM}${DD} ${hh}:${mm}`;
+
+          // 自分のメッセージかどうか判定
+          const isMine = (d.name === nickname);
+
+          // 色設定
+          const bgColor = isMine
+              ? "#c49a6c"   // 自分：濃い茶色
+              : "#e8d8c3";  // 他人：薄い茶色
+
+          // 吹き出しの位置
+          const align = isMine ? "flex-end" : "flex-start";
+
+          box.innerHTML += `
+              <div style="
+                  display:flex;
+                  justify-content:${align};
+                  margin-bottom:12px;
+              ">
+                  <div style="
+                      background:${bgColor};
+                      padding:10px;
+                      border-radius:8px;
+                      max-width:70%;
+                      color:#000;
+                  ">
+                      <strong>${d.name}</strong><br>
+                      ${d.message}<br>
+                      <span style="color:#444; font-size:12px;">${timeStr}</span>
+                  </div>
+              </div>
+          `;
+      });
+  });
+
 function sendMessage() {
-    const name = document.getElementById("name").value;
-    const msg = document.getElementById("msg").value;
-
-    if (!msg || !name) return;
-
-    // 名前を保存（次回から自動入力）
-    localStorage.setItem("chatName", name);
+    const msg = document.getElementById("message-input").value;
+    if (!msg) return;
 
     db.collection("chat").add({
-        name: name,
+        name: nickname,
         message: msg,
         timestamp: new Date()
     });
 
-    document.getElementById("msg").value = "";
+    document.getElementById("message-input").value = "";
 }
-
-// Firestore リアルタイム受信
-db.collection("chat")
-  .orderBy("timestamp")
-  .onSnapshot(snapshot => {
-    const chatBox = document.getElementById("chat-box");
-    chatBox.innerHTML = "";
-
-    const currentName = document.getElementById("name").value;
-
-snapshot.forEach(doc => {
-    const data = doc.data();
-    const div = document.createElement("div");
-
-    // 時刻の整形（MMDD HH:MM）
-    let timeStr = "";
-    if (data.timestamp && data.timestamp.toDate) {
-        const ts = data.timestamp.toDate();
-        const MM = String(ts.getMonth() + 1).padStart(2, '0');
-        const DD = String(ts.getDate()).padStart(2, '0');
-        const HH = String(ts.getHours()).padStart(2, '0');
-        const mm = String(ts.getMinutes()).padStart(2, '0');
-        timeStr = `${MM}${DD} ${HH}:${mm}`;
-    }
-
-    div.classList.add("message");
-    div.classList.add(data.name === currentName ? "me" : "other");
-
-    div.innerHTML = `
-        <strong>${data.name}</strong><br>
-        ${data.message}<br>
-        <span class="time">${timeStr}</span>
-    `;
-
-    chatBox.appendChild(div);
-});
-
-    chatBox.scrollTop = chatBox.scrollHeight;
-});      
 </script>
 
-</head>
-
-<body>
-    <div id="chat-box"></div>
-
-       <div id="input-row">
-           <input id="name" placeholder="名前">
-           <input id="msg" placeholder="メッセージ">
-       </div>
-       <button id="send-btn" onclick="sendMessage()">送信</button>
-    </div>
 </body>
 </html>
-
-

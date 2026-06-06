@@ -1,68 +1,264 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-<style>
-body {
-    background-color: lightgreen;
-    margin: 0;
-    padding: 0;
-}
-
-select {
-    font-size: 22px;
-    padding: 10px;
-    border-radius: 8px;
-    background-color: white;
-}
-
-button {
-    font-size: 22px;
-    padding: 10px 20px;
-    border-radius: 8px;
-    background-color: green;   /* ←ここ重要 */
-    color: white;
-    border: none;
-}
-
-.chat-button {
-    display: block;
-    width: 90%;
-    margin: 20px auto;
-    padding: 15px;
-    background-color: green;   /* ←ここ重要 */
-    color: white;
-    text-align: center;
-    border-radius: 10px;
-    font-size: 20px;
-    text-decoration: none;
-}
-</style>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>うま王2026</title>
+
+    <style>
+        body {
+            background-color: #cce7ff; /* スカイブルー */
+            margin: 0;
+            font-family: sans-serif;
+            text-align: center;
+        }
+
+        .top-image {
+            width: 100%;
+            max-width: 500px;
+            display: block;
+            margin: 20px auto;
+        }
+
+        #nickname-area, #main-area {
+            width: 90%;
+            max-width: 500px;
+            margin: 0 auto;
+            background: none;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        input {
+            width: 80%;
+            padding: 10px;
+            font-size: 18px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+    </style>  
 </head>
+
 <body>
-    <h1>うま王2026</h1>
 
-    <p>アクセス数：{{ count }}</p> 
+    <h1 style="text-align:left;">うま王2026</h1>
 
-    <form method="POST">
-        <select name="race">
-            {% for opt in options %}
-                <option value="{{ opt }}">{{ opt }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit">表示</button>
-    </form>
+    <body style="text-align:left; margin-left:20px;">
 
-    {% if filename %}
-        <h2>{{ race }}</h2>
-        <img src="{{ url_for('static', filename=filename) }}" width="600">
-    {% endif %}
 
+    <!-- ① ニックネーム入力エリア -->
+    <div id="nickname-area">
+    <h4>登録名入れてください（3文字で）</h4>
+
+    <div style="display:flex; justify-content:center; gap:10px; align-items:center;">
+        <input type="text" id="nickname" maxlength="3" placeholder="例うま王"
+               style="width:80px; padding:8px; font-size:18px; text-align:center;">
+        
+        <button onclick="registerNickname()"
+                style="padding:8px 16px; font-size:16px;">
+            確認
+        </button>
+    </div>
+
+    <p id="nick-error" style="color:red; margin-top:10px;"></p>
+    </div>
+
+    <!-- ② レース選択エリア -->
+    <div id="main-area" style="display:none;">
+
+        <p id="race-title" style="margin-top:8px; font-size:20px; text-align:left;">
+            レースを選択してください
+        </p>
+
+        <form onsubmit="return false;" 
+            style="display:flex; justify-content:flex-start; align-items:center; gap:8px; margin-top:20px;">
+            <select id="race-select"
+                style="
+                    font-size:18px;
+                    padding:6px 10px;
+                    height:40px;
+                    border-radius:6px;
+                    border:1px solid #ccc;
+                ">
+                {% for o in options %}
+                <option value="{{o}}">{{o}}</option>
+                {% endfor %}
+            </select>
+
+            <button type="button" onclick="showRace()"
+                style="
+                    font-size:18px;
+                    padding:6px 14px;
+                    height:40px;
+                    border-radius:6px;
+                    background-color:#4CAF50;
+                    color:white;
+                    border:none;
+                    cursor:pointer;
+                ">
+                表示
+            </button>
+        </form>
+
+        <h2 id="race-title"></h2>
+        <img id="race-img" src="" 
+            style="display:block; margin:0 auto; width:100%; max-width:800px;">
+
+        <a href="/chat" class="chat-button">チャットへ</a>  
+
+        <div style="text-align:center; margin-top:10px; color:#444; font-size:14px;">
+            アクセス数：{{ count }}
+        </div> 
+
+    </div>
+
+
+    <style>
+    .chat-button {
+        display: block;
+        width: 200px;
+        margin: 20px auto;
+        padding: 12px;
+        background-color: #4CAF50;
+        color: white;
+        text-align: center;
+        border-radius: 8px;
+        font-size: 18px;
+        text-decoration: none;
+    }
     
-    <a href="/chat" class="chat-button">チャットへ</a>
-    
+    body {
+        background: linear-gradient(to bottom, #ffffff, #dff3ff, #b5e1ff);
+        margin: 0;
+        font-family: sans-serif;
+        text-align: left;   /* ← ここが抜けていた */
+        padding-left: 20px; /* ← 左寄せしたいならこれも */
+    }
+
+    </style>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <script>
+
+        /* -------------------------
+           初期表示（最初はニックネーム画面）
+        ------------------------- */
+        window.onload = function() {
+            document.getElementById("nickname-area").style.display = "block";
+            document.getElementById("main-area").style.display = "none";
+            document.getElementById("chat-area").style.display = "none";
+
+            // 初期画像
+            const img = document.getElementById("race-img");
+            img.src = "/static/2026うま王.png";
+
+            const title = document.getElementById("race-title");
+            title.innerText = "2026年うま王";
+        };
+
+        /* -------------------------
+           Firebase 設定
+        ------------------------- */
+        const firebaseConfig = {
+            apiKey: "AIzaSyA35u3UqBqCufnf0aIUgTaRJNwk85pUrtQ",
+            authDomain: "dore-chat-base.firebaseapp.com",
+            projectId: "dore-chat-base",
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        /* -------------------------
+           ニックネームバリデーション
+        ------------------------- */
+        function validateNickname(name) {
+            if (!name) return "ニックネームを入力してください";
+            if (name.length > 3) return "3文字以内で入力してください";
+            return null;
+        }
+
+        /* -------------------------
+           ニックネーム登録
+        ------------------------- */
+        async function registerNickname() {
+            const input = document.getElementById("nickname");
+            const error = document.getElementById("nick-error");
+            const name = input.value.trim();
+
+            // 初期化
+            error.style.display = "none";
+            error.textContent = "";
+            input.style.border = "1px solid #ccc";
+
+            // ① 空欄チェック
+            if (name === "") {
+                error.textContent = "登録名を入力してください。";
+                error.style.display = "block";
+                input.style.border = "2px solid red";
+                return;
+            }
+
+            // ② 4文字以上チェック
+            if (name.length > 3) {
+                error.textContent = "登録名は3文字までです。";
+                error.style.display = "block";
+                input.style.border = "2px solid red";
+                return;
+            }
+
+            // Firestore 重複チェック
+            const userRef = db.collection("users").doc(name);
+            const docSnap = await userRef.get();
+
+            if (docSnap.exists) {
+                error.textContent = "そのニックネームは既に使われています（注意）";
+                error.style.display = "block";
+                input.style.border = "2px solid red";
+            }
+
+            // 保存
+            localStorage.setItem("nickname", name);
+
+            // 画面切り替え
+            document.getElementById("nickname-area").style.display = "none";
+            document.getElementById("main-area").style.display = "block";
+        }
+
+        /* -------------------------
+           チャット送信
+        ------------------------- */
+        function sendMessage() {
+            const name = localStorage.getItem("nickname");
+            const msg = document.getElementById("message-input").value;
+
+            if (!msg) return;
+
+            db.collection("chat").add({
+                name: name,
+                message: msg,
+                timestamp: new Date()
+            });
+
+            document.getElementById("message-input").value = "";
+        }
+
+        /* -------------------------
+           レース表示
+        ------------------------- */
+        function showRace() {
+            const race = document.getElementById("race-select").value;
+
+            document.getElementById("race-title").innerText = race;
+            document.getElementById("race-img").src = "/static/" + race + ".png";
+
+            document.getElementById("chat-area").style.display = "block";
+        }
+
+    </script>
+
 </body>
 </html>
-
