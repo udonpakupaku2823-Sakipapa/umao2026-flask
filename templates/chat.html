@@ -2,49 +2,69 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>チャット</title>
+
+    <style>
+        body {
+            background: linear-gradient(
+                to bottom,
+                #f5e9d4 0%,
+                #e8d3b0 40%,
+                #d9b98a 100%
+            );
+            margin: 0;
+            font-family: sans-serif;
+            text-align: left;
+            padding: 20px;
+        }
+
+        .chat-box {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 800px;
+            margin-bottom: 20px;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 16px;
+            background-color: #8b5a2b;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        #message-input {
+            font-size: 22px;
+            padding: 10px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            margin-left: 5px;
+        }
+    </style>
 </head>
+
 <body>
 
-<style>
-    body {
-        background: linear-gradient(
-            to bottom,
-            #f5e9d4 0%,
-            #e8d3b0 40%,
-            #d9b98a 100%
-        );
-        margin: 0;
-        font-family: sans-serif;
-        text-align: left;
-        padding: 20px;
-    }
-
-    .chat-box {
-        background: rgba(255, 255, 255, 0.8);
-        padding: 15px;
-        border-radius: 10px;
-        max-width: 800px;
-        margin-bottom: 20px;
-    }
-
-    .back-button {
-        display: inline-block;
-        padding: 10px 16px;
-        background-color: #8b5a2b;
-        color: white;
-        border-radius: 8px;
-        text-decoration: none;
-        font-size: 18px;
-    }
-</style>
+<a href="/main" class="back-button">← 戻る</a>
 
 <h2>チャット</h2>
 
 <div id="messages" style="border:1px solid #ccc; height:300px; overflow-y:scroll; padding:10px;"></div>
 
-<input type="text" id="message-input" placeholder="メッセージを入力" style="width:70%;">
-<button onclick="sendMessage()">送信</button>
+<div style="display:flex; align-items:center; gap:10px;">
+    <input type="text" id="message-input" placeholder="メッセージを入力">
+    <button onclick="sendMessage()">送信</button>
+</div>
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -75,10 +95,8 @@ db.collection("chat")
       snapshot.forEach((doc) => {
           const d = doc.data();
 
-          // Firestore timestamp → JS Date
           const time = d.timestamp ? d.timestamp.toDate() : null;
 
-          // 日付（MMDD）と時刻（HH:MM）
           const MM = time ? String(time.getMonth() + 1).padStart(2, "0") : "--";
           const DD = time ? String(time.getDate()).padStart(2, "0") : "--";
           const hh = time ? String(time.getHours()).padStart(2, "0") : "--";
@@ -86,15 +104,9 @@ db.collection("chat")
 
           const timeStr = `${MM}${DD} ${hh}:${mm}`;
 
-          // 自分のメッセージかどうか判定
           const isMine = (d.name === nickname);
 
-          // 色設定
-          const bgColor = isMine
-              ? "#c49a6c"   // 自分：濃い茶色
-              : "#e8d8c3";  // 他人：薄い茶色
-
-          // 吹き出しの位置
+          const bgColor = isMine ? "#c49a6c" : "#e8d8c3";
           const align = isMine ? "flex-end" : "flex-start";
 
           box.innerHTML += `
