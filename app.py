@@ -195,7 +195,7 @@ def main():
     filename = None
     race = None
 
-    return render_template("main.html", options=options, race=race)
+    return render_template("index.html", options=options, race=race)
 
 # -------------------------
 # ② チャットページ
