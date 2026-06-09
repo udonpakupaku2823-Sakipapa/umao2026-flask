@@ -195,7 +195,12 @@ def main():
     filename = None
     race = None
 
-    return render_template("index.html", options=options, race=race)
+    # ★ カウントは増やさない（読み込みだけ）
+    counter_ref = db.collection("stats").document("page_counter")
+    counter_doc = counter_ref.get()
+    count = counter_doc.to_dict().get("count", 0)
+
+    return render_template("index.html", options=options, race=race, count=count)
 
 # -------------------------
 # ② チャットページ
