@@ -67,7 +67,8 @@
 
     <!-- ① ニックネーム入力エリア -->
     <div id="nickname-area">
-        <h4>登録名入れてください（3文字で）</h4>
+        <h2>登録名入れてください（3文字以内で）</h2>
+        <h3>登録済みの場合は自動的に表示されます</h3>
 
         <div style="display:flex; gap:10px; align-items:center;">
             <input type="text" id="nickname" maxlength="3" placeholder="うま王"
@@ -89,7 +90,10 @@
     <!-- ② レース選択エリア -->
     <div id="main-area" style="display:none;">
 
-    <h1>うま王2026</h1>
+    <!-- ★ ここに追加 -->
+    <div id="account-name" style="font-size: 18px; font-weight: bold; margin-bottom: 10px;"></div>
+
+    <!-- <h1>うま王2026</h1> -->
 
     <p style="font-size:20px;">レースを選択してください</p>
 
@@ -144,16 +148,38 @@
             if (window.location.pathname.includes("/main")) {
                 document.getElementById("nickname-area").style.display = "none";
                 document.getElementById("main-area").style.display = "block";
-                return;  // ← ここで終了してOK
+
+                // ★ 初期画像を設定（重要）
+                //const img = document.getElementById("race-img");
+                //img.src = "/static/2026うま王.png";
+
+                //const title = document.getElementById("race-title");
+                //title.innerText = "2026年うま王";
+
+                setInitialImage();  // ← ここが重要
+
+                // ★ nickname の再表示
+                const savedName = localStorage.getItem("nickname");
+                if (savedName) {
+                    document.getElementById("account-name").textContent = savedName;
+                }
+                return;
+            //} else {
+            //    document.getElementById("nickname-area").style.display = "block";
+            //    document.getElementById("main-area").style.display = "none";
+            //    setInitialImage();  // ← ここが必要
             }
 
+            // ★ 初回アクセス（/）
             document.getElementById("nickname-area").style.display = "block";
             document.getElementById("main-area").style.display = "none";
+            setInitialImage();  // ← ここが必要
+            
             //return;
 
             // 初期画像
             const img = document.getElementById("race-img");
-            img.src = "/static/2026うま王.png";
+            img.src = "/static/2026年うま王.png";
 
             const title = document.getElementById("race-title");
             title.innerText = "2026年うま王";
@@ -233,6 +259,8 @@
 
             document.getElementById("nickname-area").style.display = "none";
             document.getElementById("main-area").style.display = "block";
+
+            setInitialImage();  // ← ここも必要
         }
 
         /* -------------------------
@@ -244,6 +272,25 @@
             document.getElementById("race-title").innerText = race;
             document.getElementById("race-img").src = "/static/" + race + ".png";
         }
+
+        function showMain() {
+            document.getElementById("nickname-area").style.display = "none";
+            document.getElementById("main-area").style.display = "block";
+
+            // ★ nickname の再表示（重要）
+            const name = localStorage.getItem("nickname");
+            if (name) {
+                document.getElementById("account-name").textContent = name;
+            }
+        }
+
+        function setInitialImage() {
+            const img = document.getElementById("race-img");
+            img.src = "/static/2026年うま王.png";
+
+            const title = document.getElementById("race-title");
+            title.innerText = "2026年うま王";
+}
 
         // /main から来た場合は main-area を表示
         //if (window.location.pathname === "/main") {
