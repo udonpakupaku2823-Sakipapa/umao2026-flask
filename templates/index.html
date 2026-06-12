@@ -139,6 +139,16 @@
     <!-- ★★★ JavaScript はここにまとめる（正しい位置） ★★★ -->
     <script>
 
+        // ★ ① まず最初に「色生成関数」を置く（ここは単独で終わる）
+        function getColorFromName(name) {
+            let hash = 0;
+            for (let i = 0; i < name.length; i++) {
+                hash = name.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const hue = Math.abs(hash) % 360;
+            return `hsl(${hue}, 70%, 80%)`;
+        }
+
         /* -------------------------
            初期表示
         ------------------------- */
@@ -208,60 +218,72 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        /* -------------------------
-           ニックネーム登録
-        ------------------------- */
-        async function registerNickname() {
-            console.log("registerNickname 実行された");
-            const input = document.getElementById("nickname");
-            const name = input.value.trim();
-            const error = document.getElementById("nick-error");
+/* -------------------------
+   ニックネーム登録
+------------------------- */
+let duplicateWarningShown = false;  // ← 追加（1回目ストップ用）
 
-            error.style.display = "none";
-            error.textContent = "";
-            input.style.border = "1px solid #ccc";
+async function registerNickname() {
+    console.log("registerNickname 実行された");
 
-            // 空欄チェック
-            if (name === "") {
-                error.textContent = "登録名を入力してください。";
-                error.style.display = "block";
-                input.style.border = "2px solid red";
-                return;
-            }
+    const input = document.getElementById("nickname");
+    const name = input.value.trim();
+    const error = document.getElementById("nick-error");
 
-            // 4文字以上チェック
-            if (name.length > 3) {
-                error.textContent = "登録名は3文字までです。";
-                error.style.display = "block";
-                input.style.border = "2px solid red";
-                return;
-            }
+    error.style.display = "none";
+    error.textContent = "";
+    input.style.border = "1px solid #ccc";
 
-            // Firestore 重複チェック
-            const userRef = db.collection("users").doc(name);
-            const docSnap = await userRef.get();
+    // 空欄チェック
+    if (name === "") {
+        error.textContent = "登録名を入力してください。";
+        error.style.display = "block";
+        input.style.border = "2px solid red";
+        return;
+    }
 
-            if (docSnap.exists) {
-                // 注意喚起は出すけど止めない
-                error.textContent = "その登録名は既に使われています（注意）";
-                error.style.display = "block";
-                input.style.border = "2px solid orange";
-                // ★ return しない
-            }
+    // 3文字以内
+    if (name.length > 3) {
+        error.textContent = "登録名は3文字までです。";
+        error.style.display = "block";
+        input.style.border = "2px solid red";
+        return;
+    }
 
-            // 保存（新規でも既存でもOK）
-            localStorage.setItem("nickname", name);
+    // ★ normalize して比較用に整える（ここだけでOK）
+    const savedName = (localStorage.getItem("nickname") || "").trim().normalize();
+    const inputName = name.trim().normalize();
 
-            // ★ Firestore にも保存（新規のみ）
-            if (!docSnap.exists) {
-                await userRef.set({ created: new Date() });
-            }
+    // ★ savedName と入力名が一致しているときだけ既存扱い
+    const isExistingUser = (savedName === inputName);
 
-            document.getElementById("nickname-area").style.display = "none";
-            document.getElementById("main-area").style.display = "block";
+    // ★ 新規ユーザーだけ重複チェック
+    if (!isExistingUser) {
+        const userRef = db.collection("users").doc(inputName);
+        const docSnap = await userRef.get();
 
-            setInitialImage();  // ← ここも必要
+        if (docSnap.exists) {
+            error.textContent = "その登録名は既に使われています（注意）";
+            error.style.display = "block";
+            input.style.border = "2px solid orange";
+            return;
         }
+
+        // 新規 → Firestore に登録
+        await userRef.set({ created: new Date() });
+    }
+
+    // ★ 既存 or 新規成功 → localStorage に保存
+    localStorage.setItem("nickname", inputName);
+
+    // 画面切り替え
+    document.getElementById("nickname-area").style.display = "none";
+    document.getElementById("main-area").style.display = "block";
+
+    setInitialImage();
+}
+
+
 
         /* -------------------------
            レース表示

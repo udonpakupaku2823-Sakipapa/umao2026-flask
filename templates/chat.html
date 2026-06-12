@@ -80,6 +80,21 @@ const firebaseConfig = {
     appId: "1:171117636172:web:fc100e2d5f2d18f6c0a2e9"
 };
 
+function getColorFromName(name) {
+    // 名前からハッシュ値を作る
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+        hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+
+    // パステルカラーを生成
+    const r = (hash >> 16) & 0xff;
+    const g = (hash >> 8) & 0xff;
+    const b = hash & 0xff;
+
+    return `rgb(${(r + 255) / 2}, ${(g + 255) / 2}, ${(b + 255) / 2})`;
+}
+
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
@@ -91,48 +106,45 @@ db.collection("chat")
   .onSnapshot((snapshot) => {
       const box = document.getElementById("messages");
 
-      // ★ 初回だけ全消し
-      if (box.innerHTML === "") {
-          box.innerHTML = "";
-      }
+      // ★ まず履歴を全部クリア
+      box.innerHTML = "";
+  
+      // ★ 履歴を全部描画（snapshot.forEach） 
+      snapshot.forEach((doc) => {
+          const d = doc.data();
 
-      // ★ 追加分だけ描画
-      snapshot.docChanges().forEach((change) => {
-          if (change.type === "added") {
-              const d = change.doc.data();
+          const time = d.timestamp ? d.timestamp.toDate() : null;
+          const MM = time ? String(time.getMonth() + 1).padStart(2, "0") : "--";
+          const DD = time ? String(time.getDate()).padStart(2, "0") : "--";
+          const hh = time ? String(time.getHours()).padStart(2, "0") : "--";
+          const mm = time ? String(time.getMinutes()).padStart(2, "0") : "--";
+          const timeStr = `${MM}/${DD} ${hh}:${mm}`;
 
-              const time = d.timestamp ? d.timestamp.toDate() : null;
-              const MM = time ? String(time.getMonth() + 1).padStart(2, "0") : "--";
-              const DD = time ? String(time.getDate()).padStart(2, "0") : "--";
-              const hh = time ? String(time.getHours()).padStart(2, "0") : "--";
-              const mm = time ? String(time.getMinutes()).padStart(2, "0") : "--";
-              const timeStr = `${MM}${DD} ${hh}:${mm}`;
+          const isMine = (d.name === nickname);
+          const userColor = getColorFromName(d.name);
+          const bgColor = isMine ? "#c49a6c" : userColor;
+          const align = isMine ? "flex-end" : "flex-start";
 
-              const isMine = (d.name === nickname);
-              const bgColor = isMine ? "#c49a6c" : "#e8d8c3";
-              const align = isMine ? "flex-end" : "flex-start";
+          const wrapper = document.createElement("div");
+          wrapper.style.display = "flex";
+          wrapper.style.justifyContent = align;
+          wrapper.style.marginBottom = "12px";
 
-              const wrapper = document.createElement("div");
-              wrapper.style.display = "flex";
-              wrapper.style.justifyContent = align;
-              wrapper.style.marginBottom = "12px";
+          wrapper.innerHTML = `
+              <div style="
+                  background:${bgColor};
+                  padding:10px;
+                  border-radius:8px;
+                  max-width:70%;
+                  color:#000;
+              ">
+                  <strong>${d.name}</strong><br>
+                  ${d.message}<br>
+                  <span style="color:#444; font-size:12px;">${timeStr}</span>
+              </div>
+          `;
 
-              wrapper.innerHTML = `
-                  <div style="
-                      background:${bgColor};
-                      padding:10px;
-                      border-radius:8px;
-                      max-width:70%;
-                      color:#000;
-                  ">
-                      <strong>${d.name}</strong><br>
-                      ${d.message}<br>
-                      <span style="color:#444; font-size:12px;">${timeStr}</span>
-                  </div>
-              `;
-
-              box.appendChild(wrapper);
-          }
+          box.appendChild(wrapper);
       });
 
       // ★ 最新メッセージへスクロール（確実に効く）
