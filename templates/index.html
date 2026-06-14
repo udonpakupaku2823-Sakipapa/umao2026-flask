@@ -2,325 +2,87 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <style>
-        body {
-           background: linear-gradient(
-                to bottom,
-                #e8ffe8 0%,
-                #d4f7d4 40%,
-                #b6e6b6 100%
-            );
-            margin: 0;
-            font-family: sans-serif;
-            text-align: left;
-            padding-left: 20px;
-        }
-
-        #nickname-area, #main-area {
-            width: 90%;
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        input {
-            width: 90%;
-            padding: 10px;
-            font-size: 22px;
-        }
-
-        button {
-            padding: 10px 20px;
-            font-size: 18px;
-            margin-top: 10px;
-        }
-
-        #race-select {
-            width: 60%;   /* ← 好きな幅に調整できる */
-            font-size: 18px;
-            padding: 6px 10px;
-            height: 40px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-        }
-
-        .chat-button {
-            display: block;
-            width: 200px;
-            margin: 20px auto;
-            padding: 12px;
-            background-color: #4CAF50;
-            color: white;
-            text-align: center;
-            border-radius: 8px;
-            font-size: 18px;
-            text-decoration: none;
-        }
-    </style>
+    <title>うま王2026</title>
 </head>
 
 <body>
 
-    <h1>うま王2026</h1>
-
-    <!-- ① ニックネーム入力エリア -->
-    <div id="nickname-area">
-        <h2>登録名入れてください（3文字以内で）</h2>
-        <h3>登録済みの場合は自動的に表示されます</h3>
-
-        <div style="display:flex; gap:10px; align-items:center;">
-            <input type="text" id="nickname" maxlength="3" placeholder="うま王"
-            style="font-size:22px; padding:10px; width:90%; max-width:70px;">
-            
-            <button type="button" onclick="registerNickname()"
-                style="
-                    padding:10px 30px;
-                    font-size:18px;
-                    border-radius:6px;
-                ">
-            確認
-        </button>
-        </div>
-
-        <p id="nick-error" style="color:red; margin-top:10px;"></p>
-    </div>
-
-    <!-- ② レース選択エリア -->
-    <div id="main-area" style="display:none;">
-
-    <!-- ★ ここに追加 -->
-    <div id="account-name" style="font-size: 18px; font-weight: bold; margin-bottom: 10px;"></div>
-
-    <!-- <h1>うま王2026</h1> -->
-
-    <p style="font-size:20px;">レースを選択してください</p>
-
-    <form onsubmit="return false;" 
-        style="display:flex; flex-direction:column; gap:12px; margin-top:20px;">
-        <select id="race-select"
-                style="font-size:18px; padding:6px 10px; height:60px;">
-            {% for o in options %}
-            <option value="{{o}}">{{o}}</option>
-            {% endfor %}
-        </select>
-
-        <button type="button" onclick="showRace()"
-                style="
-                    font-size:18px;
-                    padding:6px 12px;
-                    height:40px;
-                    width:80px;      /* ← これが超重要 */
-                    align-self:flex-start; /* ← 左寄せにする（自然） */
-                ">
-            表示
-        </button>
-    </form>
+<body style="
+background: linear-gradient(to bottom, #87CEFA, #E0FFFF);
+background-attachment: fixed;
+">
 
 
-    <h2 id="race-title">{{ race }}</h2>
+<h1>うま王2026</h1>
 
-    <img id="race-img" class="race-img" src="/static/{{ race }}.png">
+<h2>登録名を入力してください（3文字以内）</h2>
+<h3>登録済みの場合もここから入ってください</h3>
 
-    <a href="/chat" class="chat-button">チャットへ</a>
+<form action="/register" method="post" style="display:flex; gap:10px; align-items:center;">
+    <input type="text"  id="nickname" name="nickname" maxlength="3"
+           value="{{ nickname or '' }}"
+           placeholder="うま王"
+           style="font-size:22px; padding:10px; width:90%; max-width:70px;">
+    <button type="submit" onclick="saveNickname()"
+            style="padding:10px 30px; font-size:18px; border-radius:6px;">
+        確認
+    </button>
+</form>
 
-    <div style="text-align:center; margin-top:10px; color:#444; font-size:14px;">
-        アクセス数：{{ count }}
-    </div>
-    </div>
+{% if error %}
+<p style="color:red; margin-top:10px;">{{ error }}</p>
+{% endif %}
+
+<hr>
+
+<button type="button" onclick="location.href='/contest'"
+    style="
+        background: linear-gradient(135deg, #000000, #1a1a1a);
+        color: #FFD700;
+        padding: 10px 22px;
+        font-size: 18px;
+        border: 2px solid #FFD700;
+        border-radius: 8px;
+        font-weight: bold;
+        letter-spacing: 1px;
+        cursor: pointer;
+        box-shadow: 0 0 8px rgba(255,215,0,0.4);
+        transition: all 0.25s ease;
+        margin-top: 15px;
+    "
+    onmouseover="this.style.boxShadow='0 0 14px rgba(255,215,0,0.8)'; this.style.transform='scale(1.04)'"
+    onmouseout="this.style.boxShadow='0 0 8px rgba(255,215,0,0.4)'; this.style.transform='scale(1)'"
+>
+    ＪＲＡ重賞単勝コンテストに参加する
+</button>
 
 
+<!-- ルール説明（今の index.html の文章をそのまま貼る） -->
+<div style="margin-top:20px;">
+    【ＪＲＡ重賞単勝予想コンテストのルール】<br>
+    ・今週開催のレースから参加したいレースを選択できます。<br>
+    ・ルールは簡単、１着になる馬を予想してください<br>
+    ・各印の馬が１着になれば◎１０点、○５点、▲３点、×１点が付与されます。<br>
+    ・◎○▲は各１頭、×は６頭まで選択できます。<br>
+    ・獲得したポイントにＧ１は３倍、Ｇ２は２倍、Ｇ３は１倍されます。<br>
+    ・設定された期間の合計ポイントで争います。<br>
+    ・予想の締め切りはレース当日15:00までとし、それまでは何度変更しても構いません。<br>
+</div>
 
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-
-    <!-- ★★★ JavaScript はここにまとめる（正しい位置） ★★★ -->
-    <script>
-
-        // ★ ① まず最初に「色生成関数」を置く（ここは単独で終わる）
-        function getColorFromName(name) {
-            let hash = 0;
-            for (let i = 0; i < name.length; i++) {
-                hash = name.charCodeAt(i) + ((hash << 5) - hash);
-            }
-            const hue = Math.abs(hash) % 360;
-            return `hsl(${hue}, 70%, 80%)`;
-        }
-
-        /* -------------------------
-           初期表示
-        ------------------------- */
-        window.onload = function() {
-
-            // ★ /main から来た場合は main-area を表示して終了
-            if (window.location.pathname.includes("/main")) {
-                document.getElementById("nickname-area").style.display = "none";
-                document.getElementById("main-area").style.display = "block";
-
-                // ★ 初期画像を設定（重要）
-                //const img = document.getElementById("race-img");
-                //img.src = "/static/2026うま王.png";
-
-                //const title = document.getElementById("race-title");
-                //title.innerText = "2026年うま王";
-
-                setInitialImage();  // ← ここが重要
-
-                // ★ nickname の再表示
-                const savedName = localStorage.getItem("nickname");
-                if (savedName) {
-                    document.getElementById("account-name").textContent = savedName;
-                }
-                return;
-            //} else {
-            //    document.getElementById("nickname-area").style.display = "block";
-            //    document.getElementById("main-area").style.display = "none";
-            //    setInitialImage();  // ← ここが必要
-            }
-
-            // ★ 初回アクセス（/）
-            document.getElementById("nickname-area").style.display = "block";
-            document.getElementById("main-area").style.display = "none";
-            setInitialImage();  // ← ここが必要
-            
-            //return;
-
-            // 初期画像
-            const img = document.getElementById("race-img");
-            img.src = "/static/2026年うま王.png";
-
-            const title = document.getElementById("race-title");
-            title.innerText = "2026年うま王";
-
-            // 既存メンバーの名前を自動入力
-            const savedName = localStorage.getItem("nickname");
-            if (savedName) {
-                document.getElementById("nickname").value = savedName;
-            }
-        };
-
-        // 既存ニックネームを localStorage から読み込む
-        const savedName = localStorage.getItem("nickname");
-        if (savedName) {
-            document.getElementById("nickname").value = savedName;
-        }
-
-        /* -------------------------
-           Firebase 設定
-        ------------------------- */
-        const firebaseConfig = {
-            apiKey: "AIzaSyA35u3UqBqCufnf0aIUgTaRJNwk85pUrtQ",
-            authDomain: "dore-chat-base.firebaseapp.com",
-            projectId: "dore-chat-base",
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
-/* -------------------------
-   ニックネーム登録
-------------------------- */
-let duplicateWarningShown = false;  // ← 追加（1回目ストップ用）
-
-async function registerNickname() {
-    console.log("registerNickname 実行された");
-
-    const input = document.getElementById("nickname");
-    const name = input.value.trim();
-    const error = document.getElementById("nick-error");
-
-    error.style.display = "none";
-    error.textContent = "";
-    input.style.border = "1px solid #ccc";
-
-    // 空欄チェック
-    if (name === "") {
-        error.textContent = "登録名を入力してください。";
-        error.style.display = "block";
-        input.style.border = "2px solid red";
-        return;
-    }
-
-    // 3文字以内
-    if (name.length > 3) {
-        error.textContent = "登録名は3文字までです。";
-        error.style.display = "block";
-        input.style.border = "2px solid red";
-        return;
-    }
-
-    // ★ normalize して比較用に整える（ここだけでOK）
-    const savedName = (localStorage.getItem("nickname") || "").trim().normalize();
-    const inputName = name.trim().normalize();
-
-    // ★ savedName と入力名が一致しているときだけ既存扱い
-    const isExistingUser = (savedName === inputName);
-
-    // ★ 新規ユーザーだけ重複チェック
-    if (!isExistingUser) {
-        const userRef = db.collection("users").doc(inputName);
-        const docSnap = await userRef.get();
-
-        if (docSnap.exists) {
-            error.textContent = "その登録名は既に使われています（注意）";
-            error.style.display = "block";
-            input.style.border = "2px solid orange";
-            return;
-        }
-
-        // 新規 → Firestore に登録
-        await userRef.set({ created: new Date() });
-    }
-
-    // ★ 既存 or 新規成功 → localStorage に保存
-    localStorage.setItem("nickname", inputName);
-
-    // 画面切り替え
-    document.getElementById("nickname-area").style.display = "none";
-    document.getElementById("main-area").style.display = "block";
-
-    setInitialImage();
+<script>
+function saveNickname() {
+    const name = document.getElementById("nickname").value;
+    localStorage.setItem("nickname", name);
 }
+window.onload = function() {
+    const savedName = localStorage.getItem("nickname");
+    if (savedName) {
+        document.getElementById("nickname").value = savedName;
+    }
+};
+</script>
 
 
-
-        /* -------------------------
-           レース表示
-        ------------------------- */
-        function showRace() {
-            const race = document.getElementById("race-select").value;
-
-            document.getElementById("race-title").innerText = race;
-            document.getElementById("race-img").src = "/static/" + race + ".png";
-        }
-
-        function showMain() {
-            document.getElementById("nickname-area").style.display = "none";
-            document.getElementById("main-area").style.display = "block";
-
-            // ★ nickname の再表示（重要）
-            const name = localStorage.getItem("nickname");
-            if (name) {
-                document.getElementById("account-name").textContent = name;
-            }
-        }
-
-        function setInitialImage() {
-            const img = document.getElementById("race-img");
-            img.src = "/static/2026年うま王.png";
-
-            const title = document.getElementById("race-title");
-            title.innerText = "2026年うま王";
-}
-
-        // /main から来た場合は main-area を表示
-        //if (window.location.pathname === "/main") {
-        //    document.getElementById("nickname-area").style.display = "none";
-        //    document.getElementById("main-area").style.display = "block";
-        //}
-
-    </script>
 
 </body>
 </html>

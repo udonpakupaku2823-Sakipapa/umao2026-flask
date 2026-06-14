@@ -62,10 +62,37 @@
 
 <body>
 
-
-
     <h1>うま王2026</h1>
 
+    <a href="/" 
+       style="
+          display:inline-block;
+          padding:8px 16px;
+          background:#444;
+          color:white;
+          border-radius:6px;
+          text-decoration:none;
+          margin-top:10px;
+          font-size:16px;
+       ">
+       ← INDEXへ戻る
+    </a>
+
+    <a href="/chat" class="chat-button"
+       style="
+          display:inline-block;
+          padding:8px 16px;
+          background:#4CAF50;
+          color:white;
+          border-radius:6px;
+          text-decoration:none;
+          margin-left:10px;
+          font-size:16px;
+       ">
+       チャットへ
+    </a>
+
+    <p style="font-size:18px;">登録名：{{ nickname }}</p>
     <p style="font-size:20px;">レースを選択してください</p>
 
     <form onsubmit="return false;" 
@@ -75,7 +102,7 @@
             {% for o in options %}
             <option value="{{o}}">{{o}}</option>
             {% endfor %}
-        </select>
+        </select> 
 
         <button type="button" onclick="showRace()"
             style="
@@ -89,12 +116,37 @@
         </button>
     </form>
 
-    <h2 id="race-title">{{ race }}</h2>
+    <!--<h2 id="race-title">{{ race }}</h2> -->
 
-    <img id="race-img" class="race-img" src="/static/{{ race }}.png">
+    
 
-    <a href="/chat" class="chat-button">チャットへ</a>
+    <script>
+    function showRace() {
+        const race = document.getElementById("race-select").value;
 
+        // タイトル更新
+        document.getElementById("race-title").innerText = race;
+
+        // 画像更新
+        document.getElementById("race-img").src = "/static/" + race + ".png";
+    }
+
+    </script>
+    
+    <img id="race-img" class="race-img" src="/static/2026年うま王.png">
+
+    <!--<div id="nickname-area" style="display:block;">
+
+    <input type="text" id="nickname" name="nickname">
+
+    <script>
+    window.onload = function() {
+        const savedName = localStorage.getItem("nickname");
+        if (savedName) {
+            document.getElementById("nickname").value = savedName;
+        }
+    };
+    </script>-->
 
 </body>
 </html>

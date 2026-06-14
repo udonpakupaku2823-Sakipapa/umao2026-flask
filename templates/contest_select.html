@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>単勝予想コンテスト：レース選択</title>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #000000 40%, #2b2b2b 60%);
+            background-attachment: fixed;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                120deg,
+                rgba(255, 215, 0, 0.08) 0px,
+                rgba(255, 215, 0, 0.08) 2px,
+                transparent 2px,
+                transparent 12px
+            );
+        }
+
+        button {
+            background: linear-gradient(135deg, #d4af37, #b8860b);
+            color: #000;
+            font-weight: bold;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+            transition: 0.2s;
+        }
+        button:hover {
+            background: linear-gradient(135deg, #ffd700, #daa520);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+            transform: scale(1.05);
+        }
+
+        #main-area {
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            margin: 40px auto;
+        }
+
+        input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border: 2px solid #FFD700;
+            border-radius: 50%;
+            background: #000;
+            cursor: pointer;
+            position: relative;
+            transition: 0.2s;
+        }
+
+        /* ホバー時に光る */
+        input[type="radio"]:hover {
+            box-shadow: 0 0 8px rgba(255,215,0,0.7);
+        }
+
+        /* 選択された時の金色の丸 */
+        input[type="radio"]:checked::after {
+            content: "";
+            width: 12px;
+            height: 12px;
+            background: #FFD700;
+            border-radius: 50%;
+            position: absolute;
+            top: 4px;
+            left: 4px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div id="main-area">
+
+    <button onclick="location.href='/'">戻る</button>
+
+    <h2>ＪＲＡ重賞単勝予想コンテスト</h2>
+
+    <div style="margin-top:20px;">
+    <h6>【オ ー プ ン 戦】 6/21しらさぎＳ～6/28ラジオＮＩＫＫＥＩ賞　までの４戦<br>
+    【2026年下期大会】　7/5北九州記念～12/27有馬記念　までの６１戦<br>
+    予想の締め切りはレース当日15:00までとし、それまでは何度変更しても構いません。<br>
+    オープン戦の間はシステムテストも兼ねますので期間中の不具合についてはご了承ください。<br></h6>
+</div>
+
+
+
+
+    <form method="POST" action="/contest/go" id="raceForm">
+        {% for r in options %}
+            <div style="margin: 8px 0; display:flex; align-items:center; gap:8px;">
+                <input type="radio" id="race{{ r.id }}" name="raceId" value="{{ r.id }}">
+                <label for="race{{ r.id }}" style="cursor:pointer;">
+                    {{ r.date }}：{{ r.name }}
+                </label>
+            </div>
+        {% endfor %}
+
+        <div style="margin-top:20px; display:flex; gap:15px;">
+            <!-- 予想するボタン（ゴールド） -->
+            <button type="button" onclick="goMarks()" 
+                style="
+                    background: linear-gradient(135deg, #d4af37, #b8860b);
+                    color:#000;
+                    font-weight:bold;
+                    padding:12px 20px;
+                    border:none;
+                    border-radius:8px;
+                    cursor:pointer;
+                    font-size:16px;
+                    box-shadow:0 0 10px rgba(255,215,0,0.4);
+                    flex:1;
+                ">
+                わたしの予想入力
+            </button>
+
+                        <!-- 比較表を見るボタン（シルバー） -->
+            <button type="button" onclick="goCompare()"
+                style="
+                    background: linear-gradient(135deg, #c0c0c0, #8f8f8f);
+                    color:#000;
+                    font-weight:bold;
+                    padding:12px 20px;
+                    border:none;
+                    border-radius:8px;
+                    cursor:pointer;
+                    font-size:16px;
+                    box-shadow:0 0 10px rgba(200,200,200,0.4);
+                    flex:1;
+                ">
+                みんなの予想比較表
+            </button>
+        </div>
+    </form>
+
+    <script>
+    function goMarks() {
+        const selected = document.querySelector('input[name="raceId"]:checked');
+        if (!selected) {
+            alert("レースを選択してください");
+            return;
+        }
+        document.getElementById("raceForm").submit();
+    }
+   
+    function goCompare() {
+        const selected = document.querySelector('input[name="raceId"]:checked');
+        if (!selected) {
+            alert("レースを選択してください");
+            return;
+        }
+        location.href = "/compare/" + selected.value;
+    }
+    </script>
+
+
+
+</div>
+
+
+
+
+</body>
+</html>

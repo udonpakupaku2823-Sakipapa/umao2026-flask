@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ raceId }}：比較表</title>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #000000 40%, #2b2b2b 60%);
+            background-attachment: fixed;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+
+        #main-area {
+            width: 95%;
+            margin: 30px auto;
+            background: rgba(0,0,0,0.6);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #fff;
+        }
+
+        th, td {
+            border: 1px solid #FFD700;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background: linear-gradient(135deg, #d4af37, #b8860b);
+            color: #000;
+            font-weight: bold;
+        }
+
+        .waku {
+            width: 40px;
+        }
+        .number {
+            width: 40px;
+        }
+        .name {
+            width: 200px;
+            text-align: left;
+            padding-left: 10px;
+        }
+
+  
+
+        /* 枠色 */
+        .w1 { background:#ffffff; color:#000; }
+        .w2 { background:#000000; color:#fff; }
+        .w3 { background:#ff0000; color:#fff; }
+        .w4 { background:#0000ff; color:#fff; }
+        .w5 { background:#ffff00; color:#000; }
+        .w6 { background:#008000; color:#fff; }
+        .w7 { background:#ffa500; color:#000; }
+        .w8 { background:#ff69b4; color:#000; }
+
+        /* スマホ最適化（画面幅 600px 以下） */
+        @media screen and (max-width: 600px) {
+            body {
+                margin: 10px;
+            }
+            h1 {
+                font-size: 26px;
+            }
+            table {
+                width: 100%;
+            }
+            td:nth-child(1),
+            td:nth-child(2),
+            td:nth-child(4),
+            th:nth-child(1),
+            th:nth-child(2),
+            th:nth-child(4) {
+                width: 12%;
+                font-size: 16px;
+            }
+            td:nth-child(3),
+            th:nth-child(3) {
+                width: 50%;
+                font-size: 16px;
+            }
+            .mark-select {
+                width: 40px;
+                height: 35px;
+                font-size: 20px;
+            }
+            #saveMarks {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+        }
+
+    </style>
+
+    <button onclick="location.href='/contest'">戻る</button>
+
+</head>
+
+<body>
+
+<div id="main-area">
+    <h2>{{ raceId }}：比較表</h2>
+
+    <table>
+        <tr>
+            <th class="waku">枠</th>
+            <th class="number">馬番</th>
+            <th class="name">馬名</th>
+
+            {# ★ 参加ユーザーの列ヘッダー #}
+            {% for user in users %}
+                <th>{{ user }}</th>
+            {% endfor %}
+        </tr>
+
+        {# ★ 馬ごとの行 #}
+        {% for h in horses %}
+        <tr>
+            <!--<td>{{ h.waku }}</td>
+            <td>{{ h.number }}</td>
+            <td class="name">{{ h.name }}</td> -->
+
+            <td class="w{{ h.waku }}">{{ h.waku }}</td>
+            <td class="w{{ h.waku }}">{{ h.number }}</td>
+            <td class="name w{{ h.waku }}">{{ h.name }}</td>
+
+            {# ★ 馬名で検索する（ここが最重要） #}
+            {% for user in users %}
+                <td>
+                    {{ predictions[user].get(h.name, "") }}
+                </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+</body>
+</html>
+

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>印選択</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    #f8f8f8,
+                    #f8f8f8 3px,
+                    #f0f0f0 3px,
+                    #f0f0f0 6px
+                );
+        }
+        table {
+            border-collapse: collapse;
+            width: 600px;
+        }
+        th {
+            background-color: #f2f2f2; /* 明るめのグレー */
+            padding: 6px;
+        }
+        th {
+            background-color: #e0e0e0;
+            font-size: 22px;       /* ← タイトルを大きく */
+            text-align: center;    /* ← 中央揃え */
+            padding: 8px;
+        }
+
+        /* 枠と馬番の数字を大きく＆中央揃え */
+        td:nth-child(1),  /* 枠 */
+        td:nth-child(2) { /* 馬番 */
+            font-size: 22px;       /* ← 数字を大きく */
+            text-align: center;    /* ← 中央揃え */
+            font-weight: bold;     /* ← 競馬新聞っぽく太字 */
+        }
+        
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        select {
+            padding: 4px;
+            font-size: 14px;
+        }
+        
+        /* プルダウン内の選択肢も中央揃え */
+        .mark-select option {
+            text-align: center;
+        }
+        .save-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+
+        .mark-select {
+            font-weight: bold;        /* 太字 */
+            font-size: 26px;          /* 大きくして存在感UP */
+            width: 55px;              /* 正方形に近づける */
+            height: 45px;             /* 高さも確保 */
+            text-align: center;
+            text-align-last: center;
+            border: 2px solid #333;   /* 枠線を濃くして印欄っぽく */
+            border-radius: 6px;       /* 少し丸みをつけると綺麗 */
+            background-color: #fff;   /* 白背景で印が映える */
+        }
+
+        /* 枠と馬番の列幅を狭くする */
+        td:nth-child(1),  /* 枠 */
+        td:nth-child(2),  /* 馬番 */
+        td:nth-child(4),
+        th:nth-child(1),
+        th:nth-child(2),
+        th:nth-child(4) {
+            width: 20px;          /* ← 好きな幅に調整できる（40〜60がベスト） */
+            text-align: center;   /* 中央揃え */
+        }
+        td:nth-child(3),
+        th:nth-child(3) {
+            width: 180px;          /* ← 好きな幅に調整できる（40〜60がベスト） */
+        }
+        /* 馬名（3列目）を太字に */
+        td:nth-child(3) {
+            font-weight: bold;
+            font-size: 20px;   /* ← 少し大きめにするとさらに見やすい */
+        }
+
+        .waku1 { background-color: #ffffff; }
+        .waku2 { background-color: #000000; color: white; }
+        .waku3 { background-color: #ff0000; }
+        .waku4 { background-color: #0000ff; color: white; }
+        .waku5 { background-color: #ffff00; }
+        .waku6 { background-color: #00aa00; }
+        .waku7 { background-color: #ff9900; }
+        .waku8 { background-color: #ff66cc; }
+
+        /* スマホ最適化（画面幅 600px 以下） */
+        @media screen and (max-width: 600px) {
+            body {
+                margin: 10px;
+            }
+            h1 {
+                font-size: 26px;
+            }
+            table {
+                width: 100%;
+            }
+            td:nth-child(1),
+            td:nth-child(2),
+            td:nth-child(4),
+            th:nth-child(1),
+            th:nth-child(2),
+            th:nth-child(4) {
+                width: 12%;
+                font-size: 16px;
+            }
+            td:nth-child(3),
+            th:nth-child(3) {
+                width: 50%;
+                font-size: 16px;
+            }
+            .mark-select {
+                width: 40px;
+                height: 35px;
+                font-size: 20px;
+            }
+            #saveMarks {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<h1 style="font-size: 40px;">{{ raceName }}</h1> 
+
+<div id="userNameDisplay" 
+     style="font-size: 20px; font-weight: bold; margin-bottom: 10px;">
+</div>
+
+
+<h3>印の制限：◎、〇、▲は各１コ、×は６コまでＯＫ</h3>
+
+<h3>印を選択して「登録」ボタンをクリックしてください</h3>
+
+<div id="deadlineMessage" 
+    style="display:none; color:red; font-weight:bold; margin:10px 0;">
+    <h2>このレースの予想は締め切られています（15:00）</h2>
+</div>
+
+<button onclick="location.href='/contest'">戻る</button>
+
+<table>
+    <tr>
+        <th>枠</th>
+        <th>馬</th>
+        <th>馬名</th>
+        <th style="text-align: center;">
+            <button id="saveMarks"
+                style="
+                    padding: 12px 24px;
+                    font-size: 18px;
+                    border-radius: 6px;
+                    background-color: #4CAF50;
+                    color: white;
+                    border: none;
+                    cursor: pointer;
+                ">
+                登録
+            </button>
+        </th>
+    </tr>
+
+    {% for h in horses %}
+    <tr class="waku{{ h.waku }}">
+        <td>{{ h.waku }}</td>
+        <td>{{ h.number }}</td>
+        <td>{{ h.name }}</td>
+        <td>
+            <select class="mark-select" data-horse="{{ h.name }}">
+                <option value=""></option>
+                <option value="◎">◎</option>
+                <option value="〇">〇</option>
+                <option value="▲">▲</option>
+                <option value="×">×</option>
+            </select>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<!--<button id="saveMarks" class="save-btn">登録する</button> -->
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+<script>
+    const raceId = "{{ raceId }}";
+    // ① ここでレース日付を受け取る
+    const raceDate = "{{ race.date }}";  // 例: "2026-06-14"
+    // ② ここから締切ロジック
+    function checkDeadline() {
+        const deadline = new Date(raceDate + "T15:00:00");
+        const now = new Date();
+
+        if (now > deadline) {
+            lockPredictionUI();
+        }
+    }
+   
+    function lockPredictionUI() {
+    document.querySelectorAll(".mark-select").forEach(e => e.disabled = true);
+    document.getElementById("saveMarks").disabled = true;
+
+    const msg = document.getElementById("deadlineMessage");
+    if (msg) msg.style.display = "block";
+    }
+
+
+    // ③ ページ読み込み時に締切チェック
+    window.onload = checkDeadline;
+
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyA35u3UqBqCufnf0aIUgTaRJNwk85pUrtQ",
+        authDomain: "dore-chat-base.firebaseapp.com",
+        projectId: "dore-chat-base",
+        storageBucket: "dore-chat-base.appspot.com",
+        messagingSenderId: "171117636172",
+        appId: "1:171117636172:web:fc100e2d5f2d18f6c0a2e9"
+    };
+
+    // テスト段階なので固定
+    const userId = localStorage.getItem("nickname");
+    // 画面に表示
+    document.getElementById("userNameDisplay").innerText = `参加者：${userId}`;
+
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // raceId を URL から取得
+    //const raceId = decodeURIComponent(window.location.pathname.split("/").pop());
+
+    // 印の制御
+    document.querySelectorAll(".mark-select").forEach(sel => {
+        sel.addEventListener("change", () => {
+            const selectedMark = sel.value;
+
+            // ◎・○・▲ は排他（1頭だけ）
+            if (["◎", "〇", "▲"].includes(selectedMark)) {
+
+                // 他の馬で同じ印を選んでいたら解除
+                document.querySelectorAll(".mark-select").forEach(other => {
+                    if (other !== sel && other.value === selectedMark) {
+                        other.value = "";
+                    }
+                });
+            }
+
+            // × は最大6頭まで
+            if (selectedMark === "×") {
+                const countX = Array.from(document.querySelectorAll(".mark-select"))
+                    .filter(s => s.value === "×").length;
+
+                if (countX > 6) {
+                    alert("× は最大6頭までです");
+                    sel.value = "";
+                }
+            }
+        }); 
+    });
+
+
+    // 保存ボタン
+    document.getElementById("saveMarks").addEventListener("click", async () => {
+
+        const selects = document.querySelectorAll(".mark-select");
+
+        // ① 印をまとめる
+        const marks = {};
+        for (const sel of selects) {
+            const horseNumber = sel.dataset.horse;
+            marks[horseNumber] = sel.value;
+    }
+
+        // ② テスト段階なので userId は固定
+        const userId = localStorage.getItem("nickname");
+
+        // ③ Firestore に保存（上書きOK）
+        await db.collection("races")
+            .doc(raceId)              // ← URL から取得した raceId をそのまま使う
+            .collection("marks")
+            .doc(userId)              // ← 俊裕の印をまとめて保存
+            .set(marks, { merge: true });
+
+        alert("印を保存しました！");
+    });
+
+    // ページ読み込み時に印をロード
+    window.addEventListener("DOMContentLoaded", async () => {
+
+        const userId = localStorage.getItem("nickname");
+
+        const docRef = db.collection("races")
+            .doc(raceId)
+            .collection("marks")
+            .doc(userId);
+
+        const snap = await docRef.get();
+
+        if (!snap.exists) {
+            console.log("まだ印が保存されていません");
+            return;
+        }
+
+        const savedMarks = snap.data();
+
+        // 保存されている印を select に反映
+        document.querySelectorAll(".mark-select").forEach(sel => {
+            const horseNumber = sel.dataset.horse;
+            if (savedMarks[horseNumber] !== undefined) {
+                sel.value = savedMarks[horseNumber];
+            }
+        });
+   
+        console.log("印をロードしました");
+    });
+
+</script>
+
+
+
+</body>
+</html>
