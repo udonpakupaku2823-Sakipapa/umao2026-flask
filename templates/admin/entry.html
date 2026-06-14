@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>STEP2：出走枠登録</title>
+</head>
+<body>
+
+<h2>STEP2：出走枠・馬番・馬名登録</h2>
+
+<label>レース選択：</label>
+<select id="race-select"></select>
+<br><br>
+
+<button id="load-btn">枠番・馬番を生成する</button>
+
+<div id="entry-area"></div>
+
+<button id="save-btn" style="display:none;">保存する</button>
+
+<p id="msg"></p>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyA35u3UqBqCufnf0aIUgTaRJNwk85pUrtQ",
+    authDomain: "dore-chat-base.firebaseapp.com",
+    projectId: "dore-chat-base",
+    storageBucket: "dore-chat-base.firebasestorage.app",
+    messagingSenderId: "171117636172",
+    appId: "1:171117636172:web:fc100e2d5f2d18f6c0a2e9"
+  };
+  firebase.initializeApp(firebaseConfig);
+</script>
+
+<script src="/static/js/entry.js?v=1000"></script>
+
+</body>
+</html>
