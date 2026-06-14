@@ -1,4 +1,6 @@
-from flask import Flask, request, render_template, redirect, session
+from google.cloud import firestore
+# --- ① Flask / Firestore / Firebase の import ---
+from flask import Flask, request, render_template, redirect, session, make_response, flash
 import os
 import sys
 
@@ -7,19 +9,19 @@ from firebase_admin import credentials
 from firebase_admin import firestore as admin_firestore
 import datetime
 
-#cred = credentials.Certificate("/etc/secrets/serviceAccount.json")
-# Render 環境なら /etc/secrets にある
+
+
+# --- ② Firebase 認証（Render / ローカル両対応） ---
 if os.path.exists("/etc/secrets/serviceAccount.json"):
     cred_path = "/etc/secrets/serviceAccount.json"
 else:
-    # ローカル環境
     cred_path = "serviceAccount.json"
 
 cred = credentials.Certificate(cred_path)
-
 firebase_admin.initialize_app(cred)
 db = admin_firestore.client()
 
+# --- ③ PyInstaller 対応（resource_path） ---
 def resource_path(relative_path):
     try:
         base_path = sys._MEIPASS
@@ -27,8 +29,19 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
+# --- ④ Flask アプリ本体 ---
 app = Flask(__name__, static_folder='static', static_url_path='/static')
 app.secret_key = "umao-secret-key"
+
+@app.route("/race")
+def race_select():
+    races = []
+    docs = db.collection("races").stream()
+    for doc in docs:
+        races.append(doc.id)
+    print("★★★ race_select.html を返すよ ★★★")
+    return render_template("race_select.html", options=races)
+
 
 # 画像ファイル対応
 image_files = {
@@ -127,66 +140,206 @@ image_files = {
 # -------------------------
 # ① トップページ（index.html）
 # -------------------------
-@app.route("/", methods=["GET", "POST", "HEAD"])
+@app.route("/", methods=["GET"])
 def index():
-    print("METHOD:", request.method)
-    if request.method == "HEAD":
-        return "", 200
+    return render_template("index.html")
 
-    # アクセスカウント
-    if request.method == "GET":
-        counter_ref = db.collection("stats").document("page_counter")
-        counter_ref.set({"count": admin_firestore.Increment(1)}, merge=True)
+@app.route("/register", methods=["POST"])
+def register():
+    nickname = request.form.get("nickname", "").strip()
 
-    # アクセスログ
-    db.collection("access_logs").add({
-        "timestamp": datetime.datetime.now(),
-        "ip": request.remote_addr
-    })
+    # バリデーション
+    if not nickname or len(nickname) > 3:
+        return render_template("index.html",
+                               error="登録名は1〜3文字で入力してください。",
+                               nickname=nickname)
 
-    # レース選択肢
-    options = list(image_files.keys())
-    filename = None
-    race = None
+    doc_ref = db.collection("users").document(nickname)
+    doc = doc_ref.get()
 
-    if request.method == "POST":
-        race = request.form.get("race")
-        filename = image_files.get(race)
+    # ★ 既存ユーザー（本人）は Cookie で判定して通す
+    if request.cookies.get("nickname") == nickname:
+        resp = make_response(redirect("/main?nickname=" + nickname))
+        resp.set_cookie("nickname", nickname)
+        return resp
 
-    # 現在のカウント取得
-    counter_ref = db.collection("stats").document("page_counter")
-    counter_doc = counter_ref.get()
-    count = counter_doc.to_dict().get("count", 0)
+    # ★ 新規ユーザーが既存名を使った場合 → 注意喚起して止める
+    if doc.exists:
+        return render_template("index.html",
+                               error="その登録名は既に使われています。",
+                               nickname=nickname)
 
-   
+    # ★ 新規ユーザーで Firestore に存在しない → 登録して通す
+    doc_ref.set({"created": firestore.SERVER_TIMESTAMP})
 
-
-    return render_template("index.html",
-                           options=options,
-                           filename=filename,
-                           race=race,
-                           count=count)
+    # Cookie をセットして /main へ
+    resp = make_response(redirect("/main?nickname=" + nickname))
+    resp.set_cookie("nickname", nickname)
+    return resp
 
 # -------------------------
-# ② コンテストadmin登録画面1
+# ② コンテスト比較表作成
+# -------------------------
+@app.route("/compare/<raceId>")
+def compare(raceId):
+
+    # 出走表（馬番を数値としてソート）
+    horses_ref = db.collection("races").document(raceId).collection("horses").stream()
+    horses = []
+    for h in horses_ref:
+        d = h.to_dict()
+        horses.append({
+            "id": h.id,
+            "waku": d.get("waku"),
+            "number": int(d.get("number")),   # ★ 数値化
+            "name": d.get("name")
+        })
+
+    horses = sorted(horses, key=lambda x: x["number"])
+
+    # 参加ユーザー一覧（marks の直下のドキュメント名）
+    users_ref = db.collection("races").document(raceId).collection("marks").stream()
+    users = [u.id for u in users_ref]
+
+    # 印データ（フィールドをそのまま読む）
+    predictions = {}
+    for user in users:
+        doc = db.collection("races").document(raceId).collection("marks").document(user).get()
+        data = doc.to_dict() or {}   # ★ フィールドがそのまま入っている
+        predictions[user] = data     # ★ 馬名 → 印 の辞書
+
+    return render_template("compare.html",
+                           raceId=raceId,
+                           horses=horses,
+                           users=users,
+                           predictions=predictions)
+
+
+
+
+
+
+# -------------------------
+# ② 予想コンテストエントリ画面表示
 # -------------------------
 @app.route('/admin/race')
 def admin_race():
     return render_template('admin/race.html')
 
-# -------------------------
-# ② コンテストadmin登録画面2
-# -------------------------
 @app.route('/admin/entry')
 def admin_entry():
     return render_template('admin/entry.html')
 
-# -------------------------
+@app.route('/marks/<raceId>')
+def marks(raceId):
+    # races/{raceId}/horses コレクションから馬名を取得
+    #horses_ref = db.collection("races").document(raceId).collection("horses")
+    #docs = horses_ref.order_by("number").get()
+    #horses = [doc.to_dict().get("name") for doc in docs]
+    #return render_template("marks.html", horses=horses, raceId=raceId)
+
+    race_ref = db.collection("races").document(raceId)
+    race_doc = race_ref.get()
+
+    # ⑥ レース名を取得
+    raceName = race_doc.to_dict().get("name")
+
+    # 馬データ取得
+    horses_snap = race_ref.collection("horses").order_by("number").get()
+    horses = [
+        {
+            "name": doc.to_dict().get("name"),
+            "number": doc.to_dict().get("number"),
+            "waku": doc.to_dict().get("waku")
+        }
+        for doc in horses_snap
+    ]
+
+    # ⑥ raceName をテンプレートに渡す
+    return render_template("marks.html", horses=horses, raceId=raceId, raceName=raceName)
+
+@app.route("/select_race")
+def select_race():
+    races = db.collection("races").get()
+
+    options = [
+        (doc.id, f'{doc.to_dict()["name"]}（{doc.to_dict()["date"]}）')
+        for doc in races
+    ]
+
+    return render_template("race_select.html", options=options)
+
+@app.route("/marks_go", methods=["POST"])
+def marks_go():
+    raceId = request.form["raceId"]
+    if not raceId:
+        # HTML と同じ挙動：選択してないなら戻す
+        flash("レースを選択してください")
+        return redirect("/contest")
+
+    return redirect(f"/marks/{raceId}")
+
+@app.route("/contest")
+def contest_select():
+    # 管理者が登録した races コレクションを取得
+    races = db.collection("races").order_by("date").get()
+
+    options = [
+        {
+            "id": doc.id,
+            "name": doc.to_dict().get("name"),
+            "date": doc.to_dict().get("date")
+        }
+        for doc in races
+    ]
+
+    return render_template("contest_select.html", options=options)
+
+@app.route("/contest/go", methods=["POST"])
+def contest_go():
+    race_id = request.form.get("raceId")
+
+    # レース情報
+    race_ref = db.collection("races").document(race_id)
+    race = race_ref.get().to_dict()
+
+    # 馬リスト（horses）
+    horses_ref = race_ref.collection("horses")
+    horses = [h.to_dict() for h in horses_ref.stream()]
+
+    # 🔥 number でソート（ここが重要）
+    horses.sort(key=lambda x: x["number"])
+
+    return render_template(
+        "marks.html",
+        race=race,
+        raceId=race_id,
+        horses=horses
+    )
+
+
+
+
+
+#----------------------
 # ② メイン画面装飾
 # -------------------------
-@app.route("/main")
+@app.route("/main", methods=["GET", "POST"])
 def main():
-    # レース一覧（index と同じものを使う）
+    print("METHOD:", request.method)
+
+    # ★ アクセスカウント（GET のときだけ）
+    if request.method == "GET":
+        counter_ref = db.collection("stats").document("page_counter")
+        counter_ref.set({"count": admin_firestore.Increment(1)}, merge=True)
+
+    # ★ アクセスログ
+    db.collection("access_logs").add({
+        "timestamp": datetime.datetime.now(),
+        "ip": request.remote_addr
+    })
+
+    # ★ レース一覧（あなたの現行コードをそのまま使用）
     options = ["2026年うま王","2026年うま王収支表単勝","2026年うま王収支表馬連","2026年うま王収支表三連複",
                "0614宝塚記念","0613函館スプリントＳ",
                "0607安田記念",
@@ -210,15 +363,29 @@ def main():
                "0125アメリカジョッキーＣ","0125プロキオンＳ","0124小倉牝馬Ｓ",
                "0118京成杯","0118日経新春杯","0112シンザン記念","0111フェアリーＳ",
                "0104中山金杯","0104京都金杯"]
+
     filename = None
     race = None
 
-    # ★ カウントは増やさない（読み込みだけ）
+    # ★ POST のときは race を受け取る（main.html のフォーム用）
+    if request.method == "POST":
+        race = request.form.get("race")
+        filename = f"{race}.png"
+
+    # ★ カウント取得（あなたのコードをそのまま使用）
     counter_ref = db.collection("stats").document("page_counter")
     counter_doc = counter_ref.get()
     count = counter_doc.to_dict().get("count", 0)
 
-    return render_template("index.html", options=options, race=race, count=count)
+    # ★ ニックネーム（URL パラメータから取得）
+    nickname = request.args.get("nickname", "")
+
+    return render_template("main.html",
+                           nickname=nickname,
+                           options=options,
+                           race=race,
+                           filename=filename,
+                           count=count)
 
 # -------------------------
 # ② チャットページ
@@ -226,6 +393,7 @@ def main():
 @app.route("/chat")
 def chat():
     return render_template("chat.html")
+
 
 # -------------------------
 # ③ 最後に app.run()
