@@ -9,17 +9,27 @@ from firebase_admin import credentials
 from firebase_admin import firestore as admin_firestore
 import datetime
 
-
-
 # --- ② Firebase 認証（Render / ローカル両対応） ---
-if os.path.exists("/etc/secrets/serviceAccount.json"):
-    cred_path = "/etc/secrets/serviceAccount.json"
+import json
+import tempfile
+
+# Render の環境変数に Firebase 秘密鍵 JSON を入れておく
+firebase_key_json = os.environ.get("FIREBASE_KEY")
+
+if firebase_key_json:
+    # Render 本番：環境変数から一時ファイルを作る
+    with tempfile.NamedTemporaryFile(delete=False, mode="w", suffix=".json") as f:
+        f.write(firebase_key_json)
+        cred_path = f.name
 else:
+    # ローカル：serviceAccount.json を使う
     cred_path = "serviceAccount.json"
 
 cred = credentials.Certificate(cred_path)
 firebase_admin.initialize_app(cred)
 db = admin_firestore.client()
+
+
 
 # --- ③ PyInstaller 対応（resource_path） ---
 def resource_path(relative_path):
@@ -140,10 +150,6 @@ image_files = {
 # -------------------------
 # ① トップページ（index.html）
 # -------------------------
-@app.route("/", methods=["GET"])
-def index():
-    return render_template("index.html")
-
 @app.route("/register", methods=["POST"])
 def register():
     nickname = request.form.get("nickname", "").strip()
@@ -157,25 +163,22 @@ def register():
     doc_ref = db.collection("users").document(nickname)
     doc = doc_ref.get()
 
-    # ★ 既存ユーザー（本人）は Cookie で判定して通す
-    if request.cookies.get("nickname") == nickname:
+    # ★ Firestore に存在する → 既存ユーザーとして通す
+    if doc.exists:
         resp = make_response(redirect("/main?nickname=" + nickname))
         resp.set_cookie("nickname", nickname)
         return resp
 
-    # ★ 新規ユーザーが既存名を使った場合 → 注意喚起して止める
-    if doc.exists:
-        return render_template("index.html",
-                               error="その登録名は既に使われています。",
-                               nickname=nickname)
-
-    # ★ 新規ユーザーで Firestore に存在しない → 登録して通す
+    # ★ Firestore に存在しない → 新規ユーザー
+    # → ここで初めて「既存名エラー」を出すべき
+    # ただし doc.exists が False なのでエラーは出ない
+    # → 新規登録して通す
     doc_ref.set({"created": firestore.SERVER_TIMESTAMP})
 
-    # Cookie をセットして /main へ
     resp = make_response(redirect("/main?nickname=" + nickname))
     resp.set_cookie("nickname", nickname)
     return resp
+
 
 # -------------------------
 # ② コンテスト比較表作成
