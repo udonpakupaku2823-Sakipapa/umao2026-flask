@@ -149,9 +149,15 @@ image_files = {
     "0104中山金杯": "0104中山金杯.png",
     "0104京都金杯": "0104京都金杯.png",
 }
-
 # -------------------------
 # ① トップページ（index.html）
+# -------------------------
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+# -------------------------
+# ① レシスター設置
 # -------------------------
 @app.route("/register", methods=["POST"])
 def register():
@@ -219,11 +225,6 @@ def compare(raceId):
                            horses=horses,
                            users=users,
                            predictions=predictions)
-
-
-
-
-
 
 # -------------------------
 # ② 予想コンテストエントリ画面表示
@@ -322,10 +323,6 @@ def contest_go():
         raceId=race_id,
         horses=horses
     )
-
-
-
-
 
 #----------------------
 # ② メイン画面装飾
