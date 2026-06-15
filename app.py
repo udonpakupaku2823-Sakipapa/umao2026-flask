@@ -163,7 +163,7 @@ def index():
 def register():
     nickname = request.form.get("nickname", "").strip()
 
-    # バリデーション
+    # ① バリデーション（未入力・4文字以上）
     if not nickname or len(nickname) > 3:
         return render_template("index.html",
                                error="登録名は1〜3文字で入力してください。",
@@ -172,16 +172,20 @@ def register():
     doc_ref = db.collection("users").document(nickname)
     doc = doc_ref.get()
 
-    # ★ Firestore に存在する → 既存ユーザーとして通す
+    # ② Firestore に存在する場合（既存ユーザー or 他人）
     if doc.exists:
-        resp = make_response(redirect("/main?nickname=" + nickname))
-        resp.set_cookie("nickname", nickname)
-        return resp
+        # cookie の nickname と一致 → 本人
+        if request.cookies.get("nickname") == nickname:
+            resp = make_response(redirect("/main?nickname=" + nickname))
+            resp.set_cookie("nickname", nickname)
+            return resp
+        else:
+            # 他人の名前 → エラー
+            return render_template("index.html",
+                                   error="その登録名は既に使われています。",
+                                   nickname=nickname)
 
-    # ★ Firestore に存在しない → 新規ユーザー
-    # → ここで初めて「既存名エラー」を出すべき
-    # ただし doc.exists が False なのでエラーは出ない
-    # → 新規登録して通す
+    # ③ Firestore に存在しない → 新規登録
     doc_ref.set({"created": firestore.SERVER_TIMESTAMP})
 
     resp = make_response(redirect("/main?nickname=" + nickname))
