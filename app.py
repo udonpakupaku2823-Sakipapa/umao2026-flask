@@ -13,6 +13,9 @@ import datetime
 import json
 import tempfile
 
+import os
+from firebase_admin import credentials, initialize_app
+
 # Render の環境変数に Firebase 秘密鍵 JSON を入れておく
 firebase_key_json = os.environ.get("FIREBASE_KEY")
 
@@ -26,9 +29,9 @@ else:
     cred_path = "serviceAccount.json"
 
 cred = credentials.Certificate(cred_path)
-firebase_admin.initialize_app(cred)
-db = admin_firestore.client()
+initialize_app(cred)
 
+db = admin_firestore.client()
 
 
 # --- ③ PyInstaller 対応（resource_path） ---
