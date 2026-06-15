@@ -53,7 +53,7 @@ background-attachment: fixed;
     onmouseover="this.style.boxShadow='0 0 14px rgba(255,215,0,0.8)'; this.style.transform='scale(1.04)'"
     onmouseout="this.style.boxShadow='0 0 8px rgba(255,215,0,0.4)'; this.style.transform='scale(1)'"
 >
-    ＪＲＡ重賞単勝コンテストに参加する
+    ＪＲＡ重賞単勝当てコンテストに参加する
 </button>
 
 
@@ -69,6 +69,10 @@ background-attachment: fixed;
     ・予想の締め切りはレース当日15:00までとし、それまでは何度変更しても構いません。<br>
 </div>
 
+<div style="font-size:12px; color:#666; text-align:right; margin-bottom:5px;">
+    この端末名：<span id="device-name"></span>
+</div>
+
 <script>
 function saveNickname() {
     const name = document.getElementById("nickname").value;
@@ -80,6 +84,17 @@ window.onload = function() {
         document.getElementById("nickname").value = savedName;
     }
 };
+
+if (!localStorage.getItem("deviceName")) {
+    const name = prompt("この端末の名前を入力してください（例：PC、スマホ1、スマホ2）");
+    if (name) {
+        localStorage.setItem("deviceName", name);
+    }
+}
+
+document.getElementById("device-name").textContent =
+    localStorage.getItem("deviceName") || "未設定";
+
 </script>
 
 
