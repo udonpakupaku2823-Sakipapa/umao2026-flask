@@ -192,7 +192,6 @@ def register():
     resp.set_cookie("nickname", nickname)
     return resp
 
-
 # -------------------------
 # ② コンテスト比較表作成
 # -------------------------
