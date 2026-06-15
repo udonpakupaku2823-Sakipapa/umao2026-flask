@@ -382,7 +382,9 @@ def main():
     race = request.args.get("race", None)
 
     # ★ race があれば filename を作る
-    filename = f"{race}.png" if race else None
+    #filename = f"{race}.png" if race else None
+    filename = f"{race}.png" if race else "2026年うま王.png"
+
 
     # ★ カウント取得（あなたのコードをそのまま使用）
     counter_ref = db.collection("stats").document("page_counter")
