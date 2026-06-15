@@ -81,16 +81,18 @@
         /* 枠と馬番の列幅を狭くする */
         td:nth-child(1),  /* 枠 */
         td:nth-child(2),  /* 馬番 */
-        td:nth-child(4),
         th:nth-child(1),
-        th:nth-child(2),
-        th:nth-child(4) {
+        th:nth-child(2) {
             width: 20px;          /* ← 好きな幅に調整できる（40〜60がベスト） */
             text-align: center;   /* 中央揃え */
         }
         td:nth-child(3),
         th:nth-child(3) {
             width: 180px;          /* ← 好きな幅に調整できる（40〜60がベスト） */
+        }
+        td:nth-child(4),
+        th:nth-child(4) {
+            width: 45px;          /* ← 好きな幅に調整できる（40〜60がベスト） */
         }
         /* 馬名（3列目）を太字に */
         td:nth-child(3) {
