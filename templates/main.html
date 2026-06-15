@@ -95,25 +95,24 @@
     <p style="font-size:18px;">登録名：{{ nickname }}</p>
     <p style="font-size:20px;">レースを選択してください</p>
 
-    <form onsubmit="return false;" 
-        style="display:flex; gap:8px; align-items:center; margin-top:20px;">
-        <select id="race-select"
-            style="display:flex; flex-direction:column; gap:12px; margin-top:20px;">
-            {% for o in options %}
-            <option value="{{o}}">{{o}}</option>
+    <form action="/main" method="POST">
+        <select name="race">
+            {% for opt in options %}
+                <option value="{{ opt }}">{{ opt }}</option>
             {% endfor %}
-        </select> 
+        </select>
 
-        <button type="button" onclick="showRace()"
+        <button type="submit"
             style="
                 font-size:18px;
                 padding:6px 12px;
                 height:40px;
-                width:80px;      /* ← これが超重要 */
-                align-self:flex-start; /* ← 左寄せにする（自然） */
+                width:80px;
+                align-self:flex-start;
             ">
             表示
         </button>
+
     </form>
 
     <!--<h2 id="race-title">{{ race }}</h2> -->
@@ -135,18 +134,7 @@
     
     <img id="race-img" class="race-img" src="/static/2026年うま王.png">
 
-    <!--<div id="nickname-area" style="display:block;">
 
-    <input type="text" id="nickname" name="nickname">
-
-    <script>
-    window.onload = function() {
-        const savedName = localStorage.getItem("nickname");
-        if (savedName) {
-            document.getElementById("nickname").value = savedName;
-        }
-    };
-    </script>-->
 
 </body>
 </html>
