@@ -2,6 +2,8 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=1200, initial-scale=1.0">
+
     <title>印選択</title>
     <style>
         body {
@@ -71,6 +73,11 @@
             background-color: #fff;   /* 白背景で印が映える */
         }
 
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
         /* 枠と馬番の列幅を狭くする */
         td:nth-child(1),  /* 枠 */
         td:nth-child(2),  /* 馬番 */
@@ -100,42 +107,6 @@
         .waku7 { background-color: #ff9900; }
         .waku8 { background-color: #ff66cc; }
 
-        /* スマホ最適化（画面幅 600px 以下） 
-        @media screen and (max-width: 600px) {
-            body {
-                margin: 10px;
-            }
-            h1 {
-                font-size: 26px;
-            }
-            table {
-                width: 100%;
-            }
-            td:nth-child(1),
-            td:nth-child(2),
-            td:nth-child(4),
-            th:nth-child(1),
-            th:nth-child(2),
-            th:nth-child(4) {
-                width: 12%;
-                font-size: 16px;
-            }
-            td:nth-child(3),
-            th:nth-child(3) {
-                width: 50%;
-                font-size: 16px;
-            }
-            .mark-select {
-                width: 40px;
-                height: 35px;
-                font-size: 20px;
-            }
-            #saveMarks {
-                padding: 8px 16px;
-                font-size: 14px;
-            }
-        } */
-
     </style>
 </head>
 
@@ -159,6 +130,7 @@
 
 <button onclick="location.href='/contest'">戻る</button>
 
+<div class="table-container"></div>
 <table>
     <tr>
         <th>枠</th>
@@ -197,6 +169,7 @@
     </tr>
     {% endfor %}
 </table>
+</div>
 
 <!--<button id="saveMarks" class="save-btn">登録する</button> -->
 

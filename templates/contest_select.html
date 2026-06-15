@@ -108,14 +108,6 @@
 
 
     <form method="POST" action="/contest/go" id="raceForm">
-        {% for r in options %}
-            <div style="margin: 8px 0; display:flex; align-items:center; gap:8px;">
-                <input type="radio" id="race{{ r.id }}" name="raceId" value="{{ r.id }}">
-                <label for="race{{ r.id }}" style="cursor:pointer;">
-                    {{ r.date }}：{{ r.name }}
-                </label>
-            </div>
-        {% endfor %}
 
         <div style="margin-top:20px; display:flex; gap:15px;">
             <!-- 予想するボタン（ゴールド） -->
@@ -152,6 +144,20 @@
                 みんなの予想比較表
             </button>
         </div>
+
+        {% for r in options %}
+            <div style="margin: 8px 0; display:flex; align-items:center; gap:8px;">
+                <input type="radio" id="race{{ r.id }}" name="raceId" value="{{ r.id }}">
+                <label for="race{{ r.id }}" style="cursor:pointer;">
+                    {{ r.date }}：{{ r.name }}
+                    {% if r.is_closed %}
+                    <span style="color:red; font-weight:bold;">（済）</span>
+                    {% endif %}
+                </label>
+            </div>
+        {% endfor %}
+
+        
     </form>
 
     <script>
