@@ -314,6 +314,28 @@ def contest_select():
 
     return render_template("contest_select.html", options=options)
 
+@app.route("/contest", methods=["GET"])
+def contest_select():
+    races_ref = db.collection("races").order_by("date", direction="DESCENDING").get()
+
+    options = []
+    now = datetime.datetime.now()
+
+    for doc in races_ref:
+        data = doc.to_dict()
+        race_date = datetime.datetime.strptime(data["date"] + " 15:00", "%Y-%m-%d %H:%M")
+        is_closed = now > race_date
+
+        options.append({
+            "id": doc.id,
+            "name": data.get("name"),
+            "date": data.get("date"),
+            "is_closed": is_closed
+        })
+
+    return render_template("contest_select.html", options=options)
+
+
 @app.route("/contest/go", methods=["POST"])
 def contest_go():
     race_id = request.form.get("raceId")
