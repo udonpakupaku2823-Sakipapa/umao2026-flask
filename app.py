@@ -376,7 +376,13 @@ def main():
     # ★ POST のときは race を受け取る（main.html のフォーム用）
     if request.method == "POST":
         race = request.form.get("race")
-        filename = f"{race}.png"
+        return redirect(f"/main?race={race}")
+    
+    # ★ GET のときは URL から race を取得
+    race = request.args.get("race", None)
+
+    # ★ race があれば filename を作る
+    filename = f"{race}.png" if race else None
 
     # ★ カウント取得（あなたのコードをそのまま使用）
     counter_ref = db.collection("stats").document("page_counter")
