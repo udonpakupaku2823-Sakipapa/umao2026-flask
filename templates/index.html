@@ -69,8 +69,8 @@ background-attachment: fixed;
     ・予想の締め切りはレース当日15:00までとし、それまでは何度変更しても構いません。<br>
 </div>
 
-<div style="font-size:12px; color:#666; text-align:right; margin-bottom:5px;">
-    この端末名：<span id="device-name"></span>
+<div id="reg-info" style="font-size:12px; color:#666; text-align:right; margin-bottom:5px; display:none;">
+    この端末の登録名：<span id="reg-name"></span>
 </div>
 
 <script>
@@ -78,24 +78,21 @@ function saveNickname() {
     const name = document.getElementById("nickname").value;
     localStorage.setItem("nickname", name);
 }
+
+// ページ読み込み時に localStorage の登録名を表示
 window.onload = function() {
     const savedName = localStorage.getItem("nickname");
     if (savedName) {
+        // 入力欄に反映
         document.getElementById("nickname").value = savedName;
+
+        // 上部に登録名を表示
+        document.getElementById("reg-name").textContent = savedName;
+        document.getElementById("reg-info").style.display = "block";
     }
 };
-
-if (!localStorage.getItem("deviceName")) {
-    const name = prompt("この端末の名前を入力してください（例：PC、スマホ1、スマホ2）");
-    if (name) {
-        localStorage.setItem("deviceName", name);
-    }
-}
-
-document.getElementById("device-name").textContent =
-    localStorage.getItem("deviceName") || "未設定";
-
 </script>
+
 
 
 
