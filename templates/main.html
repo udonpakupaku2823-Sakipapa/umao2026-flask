@@ -95,8 +95,14 @@
     <p style="font-size:18px;">登録名：{{ nickname }}</p>
     <p style="font-size:20px;">レースを選択してください</p>
 
-    <form action="/main" method="POST">
-        <select name="race">
+    <form action="/main" method="POST" style="display:flex; gap:10px; align-items:center;">
+        <select name="race"
+            style="
+                height:40px;          /* ボタンと高さを揃える */
+                font-size:18px;       /* 文字を大きく */
+                padding:4px 8px;
+                width:240px;          /* ← 幅を広くする（調整可） */
+            ">
             {% for opt in options %}
                 <option value="{{ opt }}">{{ opt }}</option>
             {% endfor %}
@@ -112,8 +118,8 @@
             ">
             表示
         </button>
-
     </form>
+
 
     <!--<h2 id="race-title">{{ race }}</h2> -->
 

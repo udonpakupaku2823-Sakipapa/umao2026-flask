@@ -61,10 +61,33 @@
 
 <div id="messages" style="border:1px solid #ccc; max-height:300px; overflow-y:auto; padding:10px;"></div>
 
-<div style="display:flex; align-items:center; gap:10px;">
-    <input type="text" id="message-input" placeholder="メッセージを入力">
-    <button onclick="sendMessage()">送信</button>
+<div style="display:flex; flex-direction:column; gap:10px;">
+
+    <textarea id="message-input" placeholder="メッセージを入力"
+        rows="2"
+        style="
+            width:100%;
+            font-size:16px;
+            padding:8px;
+            resize:none;
+            overflow:hidden;
+        "
+        oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';">
+    </textarea>
+
+    <button onclick="sendMessage()"
+        style="
+            font-size:18px;
+            padding:8px 12px;
+            height:40px;
+            width:100px;
+            align-self:flex-end;
+        ">
+        送信
+    </button>
+
 </div>
+
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
