@@ -270,7 +270,7 @@ def marks(raceId):
 
 @app.route("/select_race")
 def select_race():
-    races = db.collection("races").get()
+    races = db.collection("races").order_by("date", direction="DESCENDING").get()
 
     options = [
         (doc.id, f'{doc.to_dict()["name"]}（{doc.to_dict()["date"]}）')
@@ -289,19 +289,28 @@ def marks_go():
 
     return redirect(f"/marks/{raceId}")
 
-@app.route("/contest")
 def contest_select():
-    # 管理者が登録した races コレクションを取得
-    races = db.collection("races").order_by("date").get()
+    # Firestore からレース一覧を日付降順で取得
+    races_ref = db.collection("races").order_by("date", direction="DESCENDING").get()
 
-    options = [
-        {
+    options = []
+    now = datetime.now()
+
+    for doc in races_ref:
+        data = doc.to_dict()
+
+        # レース日付 + 15:00 を締切時刻として扱う
+        race_date = datetime.strptime(data["date"] + " 15:00", "%Y-%m-%d %H:%M")
+
+        # 締切済みフラグ
+        is_closed = now > race_date
+
+        options.append({
             "id": doc.id,
-            "name": doc.to_dict().get("name"),
-            "date": doc.to_dict().get("date")
-        }
-        for doc in races
-    ]
+            "name": data.get("name"),
+            "date": data.get("date"),
+            "is_closed": is_closed
+        })
 
     return render_template("contest_select.html", options=options)
 
