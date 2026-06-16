@@ -355,7 +355,8 @@ def contest_go():
         "marks.html",
         race=race,
         raceId=race_id,
-        horses=horses
+        horses=horses,
+        raceName=race["name"]   # ← これを追加！
     )
 
 #----------------------
