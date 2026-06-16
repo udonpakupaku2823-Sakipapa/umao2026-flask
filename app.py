@@ -152,9 +152,9 @@ image_files = {
 # -------------------------
 # ① トップページ（index.html）
 # -------------------------
-@app.route("/")
-def index():
-    return render_template("index.html")
+#@app.route("/")
+#def index():
+#    return render_template("index.html")
 
 # -------------------------
 # ① レシスター設置
