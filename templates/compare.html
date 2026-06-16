@@ -51,7 +51,40 @@
             padding-left: 10px;
         }
 
-  
+        /* 枠番（幅固定） */
+        .waku-col {
+            width: 32px;
+            text-align: center;
+        }
+
+        /* 馬番（幅固定） */
+        .uma-col {
+            width: 32px;
+            text-align: center;
+        }
+
+        /* 馬名（最大9文字 → 12文字分で固定） */
+        .name-col {
+            width: 140px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* 印欄（参加者）も固定幅にする */
+        .mark-col {
+            width: 40px;
+            text-align: center;
+        }
+
+        /* 縦書きヘッダー（印欄） */
+        .vertical-header {
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            white-space: nowrap;
+            padding: 4px;
+        }
+
 
         /* 枠色 */
         .w1 { background:#ffffff; color:#000; }
@@ -62,42 +95,6 @@
         .w6 { background:#008000; color:#fff; }
         .w7 { background:#ffa500; color:#000; }
         .w8 { background:#ff69b4; color:#000; }
-
-        /* スマホ最適化（画面幅 600px 以下） 
-        @media screen and (max-width: 600px) {
-            body {
-                margin: 10px;
-            }
-            h1 {
-                font-size: 26px;
-            }
-            table {
-                width: 100%;
-            }
-            td:nth-child(1),
-            td:nth-child(2),
-            td:nth-child(4),
-            th:nth-child(1),
-            th:nth-child(2),
-            th:nth-child(4) {
-                width: 12%;
-                font-size: 16px;
-            }
-            td:nth-child(3),
-            th:nth-child(3) {
-                width: 50%;
-                font-size: 16px;
-            }
-            .mark-select {
-                width: 40px;
-                height: 35px;
-                font-size: 20px;
-            }
-            #saveMarks {
-                padding: 8px 16px;
-                font-size: 14px;
-            }
-        } */
 
         .black-gold-btn {
             background: linear-gradient(135deg, #000000, #1a1a1a);
@@ -152,7 +149,7 @@
 
             {# ★ 参加ユーザーの列ヘッダー #}
             {% for user in users %}
-                <th class="vertical-header">{{ user }}</th>
+                <th class="vertical-header mark-col">{{ user }}</th>
             {% endfor %}
         </tr>
 
@@ -169,10 +166,11 @@
 
             {# ★ 馬名で検索する（ここが最重要） #}
             {% for user in users %}
-                <td>
+                <td class="mark-col">
                     {{ predictions[user].get(h.name, "") }}
                 </td>
             {% endfor %}
+
         </tr>
         {% endfor %}
     </table>
