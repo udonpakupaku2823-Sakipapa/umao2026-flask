@@ -39,32 +39,19 @@
             font-weight: bold;
         }
 
-        .waku {
-            width: 40px;
-        }
         .number {
-            width: 40px;
-        }
-        .name {
-            width: 200px;
-            text-align: left;
-            padding-left: 10px;
-        }
-
-        /* 枠番（幅固定） */
-        .waku-col {
             width: 32px;
             text-align: center;
         }
 
-        /* 馬番（幅固定） */
-        .uma-col {
+        /* 枠番（幅固定） */
+        .waku {
             width: 32px;
             text-align: center;
         }
 
         /* 馬名（最大9文字 → 12文字分で固定） */
-        .name-col {
+        .name {
             width: 140px;
             white-space: nowrap;
             overflow: hidden;
@@ -160,8 +147,8 @@
             <td>{{ h.number }}</td>
             <td class="name">{{ h.name }}</td> -->
 
-            <td class="w{{ h.waku }}">{{ h.waku }}</td>
-            <td class="w{{ h.waku }}">{{ h.number }}</td>
+            <td class="waku w{{ h.waku }}">{{ h.waku }}</td>
+            <td class="number w{{ h.waku }}">{{ h.number }}</td>
             <td class="name w{{ h.waku }}">{{ h.name }}</td>
 
             {# ★ 馬名で検索する（ここが最重要） #}
