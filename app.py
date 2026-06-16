@@ -367,9 +367,9 @@ def main():
     print("METHOD:", request.method)
 
     # ★ アクセスカウント（GET のときだけ）
-    if request.method == "GET":
-        counter_ref = db.collection("stats").document("page_counter")
-        counter_ref.set({"count": admin_firestore.Increment(1)}, merge=True)
+    #if request.method == "GET":
+    #    counter_ref = db.collection("stats").document("page_counter")
+    #    counter_ref.set({"count": admin_firestore.Increment(1)}, merge=True)
 
     # ★ アクセスログ
     db.collection("access_logs").add({
@@ -432,6 +432,15 @@ def main():
                            race=race,
                            filename=filename,
                            count=count)
+
+@app.route("/", methods=["GET"])
+def index():
+    # ★ INDEX を開いたときだけカウントアップ
+    counter_ref = db.collection("stats").document("page_counter")
+    counter_ref.set({"count": admin_firestore.Increment(1)}, merge=True)
+
+    return render_template("index.html")
+
 
 # -------------------------
 # ② チャットページ
