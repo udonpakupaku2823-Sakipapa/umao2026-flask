@@ -116,6 +116,21 @@
             box-shadow: 0 0 14px rgba(255,215,0,0.8);
             transform: scale(1.04);
         }
+        .vertical-header { 
+            writing-mode: vertical-rl;   /* ← 縦書き */
+            text-orientation: upright;   /* ← 文字を正立させる */
+            padding: 6px 4px;
+            width: 1px;                  /* ← 内容にフィットさせる */
+            white-space: nowrap;         /* ← 折り返し禁止 */
+            background: #000;            /* 黒金テーマに合わせるなら */
+            color: #FFD700;
+            border: 1px solid #FFD700;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        table {
+            table-layout: fixed;
+        }
 
     </style>
 
@@ -129,7 +144,7 @@
 <div id="main-area">
     <h2>{{ raceId }}：比較表</h2>
 
-    <table>
+    <table style="table-layout: fixed;">
         <tr>
             <th class="waku">枠</th>
             <th class="number">馬番</th>
@@ -137,7 +152,7 @@
 
             {# ★ 参加ユーザーの列ヘッダー #}
             {% for user in users %}
-                <th>{{ user }}</th>
+                <th class="vertical-header">{{ user }}</th>
             {% endfor %}
         </tr>
 
