@@ -86,6 +86,24 @@
             left: 4px;
         }
 
+        .black-gold-btn {
+            background: linear-gradient(135deg, #000000, #1a1a1a);
+            color: #FFD700;
+            padding: 10px 22px;
+            font-size: 18px;
+            border: 2px solid #FFD700;
+            border-radius: 8px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(255,215,0,0.4);
+            transition: all 0.25s ease;
+        }
+        .black-gold-btn:hover {
+            box-shadow: 0 0 14px rgba(255,215,0,0.8);
+            transform: scale(1.04);
+        }
+
     </style>
 </head>
 
@@ -93,7 +111,8 @@
 
 <div id="main-area">
 
-    <button onclick="location.href='/'">戻る</button>
+    <!--<button onclick="location.href='/'">戻る</button>-->
+    <button class="black-gold-btn" onclick="history.back()">戻る</button>
 
     <h2>ＪＲＡ重賞単勝予想コンテスト</h2>
 
