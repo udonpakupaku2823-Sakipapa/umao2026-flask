@@ -439,7 +439,13 @@ def index():
     counter_ref = db.collection("stats").document("page_counter")
     counter_ref.set({"count": admin_firestore.Increment(1)}, merge=True)
 
-    return render_template("index.html")
+    # ★ 現在のカウントを取得
+    counter_doc = counter_ref.get()
+    count = counter_doc.to_dict().get("count", 0)
+
+    # ★ count を index.html に渡す
+    return render_template("index.html", count=count)
+
 
 
 # -------------------------
