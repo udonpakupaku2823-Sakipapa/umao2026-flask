@@ -39,6 +39,19 @@
             font-weight: bold;
         }
 
+        .vertical-header { 
+            writing-mode: vertical-rl;   /* ← 縦書き */
+            text-orientation: upright;   /* ← 文字を正立させる */
+            padding: 6px 4px;
+            /*width: 1px;                   ← 内容にフィットさせる */
+            white-space: nowrap;         /* ← 折り返し禁止 */
+            background: #000;            /* 黒金テーマに合わせるなら */
+            color: #FFD700;
+            border: 1px solid #FFD700;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
         .number {
             width: 32px;
             text-align: center;
@@ -53,6 +66,8 @@
         /* 馬名（最大9文字 → 12文字分で固定） */
         .name {
             width: 140px;
+            text-align: left;
+            padding-left: 10px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -63,15 +78,6 @@
             width: 40px;
             text-align: center;
         }
-
-        /* 縦書きヘッダー（印欄） */
-        .vertical-header {
-            writing-mode: vertical-rl;
-            text-orientation: upright;
-            white-space: nowrap;
-            padding: 4px;
-        }
-
 
         /* 枠色 */
         .w1 { background:#ffffff; color:#000; }
@@ -100,18 +106,7 @@
             box-shadow: 0 0 14px rgba(255,215,0,0.8);
             transform: scale(1.04);
         }
-        .vertical-header { 
-            writing-mode: vertical-rl;   /* ← 縦書き */
-            text-orientation: upright;   /* ← 文字を正立させる */
-            padding: 6px 4px;
-            width: 1px;                  /* ← 内容にフィットさせる */
-            white-space: nowrap;         /* ← 折り返し禁止 */
-            background: #000;            /* 黒金テーマに合わせるなら */
-            color: #FFD700;
-            border: 1px solid #FFD700;
-            font-weight: bold;
-            font-size: 18px;
-        }
+        
         table {
             table-layout: fixed;
         }
