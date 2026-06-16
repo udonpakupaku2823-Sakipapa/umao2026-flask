@@ -101,6 +101,11 @@ background-attachment: fixed;
     この端末の登録名：<span id="reg-name"></span>
 </div>
 
+<div id="access-counter" style="font-size:12px; color:#666; text-align:right; margin-top:2px;">
+    アクセス数：{{ count }}
+</div>
+
+
 <script>
 function saveNickname() {
     const name = document.getElementById("nickname").value;
