@@ -179,14 +179,12 @@ def register():
             resp = make_response(redirect("/main?nickname=" + nickname))
             resp.set_cookie("nickname", nickname)
             return resp
-    #   else:
-            # 他人の名前 → エラー
-    #        return render_template("index.html",
-    #                               error="その登録名は既に使われています。",
-    #                               nickname=nickname)
         else:
-            # 他人の名前でも今回は通す（エラーを出さない）
-            pass
+            # 他人の名前 → エラー
+            return render_template("index.html",
+                                   error="その登録名は既に使われています。",
+                                   nickname=nickname)
+
 
     # ③ Firestore に存在しない → 新規登録
     doc_ref.set({"created": firestore.SERVER_TIMESTAMP})
@@ -446,8 +444,21 @@ def index():
     counter_doc = counter_ref.get()
     count = counter_doc.to_dict().get("count", 0)
 
-    # ★ count を index.html に渡す
-    return render_template("index.html", count=count)
+    # ★ cookie から nickname を取得
+    cookie_name = request.cookies.get("nickname", "")
+
+    # ★ Firestore に存在するか確認（本来の登録名）
+    original_name = ""
+    if cookie_name:
+        doc = db.collection("users").document(cookie_name).get()
+        if doc.exists:
+            original_name = cookie_name
+
+    # ★ original_name を index.html に渡す
+    return render_template("index.html",
+                           count=count,
+                           original_name=original_name)
+
 
 
 
