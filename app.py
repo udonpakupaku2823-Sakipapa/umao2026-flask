@@ -1,5 +1,3 @@
-firebase_adminfrom google.cloud import firestore
-# --- ① Flask / Firestore / Firebase の import ---
 from flask import Flask, request, render_template, redirect, session, make_response, flash
 import os
 import sys
