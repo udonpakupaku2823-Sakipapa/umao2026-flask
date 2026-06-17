@@ -445,17 +445,28 @@ def index():
     # ★ cookie から nickname を取得
     cookie_name = request.cookies.get("nickname", "")
 
-    # ★ Firestore に存在するか確認（本来の登録名）
+    # ★ 本来の登録名を決定する
     original_name = ""
+
+    # ① Cookie に名前があればそれを優先
     if cookie_name:
         doc = db.collection("users").document(cookie_name).get()
         if doc.exists:
             original_name = cookie_name
 
-    # ★ original_name を index.html に渡す
+    # ② Cookie が空の場合 → URL パラメータから取得
+    if not original_name:
+        param_name = request.args.get("nickname", "")
+        if param_name:
+            doc = db.collection("users").document(param_name).get()
+            if doc.exists:
+                original_name = param_name
+
     return render_template("index.html",
                            count=count,
                            original_name=original_name)
+
+
 
 
 
