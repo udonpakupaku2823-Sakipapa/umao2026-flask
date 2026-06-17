@@ -97,8 +97,8 @@ background-attachment: fixed;
     🔄 ログイン情報をリセット
 </button>
 
-<div id="reg-info" style="font-size:12px; color:#666; text-align:right; margin-bottom:5px; display:none;">
-    この端末の登録名：<span id="reg-name"></span>
+<div style="font-size:12px; color:#666; text-align:right;">
+    この端末の本来の登録名：{{ original_name }}
 </div>
 
 <div id="access-counter" style="font-size:12px; color:#666; text-align:right; margin-top:2px;">
@@ -125,11 +125,11 @@ window.onload = function() {
     }
 };
 
-function resetUMAO() {
-    localStorage.clear();
-    alert("端末に保存されているUMA王のログイン情報をリセットしました。\n再度ニックネームを入力してください。");
-    location.href = "/";  // トップへ戻す
-}
+//function resetUMAO() {
+//    localStorage.clear();
+//    alert("端末に保存されているUMA王のログイン情報をリセットしました。\n再度ニックネームを入力してください。");
+//    location.href = "/";  // トップへ戻す
+//}
 
 </script>
 
