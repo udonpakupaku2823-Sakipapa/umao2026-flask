@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>うま王2026</title>
+
+    <style>
+        .black-gold-btn {
+            background: linear-gradient(135deg, #000000, #1a1a1a);
+            color: #FFD700;
+            padding: 10px 22px;
+            font-size: 18px;
+            border: 2px solid #FFD700;
+            border-radius: 8px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(255,215,0,0.4);
+            transition: all 0.25s ease;
+        }
+        .black-gold-btn:hover {
+            box-shadow: 0 0 14px rgba(255,215,0,0.8);
+            transform: scale(1.04);
+        }
+    </style>
+</head>
+
+
+<body>
+
+<body style="
+background: linear-gradient(to bottom, #87CEFA, #E0FFFF);
+background-attachment: fixed;
+">
+
+
+<h1>うま王2026</h1>
+
+<h2>登録名を入力してください（3文字以内）</h2>
+<h3>登録済みの場合もここから入ってください</h3>
+
+<form action="/register" method="post" style="display:flex; gap:10px; align-items:center;">
+    <input type="text"  id="nickname" name="nickname" maxlength="3"
+           value="{{ nickname or '' }}"
+           placeholder="うま王"
+           style="font-size:22px; padding:10px; width:90%; max-width:70px;">
+    <button type="submit" onclick="saveNickname()"
+            style="padding:10px 30px; font-size:18px; border-radius:6px;">
+        確認
+    </button>
+</form>
+
+{% if error %}
+<p style="color:red; margin-top:10px;">{{ error }}</p>
+{% endif %}
+
+<a href="/chat" class="chat-button"
+       style="
+          display:inline-block;
+          padding:8px 16px;
+          background:#4CAF50;
+          color:white;
+          border-radius:6px;
+          text-decoration:none;
+          margin-left:10px;
+          font-size:16px;
+       ">
+       チャットへ
+    </a>
+
+<hr>
+
+<button type="button" onclick="location.href='/contest'"
+    style="
+        background: linear-gradient(135deg, #000000, #1a1a1a);
+        color: #FFD700;
+        padding: 10px 22px;
+        font-size: 18px;
+        border: 2px solid #FFD700;
+        border-radius: 8px;
+        font-weight: bold;
+        letter-spacing: 1px;
+        cursor: pointer;
+        box-shadow: 0 0 8px rgba(255,215,0,0.4);
+        transition: all 0.25s ease;
+        margin-top: 15px;
+    "
+    onmouseover="this.style.boxShadow='0 0 14px rgba(255,215,0,0.8)'; this.style.transform='scale(1.04)'"
+    onmouseout="this.style.boxShadow='0 0 8px rgba(255,215,0,0.4)'; this.style.transform='scale(1)'"
+>
+    ＪＲＡ重賞単勝当てコンテストに参加する
+</button>
+
+
+<!-- ルール説明（今の index.html の文章をそのまま貼る） -->
+<div style="margin-top:20px;">
+     <h2>練習用として「レジェンドカップ」用意しました</h2><br>
+     2026年6月19日（金）15:00までに印打ってみてください<br>
+     <br>
+    【ＪＲＡ重賞単勝予想コンテストのルール】<br>
+    ・今週開催のレースから参加したいレースを選択できます。<br>
+    ・ルールは簡単、１着になる馬を予想してください<br>
+    ・各印の馬が１着になれば◎１０点、○５点、▲３点、×１点が付与されます。<br>
+    ・◎○▲は各１頭、×は６頭まで選択できます。<br>
+    ・獲得したポイントにＧ１は３倍、Ｇ２は２倍、Ｇ３は１倍されます。<br>
+    ・設定された期間の合計ポイントで争います。<br>
+    ・予想の締め切りはレース当日15:00までとし、それまでは何度変更しても構いません。<br>
+</div>
+
+<button onclick="resetUMAO()" style="margin-top:20px; padding:8px 16px;">
+    🔄 ログイン情報をリセット
+</button>
+
+<div style="font-size:12px; color:#666; text-align:right;">
+    この端末の本来の登録名：{{ original_name }}
+</div>
+
+<div id="access-counter" style="font-size:12px; color:#666; text-align:right; margin-top:2px;">
+    アクセス数：{{ count }}
+</div>
+
+
+<script>
+function saveNickname() {
+    const name = document.getElementById("nickname").value;
+    localStorage.setItem("nickname", name);
+}
+
+// ページ読み込み時に localStorage の登録名を表示
+window.onload = function() {
+    const savedName = localStorage.getItem("nickname");
+    if (savedName) {
+        // 入力欄に反映
+        document.getElementById("nickname").value = savedName;
+
+       // 上部に登録名を表示
+       // document.getElementById("reg-name").textContent = savedName;
+       // document.getElementById("reg-info").style.display = "block";
+    }
+};
+
+//function resetUMAO() {
+//    localStorage.clear();
+//    alert("端末に保存されているUMA王のログイン情報をリセットしました。\n再度ニックネームを入力してください。");
+//    location.href = "/";  // トップへ戻す
+//}
+
+</script>
+
+</body>
+</html>
