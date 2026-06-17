@@ -1,4 +1,4 @@
-from google.cloud import firestore
+firebase_adminfrom google.cloud import firestore
 # --- ① Flask / Firestore / Firebase の import ---
 from flask import Flask, request, render_template, redirect, session, make_response, flash
 import os
@@ -179,11 +179,14 @@ def register():
             resp = make_response(redirect("/main?nickname=" + nickname))
             resp.set_cookie("nickname", nickname)
             return resp
-        else:
+    #   else:
             # 他人の名前 → エラー
-            return render_template("index.html",
-                                   error="その登録名は既に使われています。",
-                                   nickname=nickname)
+    #        return render_template("index.html",
+    #                               error="その登録名は既に使われています。",
+    #                               nickname=nickname)
+        else:
+            # 他人の名前でも今回は通す（エラーを出さない）
+            pass
 
     # ③ Firestore に存在しない → 新規登録
     doc_ref.set({"created": firestore.SERVER_TIMESTAMP})
