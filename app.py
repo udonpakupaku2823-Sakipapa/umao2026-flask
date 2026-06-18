@@ -421,19 +421,20 @@ def main():
 
 @app.route("/", methods=["GET"])
 def index():
-    # ★ INDEX を開いたときだけカウントアップ
-    counter_ref = db.collection("stats").document("page_counter")
-    counter_ref.set({"count": admin_firestore.Increment(1)}, merge=True)
-
     # ★ 現在のカウントを取得
+    counter_ref = db.collection("stats").document("page_counter")
     counter_doc = counter_ref.get()
     count = counter_doc.to_dict().get("count", 0)
 
-    # original_name は localStorage 側で管理するため
-    # サーバー側では何も決めない
     return render_template("index.html",
                            count=count,
                            original_name="")
+
+@app.route("/countup")
+def countup():
+    counter_ref = db.collection("stats").document("page_counter")
+    counter_ref.set({"count": admin_firestore.Increment(1)}, merge=True)
+    return "ok"
 
 
 
