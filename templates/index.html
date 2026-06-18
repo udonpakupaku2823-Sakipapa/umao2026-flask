@@ -151,9 +151,12 @@ window.onload = function() {
     //}
 };
 
-
-
-
+window.addEventListener("load", () => {
+    if (!localStorage.getItem("counted")) {
+        fetch("/countup");
+        localStorage.setItem("counted", "true");
+    }
+});
 
 
 //function resetUMAO() {
