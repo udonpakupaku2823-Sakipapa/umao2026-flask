@@ -173,16 +173,13 @@ def register():
 
     # Firestore に存在する → 既存ユーザーとして通す
     if doc.exists:
-        resp = make_response(redirect("/main?nickname=" + nickname))
-        resp.set_cookie("nickname", nickname)
-        return resp
+        return redirect("/main?nickname=" + nickname)
 
     # Firestore に存在しない → 新規登録
     doc_ref.set({"created": firestore.SERVER_TIMESTAMP})
 
-    resp = make_response(redirect("/main?nickname=" + nickname))
-    resp.set_cookie("nickname", nickname)
-    return resp
+    return redirect("/main?nickname=" + nickname)
+
 
 
 # -------------------------
@@ -436,29 +433,12 @@ def index():
     counter_doc = counter_ref.get()
     count = counter_doc.to_dict().get("count", 0)
 
-    # ★ cookie から nickname を取得
-    cookie_name = request.cookies.get("nickname", "")
-
-    # ★ 本来の登録名を決定する
-    original_name = ""
-
-    # ① Cookie に名前があればそれを優先
-    if cookie_name:
-        doc = db.collection("users").document(cookie_name).get()
-        if doc.exists:
-            original_name = cookie_name
-
-    # ② Cookie が空の場合 → URL パラメータから取得
-    if not original_name:
-        param_name = request.args.get("nickname", "")
-        if param_name:
-            doc = db.collection("users").document(param_name).get()
-            if doc.exists:
-                original_name = param_name
-
+    # original_name は localStorage 側で管理するため
+    # サーバー側では何も決めない
     return render_template("index.html",
                            count=count,
-                           original_name=original_name)
+                           original_name="")
+
 
 
 @app.after_request
