@@ -226,10 +226,6 @@ def compare(raceId):
 def admin_race():
     return render_template('admin/race.html')
 
-@app.route('/admin/entry')
-def admin_entry():
-    return render_template('admin/entry.html')
-
 @app.route('/marks/<raceId>')
 def marks(raceId):
     # races/{raceId}/horses コレクションから馬名を取得
