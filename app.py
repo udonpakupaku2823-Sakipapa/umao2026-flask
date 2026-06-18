@@ -448,7 +448,17 @@ def add_header(response):
     response.headers['Expires'] = '0'
     return response
 
+# -------------------------
+# ② レース苑エントリーID取得
+# -------------------------
+@app.route("/admin/entry")
+def admin_entry():
+    raceId = request.args.get("raceId")
 
+    race_doc = db.collection("races").document(raceId).get()
+    race = race_doc.to_dict()
+
+    return render_template("entry.html", race=race, raceId=raceId)
 
 
 # -------------------------
