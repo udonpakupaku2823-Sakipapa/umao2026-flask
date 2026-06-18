@@ -41,10 +41,11 @@ background-attachment: fixed;
            value="{{ nickname or '' }}"
            placeholder="うま王"
            style="font-size:22px; padding:10px; width:90%; max-width:70px;">
-    <button type="submit" onclick="saveNickname()"
-            style="padding:10px 30px; font-size:18px; border-radius:6px;">
+    <button type="submit"
+        style="padding:10px 30px; font-size:18px; border-radius:6px;">
         確認
     </button>
+
 </form>
 
 {% if error %}
@@ -121,20 +122,31 @@ background-attachment: fixed;
 
 
 <script>
-function saveNickname() {
-    const name = document.getElementById("nickname").value;
-    localStorage.setItem("nickname", name);
-}
+//function saveNickname() {
+//    const name = document.getElementById("nickname").value;
+//    localStorage.setItem("nickname", name);
+//}
 
 // ページ読み込み時に localStorage の登録名を表示
 window.onload = function() {
-    const savedName = localStorage.getItem("nickname");
-    if (savedName) {
-        document.getElementById("nickname").value = savedName;
+    let original = localStorage.getItem("original_name");
+
+    // 初回アクセス → original_name を保存
+    if (!original) {
+        const firstInput = document.getElementById("nickname").value;
+        if (firstInput) {
+            localStorage.setItem("original_name", firstInput);
+            original = firstInput;
+        }
+    }
+
+    // 右下に original_name を表示
+    if (original) {
         document.getElementById("deviceName").textContent =
-            "この端末の本来の登録名：" + savedName;
+            "この端末の本来の登録名：" + original;
     }
 };
+
 
 
 //function resetUMAO() {
