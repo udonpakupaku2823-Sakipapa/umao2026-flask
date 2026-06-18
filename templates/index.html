@@ -42,12 +42,17 @@ background-attachment: fixed;
            placeholder="うま王"
            style="font-size:22px; padding:10px; width:90%; max-width:70px;">
     <button type="submit"
-        onclick="localStorage.setItem('last_nickname', document.getElementById('nickname').value)"
-        style="padding:10px 30px; font-size:18px; border-radius:6px;">
+        onclick="
+            const name = document.getElementById('nickname').value;
+            localStorage.setItem('last_nickname', name);
+
+            if (!localStorage.getItem('original_name')) {
+                localStorage.setItem('original_name', name);
+            }
+        "
+    >
         確認
     </button>
-
-
 </form>
 
 {% if error %}
@@ -118,9 +123,9 @@ background-attachment: fixed;
     この端末の本来の登録名：
 </div>
 
-<div id="access-counter" style="font-size:12px; color:#666; text-align:right; margin-top:2px;">
+<!--<div id="access-counter" style="font-size:12px; color:#666; text-align:right; margin-top:2px;">
     アクセス数：{{ count }}
-</div>
+</div>-->
 
 
 <script>
@@ -139,23 +144,18 @@ window.onload = function() {
     // 前回使ったニックネーム（入力欄に入れるやつ）
     let lastNickname = localStorage.getItem("last_nickname");
 
-    // ★ 初回だけ original_name を決める
-    // 入力欄が空でも placeholder を original_name として保存する
-    if (!original) {
-        const firstInput = input.value || input.placeholder;
-        localStorage.setItem("original_name", firstInput);
-        original = firstInput;
-    }
-
-    // ★ 入力欄には last_nickname を優先して表示
+    // 入力欄には last_nickname を優先して表示
     if (lastNickname) {
         input.value = lastNickname;
     }
 
-    // ★ 右下には original_name を表示（固定）
-    document.getElementById("deviceName").textContent =
-        "この端末の本来の登録名：" + original;
+    // 右下には original_name を表示（固定）
+    //if (original) {
+    //    document.getElementById("deviceName").textContent =
+    //        "この端末の本来の登録名：" + original;
+    //}
 };
+
 
 
 
@@ -168,6 +168,18 @@ window.onload = function() {
 //}
 
 </script>
+
+{% if nickname == "うま王" %}
+    <div style="margin-top:30px; text-align:center;">
+        <a href="/entry" 
+           style="display:inline-block; padding:10px 20px; 
+                  background:black; color:gold; 
+                  border-radius:8px; font-weight:bold;">
+            管理者メニュー：出走枠登録
+        </a>
+    </div>
+{% endif %}
+
 
 </body>
 </html>
