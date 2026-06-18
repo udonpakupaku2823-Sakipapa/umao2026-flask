@@ -111,8 +111,8 @@ background-attachment: fixed;
     🔄 ログイン情報をリセット
 </button>
 
-<div style="font-size:12px; color:#666; text-align:right;">
-    この端末の本来の登録名：{{ original_name }}
+<div id="deviceName" style="font-size:12px; color:#666; text-align:right;">
+    この端末の本来の登録名：
 </div>
 
 <div id="access-counter" style="font-size:12px; color:#666; text-align:right; margin-top:2px;">
@@ -130,14 +130,12 @@ function saveNickname() {
 window.onload = function() {
     const savedName = localStorage.getItem("nickname");
     if (savedName) {
-        // 入力欄に反映
         document.getElementById("nickname").value = savedName;
-
-       // 上部に登録名を表示
-       // document.getElementById("reg-name").textContent = savedName;
-       // document.getElementById("reg-info").style.display = "block";
+        document.getElementById("deviceName").textContent =
+            "この端末の本来の登録名：" + savedName;
     }
 };
+
 
 //function resetUMAO() {
 //    localStorage.clear();
