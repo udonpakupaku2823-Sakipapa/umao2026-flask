@@ -265,14 +265,13 @@ def select_race():
 
     return render_template("race_select.html", options=options)
 
-@app.route("/marks_go", methods=["POST"])
-def marks_go():
-    raceId = request.form["raceId"]
+#@app.route("/marks_go", methods=["POST"])
+#def marks_go():
+#    raceId = request.form["raceId"]
     if not raceId:
         # HTML と同じ挙動：選択してないなら戻す
         flash("レースを選択してください")
         return redirect("/contest")
-
     return redirect(f"/marks/{raceId}")
 
 def contest_select():
