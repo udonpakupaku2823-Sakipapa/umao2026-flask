@@ -47,9 +47,9 @@
 
     <form action="/marks_go" method="post">
         <select name="raceId">
-            {% for id, name in options %}
-            <option value="{{ id }}">{{ name }}</option>
-            {% endfor %}
+            {% for r in race_list %}
+                <option value="{{ r }}">{{ r }}</option>
+            {% endfor %} 
         </select>
 
         <button type="submit">印をつける</button>
