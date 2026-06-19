@@ -93,6 +93,18 @@
     </a>
 
     <p style="font-size:18px;">登録名：{{ nickname }}</p>
+    
+    {% if nickname == "うま王" %}
+        <div style="margin-top:30px; text-align:center;">
+            <a href="/entry" 
+               style="display:inline-block; padding:10px 20px; 
+                      background:black; color:gold; 
+                      border-radius:8px; font-weight:bold;">
+                管理者メニュー：出走枠登録
+            </a>
+        </div>
+    {% endif %}
+
     <p style="font-size:20px;">レースを選択してください</p>
 
     <form action="/main" method="POST" style="display:flex; gap:10px; align-items:center;">
