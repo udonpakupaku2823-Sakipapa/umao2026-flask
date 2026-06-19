@@ -448,13 +448,37 @@ def add_header(response):
 # -------------------------
 # ② レース苑エントリーID取得
 # -------------------------
-@app.route("/admin/entry")
-def admin_entry():
+#@app.route("/admin/entry")
+#def admin_entry():
     raceId = request.args.get("raceId")
 
     race_doc = db.collection("races").document(raceId).get()
     race = race_doc.to_dict()
 
+    return render_template("entry.html", race=race, raceId=raceId)
+
+# -------------------------
+# ② 管理者メニュー
+# -------------------------
+@app.route("/admin/menu")
+def admin_menu():
+    return render_template("admin_menu.html")
+
+@app.route("/admin/entry/new")
+def admin_entry_new():
+    return render_template("entry.html", race=None, raceId=None)
+
+@app.route("/admin/entry/select")
+def admin_entry_select():
+    races = db.collection("races").stream()
+    race_list = [r.id for r in races]
+    return render_template("race_select.html", race_list=race_list)
+
+@app.route("/admin/entry/edit")
+def admin_entry_edit():
+    raceId = request.args.get("raceId")
+    race_doc = db.collection("races").document(raceId).get()
+    race = race_doc.to_dict()
     return render_template("entry.html", race=race, raceId=raceId)
 
 
