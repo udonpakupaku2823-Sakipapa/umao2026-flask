@@ -123,13 +123,7 @@ background-attachment: fixed;
 </div>-->
 
 <script>
-//function saveNickname() {
-//    const name = document.getElementById("nickname").value;
-//    localStorage.setItem("nickname", name);
-//}
-
-// ページ読み込み時に localStorage の登録名を表示
-window.onload = function() {
+window.addEventListener("load", () => {
     const input = document.getElementById("nickname");
 
     // 本来の登録名（右下に出すやつ）
@@ -143,28 +137,14 @@ window.onload = function() {
         input.value = lastNickname;
     }
 
-    // 右下には original_name を表示（固定）
-    //if (original) {
-    //    document.getElementById("deviceName").textContent =
-    //        "この端末の本来の登録名：" + original;
-    //}
-};
-
-window.addEventListener("load", () => {
+    // アクセスカウンター
     if (!localStorage.getItem("counted")) {
         fetch("/countup");
         localStorage.setItem("counted", "true");
     }
 });
-
-
-//function resetUMAO() {
-//    localStorage.clear();
-//    alert("端末に保存されているUMA王のログイン情報をリセットしました。\n再度ニックネームを入力してください。");
-//    location.href = "/";  // トップへ戻す
-//}
-
 </script>
+
 
 <div id="access-counter" style="font-size:12px; color:#666; text-align:right; margin-top:2px;">
     アクセス数：{{ count }}
