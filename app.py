@@ -466,7 +466,7 @@ def admin_menu():
 
 @app.route("/admin/entry/new")
 def admin_entry_new():
-    return render_template("entry.html", race=None, raceId=None)
+    return render_template("admin/entry.html", race=None, raceId=None)
 
 @app.route("/admin/entry/select")
 def admin_entry_select():
@@ -479,7 +479,7 @@ def admin_entry_edit():
     raceId = request.args.get("raceId")
     race_doc = db.collection("races").document(raceId).get()
     race = race_doc.to_dict()
-    return render_template("entry.html", race=race, raceId=raceId)
+    return render_template("admin/entry.html", race=race, raceId=raceId)
 
 
 # -------------------------
