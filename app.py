@@ -197,7 +197,10 @@ def compare(raceId):
             "id": h.id,
             "waku": d.get("waku"),
             "number": int(d.get("number")),   # ★ 数値化
-            "name": d.get("name")
+            "name": d.get("name"),
+            "finish": d.get("finish"),      # ← 追加！
+            "pop": d.get("pop") or d.get("popularity"),  # ← どちらでも読めるように
+            "winner": (d.get("finish") == "1")   # ← 追加！
         })
 
     horses = sorted(horses, key=lambda x: x["number"])
@@ -246,7 +249,9 @@ def marks(raceId):
         {
             "name": doc.to_dict().get("name"),
             "number": doc.to_dict().get("number"),
-            "waku": doc.to_dict().get("waku")
+            "waku": doc.to_dict().get("waku"),
+            "pop": doc.to_dict().get("pop"),
+            "finish": doc.to_dict().get("finish")
         }
         for doc in horses_snap
     ]
@@ -258,12 +263,31 @@ def marks(raceId):
 def select_race():
     races = db.collection("races").order_by("date", direction="DESCENDING").get()
 
-    options = [
-        (doc.id, f'{doc.to_dict()["name"]}（{doc.to_dict()["date"]}）')
-        for doc in races
-    ]
+    options = []
+    for doc in races:
+        d = doc.to_dict()
+        options.append({
+            "id": doc.id,
+            "name": d["name"],
+            "date": d["date"],
+            "is_closed": d.get("is_closed", False)
+        })
 
-    return render_template("race_select.html", options=options)
+    # ★ 未済 → 済 の境界 index を計算
+    boundary_index = None
+    for i, r in enumerate(options):
+        if r["is_closed"]:
+            boundary_index = i
+            break
+
+    return render_template(
+        "contest_select.html",
+        options=options,
+        boundary_index=boundary_index
+    )
+
+
+
 
 #@app.route("/marks_go", methods=["POST"])
 #def marks_go():
@@ -479,6 +503,23 @@ def admin_entry_edit():
     race_doc = db.collection("races").document(raceId).get()
     race = race_doc.to_dict()
     return render_template("admin/entry.html", race=race, raceId=raceId)
+
+
+    # Firestore に保存
+    race_ref = db.collection("races").document()
+    race_ref.set({
+        "name": name,
+        "grade": grade,
+        "date": date,
+        "course": course,
+        "numHorses": numHorses
+    })
+
+    race_id = race_ref.id
+
+    # STEP2 へ遷移
+    return redirect(f"/admin/entry/edit?raceId={race_id}")
+
 
 
 # -------------------------
