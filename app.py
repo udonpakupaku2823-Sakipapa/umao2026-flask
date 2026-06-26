@@ -289,9 +289,9 @@ def select_race():
 
 
 
-#@app.route("/marks_go", methods=["POST"])
-#def marks_go():
-#    raceId = request.form["raceId"]
+@app.route("/marks_go", methods=["POST"])
+def marks_go():
+    raceId = request.form["raceId"]
     if not raceId:
         # HTML と同じ挙動：選択してないなら戻す
         flash("レースを選択してください")
