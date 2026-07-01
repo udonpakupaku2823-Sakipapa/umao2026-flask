@@ -37,15 +37,25 @@
             width: 80%;
             margin: 40px auto;
         }
+
+        select[name="raceId"] {
+            font-size: 15px;
+            padding: 10px;
+            width: 100%;
+            max-width: 200px;   /* ← ここで箱の最大幅を決める */
+        }
+
     </style>
 
 </head>
 <body>
 
+<button onclick="history.back()">← 戻る</button>    
+
 <div id="main-area">
     <h2>レースを選択してください</h2>
 
-    <form action="/marks" method="get">
+    <form action="/admin/entry/edit" method="get">
         <select name="raceId">
             {% for r in race_list %}
                 <option value="{{ r }}">{{ r }}</option>

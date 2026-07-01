@@ -62,7 +62,7 @@
 
 <body>
         
-    {% if nickname == "うま王" %}
+    {% if nickname == "うま王","ｐｏｐ" %}
         <div style="margin-top:30px; text-align:center;">
             <a href="/admin/menu" 
                style="display:inline-block; padding:10px 20px; 
@@ -108,7 +108,8 @@
     <p style="font-size:20px;">レースを選択してください</p>
 
     <form action="/main" method="POST" style="display:flex; gap:10px; align-items:center;">
-        <select name="race"
+
+        <select name="race" autocomplete="off"
             style="
                 height:40px;          /* ボタンと高さを揃える */
                 font-size:18px;       /* 文字を大きく */
@@ -116,7 +117,9 @@
                 width:240px;          /* ← 幅を広くする（調整可） */
             ">
             {% for opt in options %}
-                <option value="{{ opt }}">{{ opt }}</option>
+                <option value="{{ opt.name }}" style="color: {{ opt.color }};">
+                    {{ opt.name }}
+                </option>
             {% endfor %}
         </select>
 

@@ -117,15 +117,14 @@
 
     <div style="margin-top:20px;">
     <h6>【オ ー プ ン 戦】 6/21しらさぎＳ～6/28ラジオＮＩＫＫＥＩ賞　までの４戦<br>
-    【2026年下期大会】　7/5北九州記念～12/27有馬記念　までの６１戦<br>
+    <h3>【2026年下期大会】</h3>
+    <h3>【第１回Ｓｕｍｍｅｒシリーズ】　7/5北九州記念～9/27スプリンターズＳまでの２７戦</h3>
+    <h3>【第２回Ａｕｔｕｍｎシリーズ】10/4京都大賞典～12/27有馬記念　までの３４戦</h3><br>
     予想の締め切りはレース当日15:00までとし、それまでは何度変更しても構いません。<br>
     オープン戦の間はシステムテストも兼ねますので期間中の不具合についてはご了承ください。<br></h6>
 </div>
 
-
-
-
-    <form method="POST" action="/contest/go" id="raceForm">
+    
 
         <div style="margin-top:20px; display:flex; gap:15px;">
             <!-- 予想するボタン（ゴールド） -->
@@ -145,7 +144,7 @@
                 わたしの予想入力
             </button>
 
-                        <!-- 比較表を見るボタン（シルバー） -->
+            <!-- 比較表を見るボタン（シルバー） -->
             <button type="button" onclick="goCompare()"
                 style="
                     background: linear-gradient(135deg, #c0c0c0, #8f8f8f);
@@ -160,21 +159,65 @@
                     flex:1;
                 ">
                 みんなの予想比較表
+            </button>    
+
+            <!-- レース別個人マーク（明るい緑） -->
+            <button type="button" onclick="location.href='/marks_list'"
+                style="
+                    background: linear-gradient(135deg, #7CFC00, #32CD32);
+                    color:#000;
+                    font-weight:bold;
+                    padding:12px 20px;
+                    border:none;
+                    border-radius:8px;
+                    cursor:pointer;
+                    font-size:16px;
+                    box-shadow:0 0 10px rgba(144,238,144,0.4);
+                    flex:1;
+                ">
+                レース別個人マーク
             </button>
+
+            <!-- 個人ランキング（明るい青） -->
+            <button type="button" onclick="location.href='/ranking'"
+                style="
+                    background: linear-gradient(135deg, #87CEFA, #1E90FF);
+                    color:#000;
+                    font-weight:bold;
+                    padding:12px 20px;
+                    border:none;
+                    border-radius:8px;
+                    cursor:pointer;
+                    font-size:16px;
+                    box-shadow:0 0 10px rgba(135,206,250,0.4);
+                    flex:1;
+                ">
+                個人ランキング    
+            </button>
+
         </div>
 
-        {% for r in options %}
-            <div style="margin: 8px 0; display:flex; align-items:center; gap:8px;">
-                <input type="radio" id="race{{ r.id }}" name="raceId" value="{{ r.id }}">
-                <label for="race{{ r.id }}" style="cursor:pointer;">
+        <!-- ボタンとの間を広げる -->
+        <div style="height: 25px;"></div>
+
+    <form method="POST" action="/contest/go" id="raceForm">    
+            {% for r in options %}
+            <div style="margin: 10px 0; display:flex; align-items:center; gap:12px;
+                        color: {% if r.is_closed %}#888{% else %}#fff{% endif %};">
+ 
+                <!-- ラジオボタンを少し大きく -->
+                <input type="radio" id="race{{ r.id }}" name="raceId" value="{{ r.id }}"
+                       style="width:26px; height:26px;">
+
+                <!-- レース名の文字を大きく -->
+                <label for="race{{ r.id }}" style="cursor:pointer; font-size:20px;">
                     {{ r.date }}：{{ r.name }}
                     {% if r.is_closed %}
-                    <span style="color:red; font-weight:bold;">（済）</span>
+                   <span style="color:red; font-weight:bold; font-size:20px;">（済）</span>
                     {% endif %}
                 </label>
             </div>
-        {% endfor %}
-
+       {% endfor %}
         
     </form>
 
@@ -185,6 +228,9 @@
             alert("レースを選択してください");
             return;
         }
+        const nickname = localStorage.getItem("nickname");
+        document.getElementById("raceForm").action =
+        `/contest/go?mode=marks&nickname=${nickname}`;
         document.getElementById("raceForm").submit();
     }
    
@@ -194,16 +240,12 @@
             alert("レースを選択してください");
             return;
         }
-        location.href = "/compare/" + selected.value;
+        document.getElementById("raceForm").action = "/contest/go?mode=compare";
+        document.getElementById("raceForm").submit();
     }
     </script>
 
-
-
 </div>
-
-
-
 
 </body>
 </html>

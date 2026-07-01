@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>レース別　★１着馬★　マーク評価表</title>
+    <style>
+        body {
+            background: #000;
+            color: #fff;
+            font-family: "Yu Gothic", sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 900px;
+        }
+        th, td {
+            padding: 6px;
+            border: 1px solid #444;
+            text-align: center;
+            white-space: nowrap;
+        }
+        
+        /* ★ タイトル行（色逆転） */
+        thead th {
+            background-color: #fce307;
+            color: #110d01;
+            font-size: 20px;
+        }
+        tbody tr {
+            background-color: #111;
+            color: #eee;
+        }
+        
+        .grade-G3 {
+            background-color: #078f4b; /* 明るい緑 */
+        }
+        .grade-G2 {
+            background-color: #b10505; /* 明るい赤 */
+        }
+        .grade-G1 {
+            background-color: #0344a5; /* 明るい青 */
+        }
+    </style>
+</head>
+<body>
+
+<h2>レース別　★１着馬★　マーク評価表</h2>
+
+<button 
+    onclick="location.href='/contest'" 
+    style="
+        background: linear-gradient(135deg, #000000, #1a1a1a);
+        color: #FFD700;
+        padding: 10px 22px;
+        font-size: 18px;
+        border: 2px solid #FFD700;
+        border-radius: 8px;
+        font-weight: bold;
+        letter-spacing: 1px;
+        cursor: pointer;
+        box-shadow: 0 0 8px rgba(255,215,0,0.4);
+        transition: all 0.25s ease;
+
+
+    ">
+    戻る
+</button>
+
+
+<div style="overflow-x: auto; margin-top: 15px;">
+<table>
+    <thead>
+        <tr>
+            <th>No.</th>
+            <th>グレード</th>
+            <th>日程</th>
+            <th>レース名</th>
+            <th>参加者数</th>
+            <th>1着馬</th>
+            <th>人気</th>
+
+            {% for user in user_list %}
+                <th>{{ user }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for row in race_summary %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td class="grade-cell grade-{{ row.grade }}">{{ row.grade }}</td>
+            <td>{{ row.date }}</td>
+            <td>{{ row.race_name }}</td>
+            <td>{{ row.participants }}</td>
+            <td>{{ row.winner_name }}</td>
+            <td>{{ row.winner_pop }}</td>
+
+            {% for user in user_list %}
+                <td>{{ row.marks.get(user, "-") }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+</body>
+</html>

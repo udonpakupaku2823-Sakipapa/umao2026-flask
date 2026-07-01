@@ -1,5 +1,11 @@
 <h2 style="margin-top:20px;">管理者メニュー</h2>
 
+<button onclick="history.back()">← 戻る</button>
+
+<hr>
+
+
+
 <div style="margin-top:10px;">
     <a href="/admin/race">
         ① 新規レースを登録する
@@ -12,3 +18,52 @@
     </a>
 </div>
 
+<div style="margin-top:10px;">
+    <label>③ 集計するレースを選択：</label>
+    <br>
+    <select id="raceId">
+        {% for r in race_list %}
+            <option value="{{ r }}">{{ r }}</option>
+        {% endfor %}
+    </select>
+
+    <a href="#" onclick="runCalc()">  集計する</a>
+</div>
+
+<div style="margin-top:20px;">
+    <a href="#" onclick="goMarks()">④ 印一覧を見る</a>
+</div>
+
+<br><br><br>
+<hr>
+
+<div style="margin-top:10px;">
+    <a href="/admin/race_list">
+        レース一覧(t対象レース選定用)        
+    </a>
+</div>
+
+<hr>
+
+<script>
+function runCalc() {
+    const raceId = document.getElementById("raceId").value;
+
+    fetch(`/calc_points/${raceId}`, {
+        method: "POST"
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert("集計が完了しました！");
+        console.log(data);
+    })
+    .catch(err => {
+        console.error(err);
+        alert("集計に失敗しました");
+    });
+}
+function goMarks() {
+    window.location.href = `/marks_list`;
+}
+
+</script>

@@ -2,7 +2,26 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+
     <title>うま王2026</title>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyA35u3UqBqCufnf0aIUgTaRJNwk85pUrtQ",
+        authDomain: "dore-chat-base.firebaseapp.com",
+        projectId: "dore-chat-base",
+        storageBucket: "dore-chat-base.firebasestorage.app",
+        messagingSenderId: "171117636172",
+        appId: "1:171117636172:web:fc100e2d5f2d18f6c0a2e9"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+    </script>
 
     <style>
         .black-gold-btn {
@@ -25,35 +44,28 @@
     </style>
 </head>
 
-<body style="
-background: linear-gradient(to bottom, #87CEFA, #E0FFFF);
-background-attachment: fixed;
-">
-
+<body style="background: linear-gradient(to bottom, #87CEFA, #E0FFFF); background-attachment: fixed;">
 
 <h1>うま王2026</h1>
+
+<h3>
+    <div style="color:red; font-weight:bold;">
+        本アプリはiPAD非対応です
+    </div>
+</h3>
 
 <h2>登録名を入力してください（3文字以内）</h2>
 <h3>登録済みの場合もここから入ってください</h3>
 
-<form action="/register" method="post" style="display:flex; gap:10px; align-items:center;">
-    <input type="text"  id="nickname" name="nickname" maxlength="3"
+<div style="display:flex; gap:10px; align-items:center;">
+    <input type="text" id="nickname" maxlength="3"
            placeholder="うま王"
            style="font-size:22px; padding:10px; width:90%; max-width:70px;">
-    <button type="submit"
-        style="padding:14px 28px; font-size:22px; border-radius:8px;"
-        onclick="
-            const name = document.getElementById('nickname').value;
-            localStorage.setItem('last_nickname', name);
-
-            if (!localStorage.getItem('original_name')) {
-                localStorage.setItem('original_name', name);
-            }
-        "
-    >
+    <button id="registerBtn"
+        style="padding:14px 28px; font-size:22px; border-radius:8px;">
         確認
     </button>
-</form>
+</div>
 
 {% if error %}
 <p style="color:red; margin-top:10px;">{{ error }}</p>
@@ -77,79 +89,116 @@ background-attachment: fixed;
 
 <hr>
 
-
 <button type="button" onclick="location.href='/contest'"
-    style="
-        background: linear-gradient(135deg, #000000, #1a1a1a);
-        color: #FFD700;
-        padding: 10px 22px;
-        font-size: 18px;
-        border: 2px solid #FFD700;
-        border-radius: 8px;
-        font-weight: bold;
-        letter-spacing: 1px;
-        cursor: pointer;
-        box-shadow: 0 0 8px rgba(255,215,0,0.4);
-        transition: all 0.25s ease;
-        margin-top: 15px;
-    "
-    onmouseover="this.style.boxShadow='0 0 14px rgba(255,215,0,0.8)'; this.style.transform='scale(1.04)'"
-    onmouseout="this.style.boxShadow='0 0 8px rgba(255,215,0,0.4)'; this.style.transform='scale(1)'"
->
+    class="black-gold-btn"
+    style="margin-top: 15px;">
     ＪＲＡ重賞単勝当てコンテストに参加する
 </button>
 
-
-<!-- ルール説明（今の index.html の文章をそのまま貼る） -->
+<!-- ルール説明 -->
 <div style="margin-top:20px;">
-     <h2>オープン戦はじまりました</h2><br>
-     2026年6月28日（日）15:00までに印打ってみてください<br>
-     <br>
+    <h2>いよいよオープン戦始まりました</h2>
+    <div style="color:blueviolet; font-weight:bold;">
+        2026年6月21日（日）しらさぎＳ　締め切り6/21 15:00<br>
+        2026年6月21日（日）府中牝馬Ｓ　締め切り6/21 15:00<br>
+        2026年6月28日（日）函館記念　締め切り6/21 15:00<br>
+        2026年6月28日（日）ラジオＮＩＫＫＥＩ賞　締め切り6/21 15:00<br>
+    </div>
+    <br>
     【ＪＲＡ重賞単勝予想コンテストのルール】<br>
     ・今週開催のレースから参加したいレースを選択できます。<br>
     ・ルールは簡単、１着になる馬を予想してください<br>
     ・各印の馬が１着になれば◎１０点、○５点、▲３点、×１点が付与されます。<br>
     ・◎○▲は各１頭、×は６頭まで選択できます。<br>
     ・獲得したポイントにＧ１は３倍、Ｇ２は２倍、Ｇ３は１倍されます。<br>
+    ・１着馬の最終人気をポイントに乗じて最終獲得ポイントとします。<br>
     ・設定された期間の合計ポイントで争います。<br>
     ・予想の締め切りはレース当日15:00までとし、それまでは何度変更しても構いません。<br>
 </div>
 
-<!--<button onclick="resetUMAO()" style="margin-top:20px; padding:8px 16px;">
-    🔄 ログイン情報をリセット
-</button>-->
+<div id="cppyright" style="font-size:12px; color:#666; text-align:right; margin-top:2px;">
+    Copyright © 2012 OkadaGameCompany Inc. All Rights Reserved
+</div>
 
-<!--<div id="deviceName" style="font-size:12px; color:#666; text-align:right;">
-    この端末の本来の登録名：
-</div>-->
+<hr>
+
+<button onclick="resetUMAO()" style="margin-top:20px; padding:8px 16px;">
+    🔄 ログイン情報をリセット
+</button>
+
+<div id="access-counter" style="font-size:12px; color:#666; text-align:right; margin-top:2px;">
+    アクセス数：{{ count }}
+</div>
+
+<div id="deviceName" style="font-size:12px; color:#666; text-align:right;"></div>
 
 <script>
 window.addEventListener("load", () => {
     const input = document.getElementById("nickname");
 
-    // 本来の登録名（右下に出すやつ）
     let original = localStorage.getItem("original_name");
-
-    // 前回使ったニックネーム（入力欄に入れるやつ）
     let lastNickname = localStorage.getItem("last_nickname");
 
-    // 入力欄には last_nickname を優先して表示
     if (lastNickname) {
         input.value = lastNickname;
     }
 
-    // アクセスカウンター
+    document.getElementById("deviceName").textContent =
+        "この端末の本来の登録名：" + (original ?? "未登録");
+
     if (!localStorage.getItem("counted")) {
         fetch("/countup");
         localStorage.setItem("counted", "true");
     }
 });
+
+function resetUMAO() {
+    localStorage.clear();
+    alert("登録名をリセットしました。\n再度、登録名を入力してください。");
+    location.reload();
+}
 </script>
 
+<script>
+// Firestore
+//const db = firebase.firestore();
 
-<div id="access-counter" style="font-size:12px; color:#666; text-align:right; margin-top:2px;">
-    アクセス数：{{ count }}
-</div>
+document.getElementById("registerBtn").addEventListener("click", registerUser);
+
+async function registerUser() {
+    const name = document.getElementById("nickname").value.trim();
+    if (!name) {
+        alert("名前を入力してください");
+        return;
+    }
+
+    // localStorage 保存（復元）
+    localStorage.setItem("nickname", name);
+    localStorage.setItem("last_nickname", name);
+
+    // 初回のみ original_name を保存
+    if (!localStorage.getItem("original_name")) {
+        localStorage.setItem("original_name", name);
+
+        // Firestore に document(name) で保存（復元）
+        await db.collection("users").doc(name).set({
+            nickname: name,
+            createdAt: new Date()
+        });
+    }
+
+    // 次の画面へ
+    window.location.href = "/main?nickname=" + encodeURIComponent(name);
+}
+</script>
+
+<h5>
+    <div style="color:blue; font-weight:bold;">
+        登録名は原則変更できません。<br>
+        変更したい場合は、チャットのコメントにて依頼し上で、<br>
+        上の「登録名リセット」ボタンをクリックしてください
+    </div>
+</h5>
 
 </body>
 </html>

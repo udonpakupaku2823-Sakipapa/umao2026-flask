@@ -52,13 +52,10 @@
             font-size: 18px;
         }
 
-        .number {
-            width: 32px;
-            text-align: center;
-        }
-
-        /* 枠番（幅固定） */
-        .waku {
+        .number,
+        .waku,
+        .pop,
+        .finish {
             width: 32px;
             text-align: center;
         }
@@ -72,6 +69,14 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
+        tr.winner td.finish,
+        tr.winner td.mark-col {
+            background: linear-gradient(135deg, #FFD700, #DAA520); /* 金地 */
+            color: #000;  /* 黒文字 */
+            font-weight: bold;
+        }
+
 
         /* 印欄（参加者）も固定幅にする */
         .mark-col {
@@ -128,6 +133,8 @@
             <th class="waku">枠</th>
             <th class="number">馬番</th>
             <th class="name">馬名</th>
+            <th class="pop">人気</th>
+            <th class="finish">着順</th>
 
             {# ★ 参加ユーザーの列ヘッダー #}
             {% for user in users %}
@@ -137,23 +144,30 @@
 
         {# ★ 馬ごとの行 #}
         {% for h in horses %}
-        <tr>
-            <!--<td>{{ h.waku }}</td>
-            <td>{{ h.number }}</td>
-            <td class="name">{{ h.name }}</td> -->
-
+        <tr class="{{ 'winner' if h.winner else '' }}">
             <td class="waku w{{ h.waku }}">{{ h.waku }}</td>
             <td class="number w{{ h.waku }}">{{ h.number }}</td>
             <td class="name w{{ h.waku }}">{{ h.name }}</td>
+          
+            {# ★ 人気（pop） #}
+            <td class="pop">
+                {{ h.get("pop", "-") }} 
+            </td>
 
-            {# ★ 馬名で検索する（ここが最重要） #}
-            {% for user in users %}
-                <td class="mark-col">
-                    {{ predictions[user].get(h.name, "") }}
-                </td>
-            {% endfor %}
+            {# ★ 着順（finish） #}
+            <td class="finish">
+                {{ h.get("finish", "-") }}
+            </td>
+
+            {# ★ 印（ユーザーごと） #}
+                {% for user in users %}
+                    <td class="mark-col">
+                        {{ predictions[user].get(h.name, "") }}
+                    </td>
+                {% endfor %}
 
         </tr>
+
         {% endfor %}
     </table>
 </div>

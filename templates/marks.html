@@ -126,6 +126,15 @@
             font-size: 20px;   /* ← 少し大きめにするとさらに見やすい */
         }
 
+        
+        
+        select {
+        width: 100px;
+        height: 32px;
+        font-size: 18px;
+        text-align: center;
+        }
+
         .waku1 { background-color: #ffffff; }
         .waku2 { background-color: #000000; color: white; }
         .waku3 { background-color: #ff0000; }
@@ -147,9 +156,8 @@
 </div>
 
 
-<h3>印の制限：◎、〇、▲は各１コ、×は６コまでＯＫ</h3>
-
-<h3>印を選択して「登録」ボタンをクリックしてください</h3>
+<h4>印の制限：◎、〇、▲は各１コ、×は６コまでＯＫ</h4>
+<h4>印を選択して「登録」ボタンをクリックしてください（当日15:00締め切り）</h4>
 
 <div id="deadlineMessage" 
     style="display:none; color:red; font-weight:bold; margin:10px 0;">
@@ -180,6 +188,7 @@
         </th>
     </tr>
 
+
     {% for h in horses %}
     <tr class="waku{{ h.waku }}">
         <td>{{ h.waku }}</td>
@@ -206,6 +215,7 @@
 
 <script>
     const raceId = "{{ raceId }}";
+    const nickname = "{{ nickname }}";
     // ① ここでレース日付を受け取る
     const raceDate = "{{ race.date }}";  // 例: "2026-06-14"
     // ② ここから締切ロジック
@@ -241,9 +251,10 @@
     };
 
     // テスト段階なので固定
-    const userId = localStorage.getItem("nickname");
+    //const userId = localStorage.getItem("nickname");
+    const userId = "nickname";
     // 画面に表示
-    document.getElementById("userNameDisplay").innerText = `参加者：${userId}`;
+    document.getElementById("userNameDisplay").innerText = `参加者：${nickname}`;
 
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
@@ -294,7 +305,8 @@
     }
 
         // ② テスト段階なので userId は固定
-        const userId = localStorage.getItem("nickname");
+        //const userId = localStorage.getItem("nickname");
+        const userId = "nickname";
 
         // ③ Firestore に保存（上書きOK）
         await db.collection("races")
@@ -309,7 +321,8 @@
     // ページ読み込み時に印をロード
     window.addEventListener("DOMContentLoaded", async () => {
 
-        const userId = localStorage.getItem("nickname");
+        //const userId = localStorage.getItem("nickname");
+        const userId = "nickname";
 
         const docRef = db.collection("races")
             .doc(raceId)

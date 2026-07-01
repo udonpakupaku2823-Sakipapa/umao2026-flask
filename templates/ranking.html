@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ランキング</title>
+    <style>
+    /*body {
+        background: #000;
+        color: #fff;
+        font-family: "Yu Gothic", sans-serif;
+        margin: 0;
+        padding: 20px;
+    } */
+
+    /* タイトル */
+    h1 {
+        text-align: center;
+        margin-bottom: 27px;
+        font-size: 40px;
+        letter-spacing: 2px;
+    }
+    h2 {
+        text-align: center;
+        margin-bottom: 27px;
+        font-size: 35px;
+        letter-spacing: 2px;
+    }
+    h3 {
+        color: #0f0f0f;
+        text-align: center;
+        margin-bottom: 27px;
+        font-size: 35px;
+        letter-spacing: 2px;
+    }
+    
+    /* ランキングテーブル */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        font-size: 20px;
+    }
+
+    th, td {
+        border: 5px solid #110f00;
+        padding: 12px;
+        text-align: center;
+    }
+
+    /* ヘッダー */
+    th {
+        background: #1a1a1a;
+        color: #FFD700;
+        font-weight: bold;
+    }
+
+    /* ★ タイトル行（色逆転） */
+    th {
+        background: 
+        #c5c5c5;   /* 金背景 */
+        color: #000;           /* 黒文字 */
+        font-weight: bold;
+        font-size: 24px;
+    }
+
+    .rank-number {
+        color: #050000;   
+        font-weight: bold;
+        font-size: 30px;
+    } 
+
+    .rank-number-only {
+        color: #fff;   /* ← 白字 */
+        font-weight: bold;
+        font-size: 30px;
+        background: #5d60fc;
+    }
+
+    .total-point {
+        font-size: 30px;   /* ← 好きな大きさに調整できる */
+        font-weight: bold; /* ← 太字にするとさらに見やすい */
+        background: #f34949;
+        color: #fdfcfc;
+    }
+
+    .total-nickname {
+        font-size: 27px;   /* ← 好きな大きさに調整できる */
+        font-weight: bold; /* ← 太字にするとさらに見やすい */
+        background: #5d60fc;
+        color: #ffffff;
+    }
+
+    /* ★ 1位の行だけ文字サイズ 1.5倍 */
+    .rank-1 td {
+        font-size: 30px;   /* 18px × 1.5 = 27px */
+        font-weight: bold;
+        background: #2433fc;
+        color: #ffffff;
+        font-weight: bold;
+        }
+
+    
+
+
+    /* 戻るボタン */
+    .back-btn {
+        background: linear-gradient(135deg, #000000, #1a1a1a);
+        color: #FFD700;
+        padding: 10px 22px;
+        font-size: 18px;
+        border: 2px solid #FFD700;
+        border-radius: 8px;
+        font-weight: bold;
+        letter-spacing: 1px;
+        cursor: pointer;
+        box-shadow: 0 0 8px rgba(255,215,0,0.4);
+        transition: all 0.25s ease;
+        margin-bottom: 20px;
+    }
+
+    .back-btn:hover {
+        box-shadow: 0 0 12px rgba(255,215,0,0.7);
+        transform: scale(1.03);
+    }
+    </style>
+
+<!--<button onclick="location.href='/contest'" class="back-btn">戻る</button>-->
+
+<h1>ＪＲＡ重賞単勝当て個人勝点ランキング</h1>
+<h2>2026年Ｓｕｍｍｅｒシリーズ</h2>
+
+    <br>
+    <div style="color:white;">
+    【ＪＲＡ重賞単勝的中勝点の計算方法】<br>
+    ・各印の馬が１着になれば◎１０点、○５点、▲３点、×１点が付与されます。<br>
+    ・◎〇▲×及びＧ１/Ｇ２/Ｇ３の欄は的中回数を表示しています<br>
+    ・さらに１着馬の「人気」を掛けます<br>
+    　例１）的中時最低点　Ｇ３　「×」　１番人気　= 1 X 1 X 1 = １点<br>
+    　例２）的中時最高点　Ｇ１　「◎」　１８番人気　= 3 X 10 X 18 = ５４０点<br>
+</div>
+</head>
+
+<body style="background-image: url('/static/summerBack.png');
+             background-size: cover;
+             background-position: center;
+             background-repeat: no-repeat;">
+
+
+<h2 style="color:rgb(243, 54, 54);">勝点獲得ランキング（2026/07/1-09/30）</h2>
+<h3 style="color:rgb(136, 15, 96);">更新時刻：{{ now }}現在</h3>
+
+<button 
+    onclick="location.href='/contest'" 
+    style="
+        background: linear-gradient(135deg, #000000, #1a1a1a);
+        color: #FFD700;
+        padding: 10px 22px;
+        font-size: 18px;
+        border: 2px solid #FFD700;
+        border-radius: 8px;
+        font-weight: bold;
+        letter-spacing: 1px;
+        cursor: pointer;
+        box-shadow: 0 0 8px rgba(255,215,0,0.4);
+        transition: all 0.25s ease;
+    ">
+    戻る
+</button>
+
+<table>
+    <tr>
+        <th>順位</th>
+        <th>ユーザー</th>
+        <th>合計</th>
+        <th>◎<br>10点</th>
+        <th>○<br>5点</th>
+        <th>▲<br>3点</th>
+        <th>×<br>1点</th>
+        <th>G1<br>x3</th>
+        <th>G2<br>x2</th>
+        <th>G3<br>x1</th>
+    </tr>
+
+    {% for row in ranking_list %}
+    <tr class="rank-{{ loop.index if loop.index <= 3 }}">
+        <!--<td>{{ loop.index }}</td>
+        <td class="rank-number">{{ loop.index }}</td>-->
+        <td class="rank-number-only">{{ loop.index }}</td>
+        <td class="total-nickname">{{ row.nickname }}</td>
+        <td class="total-point">{{ row.total }}</td>
+
+        <td class="rank-number">{{ row.hitUma }}</td>
+        <td class="rank-number">{{ row.hitMaru }}</td>
+        <td class="rank-number">{{ row.hitSankaku }}</td>
+        <td class="rank-number">{{ row.hitBatsu }}</td>
+        <td class="rank-number">{{ row.hitG1 }}</td>
+        <td class="rank-number">{{ row.hitG2 }}</td>
+        <td class="rank-number">{{ row.hitG3 }}</td>
+
+
+
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>
