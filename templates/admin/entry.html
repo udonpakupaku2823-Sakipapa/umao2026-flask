@@ -20,21 +20,39 @@
     <br>
     {{ race.date }}　{{ race.course }}
     <br>
-    登録頭数：{{ race.horses }}頭
+    登録頭数：{{ race.numHorses }}頭
 </div>
 {% endif %}
 
+<button onclick="history.back()">← 戻る</button>
+
 <h2>STEP2：出走枠・馬番・馬名登録</h2>
 
-<label>レース選択：</label>
+<!--<label>レース選択：</label>
 <select id="race-select"></select>
-<br><br>
+<br><br> 
+<button id="load-btn">枠番・馬番を生成する</button> -->
 
-<button id="load-btn">枠番・馬番を生成する</button>
+<button id="generate-btn">枠番・馬番を生成する</button>
 
 <div id="entry-area"></div>
 
+<!-- 参加者数の登録画面へ -->
+<div id="participants-area" style="display:none; margin-top:20px;"></div>
+
+
 <button id="save-btn" style="display:none;">保存する</button>
+
+<!--<button id="go-marks">印をつける画面へ</button>-->
+
+
+<div style="margin-top:20px; padding:10px; border:1px solid #ccc;">
+    <label>
+        <input type="checkbox" id="isOfficial">
+        このレースを公式レースとして公開する
+    </label>
+</div>
+
 
 <p id="msg"></p>
 

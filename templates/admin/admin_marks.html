@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>印一覧</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            overflow-x: auto;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 6px 10px;
+            text-align: center;
+            white-space: nowrap;
+        }
+        th {
+            background: #f0f0f0;
+        }
+        .winner {
+            background: #fff7cc; /* 1着馬の行を少し強調 */
+        }
+    </style>
+</head>
+<body>
+
+<h2>印一覧（{{ race_id }}）</h2>
+
+<table>
+    <tr>
+        <th>グレード</th>
+        <th>日程</th>
+        <th>レース名</th>
+        <th>1着馬</th>
+        <th>人気</th>
+
+        {# --- ユーザー名をヘッダーに並べる --- #}
+        {% for nickname in marks_data.keys() %}
+            <th>{{ nickname }}</th>
+        {% endfor %}
+    </tr>
+
+    <tr class="winner">
+        <td>{{ race.grade }}</td>
+        <td>{{ race.date }}</td>
+        <td>{{ race.name }}</td>
+        <td>{{ winner_name }}</td>
+        <td>{{ winner_popularity }}</td>
+
+        {# --- 各ユーザーの印を表示 --- #}
+        {% for nickname, marks in marks_data.items() %}
+            <td>
+                {{ marks.get(winner_name, "") }}
+            </td>
+        {% endfor %}
+    </tr>
+</table>
+
+</body>
+</html>

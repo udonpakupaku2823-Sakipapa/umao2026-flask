@@ -6,46 +6,36 @@
 </head>
 <body>
 
+<button onclick="history.back()">← 戻る</button>
+
+
 <h2>STEP1：レース登録</h2>
 
-<label>レース名：</label>
-<input type="text" id="race-name"><br><br>
+<form action="/admin/race/save" method="POST">
 
-<label>グレード：</label>
-<select id="race-grade">
-    <option value="G1">G1</option>
-    <option value="G2">G2</option>
-    <option value="G3">G3</option>
-</select><br><br>
+    <!--<label>レースID：</label><br>
+    <input type="text" name="raceId" required><br><br>-->
 
-<label>日付：</label>
-<input type="date" id="race-date"><br><br>
+    <label>レース名：</label><br>
+    <input type="text" name="raceName" required><br><br>
 
-<label>出走頭数：</label>
-<input type="number" id="race-num" min="1" max="18"><br><br>
+    <label>グレード：</label><br>
+    <select name="raceGrade">
+        <option value="G1">G1</option>
+        <option value="G2">G2</option>
+        <option value="G3">G3</option>
+    </select><br><br>
 
-<button id="save-btn">レースを登録する</button>
+    <label>日付：</label><br>
+    <input type="date" name="raceDate" required><br><br>
 
-<p id="msg"></p>
+    <label>出走頭数：</label><br>
+    <input type="number" name="numHorses" min="6" max="18" required><br><br>
 
-<!-- ★ Firebase SDK 読み込み -->
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <button type="submit">レースを登録する</button>
 
-<!-- ★ Firebase 初期化（あなたの設定に書き換え） -->
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyA35u3UqBqCufnf0aIUgTaRJNwk85pUrtQ",
-    authDomain: "dore-chat-base.firebaseapp.com",
-    projectId: "dore-chat-base",
-    storageBucket: "dore-chat-base.firebasestorage.app",
-    messagingSenderId: "171117636172",
-    appId: "1:171117636172:web:fc100e2d5f2d18f6c0a2e9"
-  };
-  firebase.initializeApp(firebaseConfig);
-</script>
-
-<script src="/static/scripts/race.js"></script>
+</form>
 
 </body>
 </html>
+

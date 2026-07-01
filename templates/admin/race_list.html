@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>レース一覧（管理者）</title>
+</head>
+<body>
+
+<button onclick="history.back()">← 戻る</button>
+
+<h2>レース一覧</h2>
+
+<table border="1" cellpadding="8">
+    <tr>
+        <th>ID</th>
+        <th>レース名</th>
+        <th>日付</th>
+        <th>グレード</th>
+        <th>公式？</th>
+        <th>操作</th>
+    </tr>
+
+    {% for r in races %}
+    <tr>
+        <td>{{ r.id }}</td>
+        <td>{{ r.name }}</td>
+        <td>{{ r.date }}</td>
+        <td>{{ r.grade }}</td>
+        <td>{{ "✔" if r.isOfficial else "✖" }}</td>
+        <td>
+            <a href="/admin/race_edit/{{ r.id }}">編集</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>
