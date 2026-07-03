@@ -28,5 +28,5 @@ document.getElementById("save-btn").addEventListener("click", async () => {
         `登録しました！ レースID：${raceId}`;
 
     // ★ 登録後にSTEP2へ自動遷移    
-    window.location.href = "/admin/entry";    
+    window.location.href = `/admin/entry/edit?raceId=${raceId}`;
 });
