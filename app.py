@@ -575,10 +575,13 @@ def admin_entry():
 # -------------------------
 @app.route("/admin/menu")
 def admin_menu():
+    nickname = request.args.get("nickname")  # ← 追加
     races_ref = db.collection("races").stream()
     race_list = sorted([r.id for r in races_ref], reverse=True)
 
-    return render_template("admin_menu.html", race_list=race_list)
+    return render_template("admin_menu.html",
+                           race_list=race_list,
+                           nickname=nickname)
 
 
 @app.route("/admin/entry/new")
