@@ -166,7 +166,10 @@ def compare(raceId):
 
     # 参加ユーザー一覧（marks の直下のドキュメント名）
     users_ref = db.collection("races").document(raceId).collection("marks").stream()
-    users = [u.id for u in users_ref]
+    users = []
+    for u in users_ref:
+        d = u.to_dict()
+        users.append(d.get("user", u.id))   # ← user フィールドがあれば使う
 
     # 印データ（フィールドをそのまま読む）
     predictions = {}
