@@ -306,9 +306,12 @@
 
         // ② テスト段階なので userId は固定
         //const userId = localStorage.getItem("nickname");
-        const userId = "nickname";
+        //const userId = "nickname";
+        const userId = localStorage.getItem("nickname");
 
         // ③ Firestore に保存（上書きOK）
+        marks["user"] = userId;   // ← compare() が使う名前
+
         await db.collection("races")
             .doc(raceId)              // ← URL から取得した raceId をそのまま使う
             .collection("marks")
