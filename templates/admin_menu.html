@@ -1,6 +1,11 @@
 <h2 style="margin-top:20px;">管理者メニュー</h2>
 
-<button onclick="history.back()">← 戻る</button>
+<button type="button"
+        onclick="window.location.href='/main?nickname={{ nickname }}'">
+    ← 戻る
+</button>
+
+
 
 <hr>
 
@@ -27,23 +32,72 @@
         {% endfor %}
     </select>
 
-    <a href="#" onclick="runCalc()">  集計する</a>
+    <a href="#" onclick="runCalc()">集計する</a>
 </div>
 
 <div style="margin-top:20px;">
     <a href="#" onclick="goMarks()">④ 印一覧を見る</a>
 </div>
 
-<br><br><br>
+<br>
+<hr>
+ <h3>管理者コメント入力</h3> 
+   <textarea id="adminComment"
+        placeholder="コメントを入力"
+        rows="5"
+        style="width: 90%; padding: 10px; font-size: 16px; border-radius: 6px;"></textarea>
+
+  <button onclick="saveAdminComment()" style="margin-top:10px;">
+      送信
+  </button>
+
+<br><br>
 <hr>
 
 <div style="margin-top:10px;">
     <a href="/admin/race_list">
-        レース一覧(t対象レース選定用)        
+        レース一覧(対象レース選定用)        
     </a>
 </div>
 
 <hr>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyA35u3UqBqCufnf0aIUgTaRJNwk85pUrtQ",
+    authDomain: "dore-chat-base.firebaseapp.com",
+    projectId: "dore-chat-base",
+    storageBucket: "dore-chat-base.firebasestorage.app",
+    messagingSenderId: "171117636172",
+    appId: "1:171117636172:web:fc100e2d5f2d18f6c0a2e9"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+</script>
+
+<script>
+function saveAdminComment() {
+  const text = document.getElementById("adminComment").value;
+  if (!text) {
+    alert("コメントを入力してください");
+    return;
+  }
+
+  db.collection("admin_comments").doc("latest").set({
+    text: text,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(() => {
+    alert("コメントを保存しました");
+  }).catch(err => {
+    console.error("Firestore 書き込みエラー:", err);
+    alert("保存に失敗しました");
+  });
+}
+</script>
 
 <script>
 function runCalc() {
@@ -66,4 +120,20 @@ function goMarks() {
     window.location.href = `/marks_list`;
 }
 
+</script>
+
+<script>
+  // ページ読み込み時に最新コメントを取得して textarea にセット
+  db.collection("admin_comments")
+    .doc("latest")
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        const data = doc.data();
+        document.getElementById("adminComment").value = data.text || "";
+      }
+    })
+    .catch(err => {
+      console.error("最新コメント取得エラー:", err);
+    });
 </script>

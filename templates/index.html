@@ -95,16 +95,36 @@
     ＪＲＡ重賞単勝当てコンテストに参加する
 </button>
 
-<!-- ルール説明 -->
-<div style="margin-top:20px;">
-    <h2>いよいよオープン戦始まりました</h2>
-    <div style="color:blueviolet; font-weight:bold;">
-        2026年6月21日（日）しらさぎＳ　締め切り6/21 15:00<br>
-        2026年6月21日（日）府中牝馬Ｓ　締め切り6/21 15:00<br>
-        2026年6月28日（日）函館記念　締め切り6/21 15:00<br>
-        2026年6月28日（日）ラジオＮＩＫＫＥＩ賞　締め切り6/21 15:00<br>
-    </div>
-    <br>
+<div id="adminMessageArea" style="margin: 20px 0; padding: 10px; background: #222; color: #fff; border-radius: 8px;">
+    <h3 style="margin-bottom: 10px;">主催者からのメッセージ</h3>
+    <div id="adminComments"></div>
+</div>
+
+
+<script>
+db.collection("admin_comments")
+  .doc("latest")
+  .onSnapshot((doc) => {
+    const area = document.getElementById("adminComments");
+    area.innerHTML = "";
+
+    if (!doc.exists) return;
+
+    const data = doc.data();
+    const div = document.createElement("div");
+    div.style.marginBottom = "8px";
+    div.style.padding = "6px 10px";
+    div.style.background = "#333";
+    div.style.borderRadius = "4px";
+    div.style.whiteSpace = "pre-wrap";
+
+    div.textContent = data.text;
+    area.appendChild(div);
+  });
+</script>
+
+
+<div>
     【ＪＲＡ重賞単勝予想コンテストのルール】<br>
     ・今週開催のレースから参加したいレースを選択できます。<br>
     ・ルールは簡単、１着になる馬を予想してください<br>
@@ -114,7 +134,7 @@
     ・１着馬の最終人気をポイントに乗じて最終獲得ポイントとします。<br>
     ・設定された期間の合計ポイントで争います。<br>
     ・予想の締め切りはレース当日15:00までとし、それまでは何度変更しても構いません。<br>
-</div>
+</div> 
 
 <div id="cppyright" style="font-size:12px; color:#666; text-align:right; margin-top:2px;">
     Copyright © 2012 OkadaGameCompany Inc. All Rights Reserved
@@ -160,8 +180,6 @@ function resetUMAO() {
 </script>
 
 <script>
-// Firestore
-//const db = firebase.firestore();
 
 document.getElementById("registerBtn").addEventListener("click", registerUser);
 
