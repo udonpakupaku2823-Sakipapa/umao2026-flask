@@ -152,10 +152,10 @@ document.getElementById("save-btn").addEventListener("click", async () => {
         }
     }
 
-    document.getElementById("go-marks").addEventListener("click", () => {
-    const nickname = localStorage.getItem("nickname");
-    window.location.href = `/marks/${raceId}?nickname=${nickname}`;
-    });
+    //document.getElementById("go-marks").addEventListener("click", () => {
+    //const nickname = localStorage.getItem("nickname");
+    //window.location.href = `/marks/${raceId}?nickname=${nickname}`;
+    //});
 
 
     //参加者数を保存
