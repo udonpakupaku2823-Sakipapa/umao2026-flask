@@ -23,6 +23,15 @@
       const db = firebase.firestore();
     </script>
 
+    <script>
+    (function() {
+        if (!localStorage.getItem("counted")) {
+            fetch("/countup");
+            localStorage.setItem("counted", "true");
+        }
+    })();
+    </script>
+
     <style>
         .black-gold-btn {
             background: linear-gradient(135deg, #000000, #1a1a1a);
@@ -91,8 +100,13 @@
 
 <button type="button" onclick="location.href='/contest'"
     class="black-gold-btn"
-    style="margin-top: 15px;">
-    ＪＲＡ重賞単勝当てコンテストに参加する
+    style="
+        margin-top: 15px;
+        padding: 14px 28px;
+        font-size: 30px;
+        border-radius: 8px;
+    ">
+    ＪＲＡ重賞単勝当てコンテストに参加
 </button>
 
 <div id="adminMessageArea" style="margin: 20px 0; padding: 10px; background: #222; color: #fff; border-radius: 8px;">
@@ -125,8 +139,8 @@ db.collection("admin_comments")
 
 
 <div>
-    【ＪＲＡ重賞単勝予想コンテストのルール】<br>
-    ・今週開催のレースから参加したいレースを選択できます。<br>
+    <h2>【ＪＲＡ重賞単勝予想コンテストのルール】</h2>
+    ・今週開催の重症レースから参加したいレースを選択できます。<br>
     ・ルールは簡単、１着になる馬を予想してください<br>
     ・各印の馬が１着になれば◎１０点、○５点、▲３点、×１点が付与されます。<br>
     ・◎○▲は各１頭、×は６頭まで選択できます。<br>
@@ -153,7 +167,7 @@ db.collection("admin_comments")
 <div id="deviceName" style="font-size:12px; color:#666; text-align:right;"></div>
 
 <script>
-window.addEventListener("load", () => {
+window.addEventListener("DOMContentLoaded", () => {
     const input = document.getElementById("nickname");
 
     let original = localStorage.getItem("original_name");
@@ -166,17 +180,19 @@ window.addEventListener("load", () => {
     document.getElementById("deviceName").textContent =
         "この端末の本来の登録名：" + (original ?? "未登録");
 
-    if (!localStorage.getItem("counted")) {
-        fetch("/countup");
-        localStorage.setItem("counted", "true");
-    }
+    //if (!sessionStorage.getItem("counted")) {
+    //    fetch("/countup");
+    //    sessionStorage.setItem("counted", "true");
+    //}
 });
 
 function resetUMAO() {
-    localStorage.clear();
+    localStorage.removeItem("original_name");
+    localStorage.removeItem("last_nickname");
     alert("登録名をリセットしました。\n再度、登録名を入力してください。");
     location.reload();
 }
+
 </script>
 
 <script>

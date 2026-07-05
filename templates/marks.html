@@ -114,26 +114,42 @@
             text-align: center;
         }
         /* 印のドロップダウン */
-        td:nth-child(4) select {
-            width: 50px;     /* ← 枠と同じにする */
+        /*td:nth-child(4) select {
+            width: 50px;    
             height: 30px;
             font-size: 18px;
             text-align: center;
-        }
+        } */
         /* 馬名（3列目）を太字に */
         td:nth-child(3) {
             font-weight: bold;
             font-size: 20px;   /* ← 少し大きめにするとさらに見やすい */
         }
 
+        /* iPhone（iOS Safari）だけに適用される CSS */
+        @supports (-webkit-touch-callout: none) {
+            .mark-select {
+                width: 70px !important;   /* ← iPhone のときだけ広げる */
+                font-size: 20px;          /* ← 印が見やすくなる */
+                height: 34px;             /* ← 押しやすくなる */
+                text-align: center;
+            }
+        }
+
+        @supports (-webkit-touch-callout: none) {
+            td:nth-child(4) select {
+                width: 70px !important;
+                height: 40px !important;
+                font-size: 22px !important;
+            }
+        }
         
-        
-        select {
+        /*select {
         width: 100px;
         height: 32px;
         font-size: 18px;
         text-align: center;
-        }
+        } */
 
         .waku1 { background-color: #ffffff; }
         .waku2 { background-color: #000000; color: white; }
@@ -252,7 +268,8 @@
 
     // テスト段階なので固定
     //const userId = localStorage.getItem("nickname");
-    const userId = "nickname";
+    //const userId = "nickname";
+    const userId = localStorage.getItem("nickname");
     // 画面に表示
     document.getElementById("userNameDisplay").innerText = `参加者：${nickname}`;
 
@@ -325,7 +342,8 @@
     window.addEventListener("DOMContentLoaded", async () => {
 
         //const userId = localStorage.getItem("nickname");
-        const userId = "nickname";
+        //const userId = "nickname";
+        const userId = localStorage.getItem("nickname");
 
         const docRef = db.collection("races")
             .doc(raceId)

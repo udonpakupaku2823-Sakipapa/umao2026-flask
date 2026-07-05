@@ -113,89 +113,103 @@
 
     <button onclick="location.href='/'">戻る</button>
     
-    <h2>ＪＲＡ重賞単勝予想コンテスト</h2>
+    <h1>ＪＲＡ重賞単勝予想コンテスト</h1>
 
     <div style="margin-top:20px;">
-    <h6>【オ ー プ ン 戦】 6/21しらさぎＳ～6/28ラジオＮＩＫＫＥＩ賞　までの４戦<br>
-    <h3>【2026年下期大会】</h3>
+    <h2>【2026年下期大会】</h2>
     <h3>【第１回Ｓｕｍｍｅｒシリーズ】　7/5北九州記念～9/27スプリンターズＳまでの２７戦</h3>
-    <h3>【第２回Ａｕｔｕｍｎシリーズ】10/4京都大賞典～12/27有馬記念　までの３４戦</h3><br>
-    予想の締め切りはレース当日15:00までとし、それまでは何度変更しても構いません。<br>
-    オープン戦の間はシステムテストも兼ねますので期間中の不具合についてはご了承ください。<br></h6>
+
+
 </div>
 
+<div style="margin-top:20px; display:flex; gap:15px;">
+    <!-- レース別個人マーク（明るい緑） -->
+    <button type="button" onclick="location.href='/marks_list'"
+        style="
+            background: linear-gradient(135deg, #7CFC00, #32CD32);
+            color:#000;
+            font-weight:bold;
+            padding:12px 20px;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+            font-size:16px;
+            box-shadow:0 0 10px rgba(144,238,144,0.4);
+            flex:1;
+        ">
+        レース別個人マーク
+    </button>
+
+    <!-- 個人ランキング（明るい青） -->
+    <button type="button" onclick="location.href='/ranking'"
+        style="
+            background: linear-gradient(135deg, #87CEFA, #1E90FF);
+            color:#000;
+            font-weight:bold;
+            padding:12px 20px;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+            font-size:16px;
+            box-shadow:0 0 10px rgba(135,206,250,0.4);
+            flex:1;
+        ">
+        個人ランキング    
+    </button>
+
+</div>
+
+<br>
+     ◆◆◆次回シリーズ開催予告◆◆◆<br>
+    【第２回Ａｕｔｕｍｎシリーズ】10/4京都大賞典～12/27有馬記念　までの３４戦<br>
+
+<br>
+<hr>
+<br>
+
+<div>
+    <h2>【今週の予想対象レース】</h2>
+    予想の締め切りはレース当日15:00までとし、それまでは何度変更しても構いません。<br>
     
+</div>
 
-        <div style="margin-top:20px; display:flex; gap:15px;">
-            <!-- 予想するボタン（ゴールド） -->
-            <button type="button" onclick="goMarks()" 
-                style="
-                    background: linear-gradient(135deg, #d4af37, #b8860b);
-                    color:#000;
-                    font-weight:bold;
-                    padding:12px 20px;
-                    border:none;
-                    border-radius:8px;
-                    cursor:pointer;
-                    font-size:16px;
-                    box-shadow:0 0 10px rgba(255,215,0,0.4);
-                    flex:1;
-                ">
-                わたしの予想入力
-            </button>
 
-            <!-- 比較表を見るボタン（シルバー） -->
-            <button type="button" onclick="goCompare()"
-                style="
-                    background: linear-gradient(135deg, #c0c0c0, #8f8f8f);
-                    color:#000;
-                    font-weight:bold;
-                    padding:12px 20px;
-                    border:none;
-                    border-radius:8px;
-                    cursor:pointer;
-                    font-size:16px;
-                    box-shadow:0 0 10px rgba(200,200,200,0.4);
-                    flex:1;
-                ">
-                みんなの予想比較表
-            </button>    
+<div style="margin-top:20px; display:flex; gap:15px;">
+    <!-- 予想するボタン（ゴールド） -->
+    <button type="button" onclick="goMarks()" 
+        style="
+            background: linear-gradient(135deg, #d4af37, #b8860b);
+            color:#000;
+            font-weight:bold;
+            padding:12px 20px;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+            font-size:16px;
+            box-shadow:0 0 10px rgba(255,215,0,0.4);
+            flex:1;
+        ">
+        わたしの予想入力
+    </button>
 
-            <!-- レース別個人マーク（明るい緑） -->
-            <button type="button" onclick="location.href='/marks_list'"
-                style="
-                    background: linear-gradient(135deg, #7CFC00, #32CD32);
-                    color:#000;
-                    font-weight:bold;
-                    padding:12px 20px;
-                    border:none;
-                    border-radius:8px;
-                    cursor:pointer;
-                    font-size:16px;
-                    box-shadow:0 0 10px rgba(144,238,144,0.4);
-                    flex:1;
-                ">
-                レース別個人マーク
-            </button>
+    <!-- 比較表を見るボタン（シルバー） -->
+    <button type="button" onclick="goCompare()"
+        style="
+            background: linear-gradient(135deg, #c0c0c0, #8f8f8f);
+            color:#000;
+            font-weight:bold;
+            padding:12px 20px;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+            font-size:16px;
+            box-shadow:0 0 10px rgba(200,200,200,0.4);
+            flex:1;
+        ">
+        みんなの予想比較表
+    </button>    
 
-            <!-- 個人ランキング（明るい青） -->
-            <button type="button" onclick="location.href='/ranking'"
-                style="
-                    background: linear-gradient(135deg, #87CEFA, #1E90FF);
-                    color:#000;
-                    font-weight:bold;
-                    padding:12px 20px;
-                    border:none;
-                    border-radius:8px;
-                    cursor:pointer;
-                    font-size:16px;
-                    box-shadow:0 0 10px rgba(135,206,250,0.4);
-                    flex:1;
-                ">
-                個人ランキング    
-            </button>
-
-        </div>
+</div>
 
         <!-- ボタンとの間を広げる -->
         <div style="height: 25px;"></div>
