@@ -86,19 +86,21 @@ image_files = {**fixed_files, **auto_files}
 options = sorted(image_files.keys(), reverse=True)
 
 #####　レース画像チョイスend
-
 @app.route("/", methods=["GET"])
 def index():
-    # ★ INDEX を開いたときだけカウントアップ
-    counter_ref = db.collection("stats").document("page_counter")
-    counter_ref.set({"count": admin_firestore.Increment(1)}, merge=True)
+    # ★ 初回アクセスだけカウントアップ
+    if not session.get("counted"):
+        counter_ref = db.collection("stats").document("page_counter")
+        counter_ref.set({"count": admin_firestore.Increment(1)}, merge=True)
+        session["counted"] = True
 
     # ★ 現在のカウントを取得
+    counter_ref = db.collection("stats").document("page_counter")
     counter_doc = counter_ref.get()
     count = counter_doc.to_dict().get("count", 0)
 
-    # ★ count を index.html に渡す
     return render_template("index.html", count=count)
+
 
 # -------------------------
 # ① レシスター設置
@@ -169,7 +171,7 @@ def compare(raceId):
     users = []
     for u in users_ref:
         d = u.to_dict()
-        users.append(d.get("user", u.id))   # ← user フィールドがあれば使う
+        users.append(d.get("user") or u.id)   # ← user フィールドがあれば使う
 
     # 印データ（フィールドをそのまま読む）
     predictions = {}
