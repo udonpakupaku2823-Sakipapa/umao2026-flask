@@ -1,0 +1,182 @@
+
+from flask import Flask, request, render_template, render_template_string
+
+import os
+import sys
+
+#import base64
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore as admin_firestore
+import json
+import tempfile
+
+# Base64 から JSON を復元
+#b64 = os.environ["GOOGLE_APPLICATION_CREDENTIALS_BASE64"]
+#json_str = base64.b64decode(b64).decode("utf-8")
+
+#json_str = os.environ["GOOGLE_APPLICATION_CREDENTIALS"].strip()
+#with tempfile.NamedTemporaryFile(delete=False, mode="w", suffix=".json") as f:
+#    f.write(json_str)
+#    temp_json_path = f.name
+
+#cred = credentials.Certificate(temp_json_path)
+#cred = credentials.Certificate("serviceAccount.json")
+cred = credentials.Certificate("/etc/secrets/serviceAccount.json")
+
+firebase_admin.initialize_app(cred)
+
+#from google.cloud import firestore
+#db = firestore.Client()
+db = admin_firestore.client()
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+#app = Flask(__name__, static_folder=resource_path('static'))
+app = Flask(__name__, static_folder='static', static_url_path='/static')
+
+
+
+# 画像ファイル対応
+image_files = {
+    "2026年うま王収支表（単勝）": "2026うま王収支表（単勝）.png",
+    "2026年うま王収支表（馬連）": "2026うま王収支表（馬連）.png",
+    "2026年うま王収支表（三連複）": "2026うま王収支表（三連複）.png",
+
+    "0503天皇賞（春）": "0503天皇賞（春）.png",
+    "0502京王杯スプリングＣ": "0502京王杯スプリングＣ.png",
+    "0502ユニコーンＳ": "0502ユニコーンＳ.png",
+
+    "0426フローラＳ": "0426フローラＳ.png",
+    "0426マイラーズＣ": "0426マイラーズＣ.png",
+    "0425青葉賞": "0425青葉賞.png",
+
+    "0419皐月賞": "0419皐月賞.png",
+    "0419福島牝馬Ｓ": "0419福島牝馬Ｓ.png",
+    "0418アンタレスＳ": "0418アンタレスＳ.png",
+
+    "0412桜花賞": "0412桜花賞.png",
+    "0411ニュージーランドＴ": "0411ニュージーランドＴ.png",
+    "0411阪神牝馬Ｓ": "0411阪神牝馬Ｓ.png",
+
+    "0405大阪杯": "0405大阪杯.png",
+    "0404ダービー卿ＣＴ": "0404ダービー卿ＣＴ.png",
+    "0404チャーチルダウンズＣ": "0404チャーチルダウンズＣ.png",
+
+    "0329高松宮記念": "0329高松宮記念.png",
+    "0329マーチＳ": "0329マーチＳ.png",
+    "0328日経賞": "0328日経賞.png",
+    "0328毎日杯": "0328毎日杯.png",
+
+    "0322阪神大賞典": "0322阪神大賞典.png",
+    "0322愛知杯": "0322愛知杯.png",
+    "0321フラワーカップ": "0321フラワーカップ.png",
+    "0321ファルコンＳ": "0321ファルコンＳ.png",
+
+    "0315スプリングＳ": "0315スプリングＳ.png",
+    "0315金鯱賞": "0315金鯱賞.png",
+    "0308弥生賞": "0308弥生賞.png",
+    "0307中山牝馬Ｓ": "0307中山牝馬Ｓ.png",
+    "0307フィリーズレビュー": "0307フィリーズレビュー.png",
+
+    "0301中山記念": "0301中山記念.png",
+    "0301チューリップ賞": "0301チューリップ賞.png",
+    "0228オーシャンＳ": "0228オーシャンＳ.png",
+
+    "0222フェブラリーＳ": "0222フェブラリーＳ.png",
+    "0222小倉大賞典": "0222小倉大賞典.png",
+    "0221ダイヤモンドＳ": "0221ダイヤモンドＳ.png",
+    "0221阪急杯": "0221阪急杯.png",
+
+    "0215共同通信杯": "0215共同通信杯.png",
+    "0215京都記念": "0215京都記念.png",
+    "0214クイーンカップ": "0214クイーンカップ.png",
+
+    "0210東京新聞杯": "0210東京新聞杯.png",
+    "0210きさらぎ賞": "0210きさらぎ賞.png",
+
+    "0201シルクロードＳ": "0201シルクロードＳ.png",
+    "0201根岸Ｓ": "0201根岸Ｓ.png",
+
+    "0125アメリカジョッキーＣ": "0125アメリカジョッキーＣ.png",
+    "0125プロキオンＳ": "0125プロキオンＳ.png",
+    "0124小倉牝馬Ｓ": "0124小倉牝馬Ｓ.png",
+
+    "0118京成杯": "0118京成杯.png",
+    "0118日経新春杯": "0118日経新春杯.png",
+    "0112シンザン記念": "0112シンザン記念.png",
+    "0111フェアリーＳ": "0111フェアリーＳ.png",
+
+    "0104中山金杯": "0104中山金杯.png",
+    "0104京都金杯": "0104京都金杯.png",
+}
+
+
+#@app.route("/", methods=["GET", "POST"])
+#def index():
+
+@app.route("/", methods=["GET", "POST","HEAD"])
+def index():
+    if request.method == "HEAD":
+        return "", 200
+    # GET のときだけカウントアップ
+    if request.method == "GET":
+        counter_ref = db.collection("stats").document("page_counter")
+        counter_ref.update({"count": admin_firestore.Increment(1)})
+
+    # 現在のカウントを取得（ここでは update しない）
+    counter_ref = db.collection("stats").document("page_counter")
+    counter_doc = counter_ref.get()
+    count = counter_doc.to_dict().get("count", 0)
+
+    
+    options = ["2026年うま王収支表（単勝）","2026年うま王収支表（馬連）","2026年うま王収支表（三連複）",
+               "0503天皇賞（春）","0502京王杯スプリングＣ","0502ユニコーンＳ",
+               "0426フローラＳ","0426マイラーズＣ","0425青葉賞",
+               "0419皐月賞","0419福島牝馬Ｓ","0418アンタレスＳ",
+               "0412桜花賞","0411ニュージーランドＴ","0411阪神牝馬Ｓ",
+               "0405大阪杯","0404ダービー卿ＣＴ","0404チャーチルダウンズＣ",
+               "0329高松宮記念","0329マーチＳ","0328日経賞","0328毎日杯",
+               "0322阪神大賞典","0322愛知杯","0321フラワーカップ","0321ファルコンＳ",
+               "0315スプリングＳ","0315金鯱賞","0308弥生賞","0307中山牝馬Ｓ","0307フィリーズレビュー",
+               "0301中山記念","0301チューリップ賞","0228オーシャンＳ",
+               "0222フェブラリーＳ","0222小倉大賞典","0221ダイヤモンドＳ","0221阪急杯",
+               "0215共同通信杯","0215京都記念","0214クイーンカップ",
+               "0210東京新聞杯","0210きさらぎ賞",
+               "0201シルクロードＳ","0201根岸Ｓ",
+               "0125アメリカジョッキーＣ","0125プロキオンＳ","0124小倉牝馬Ｓ",
+               "0118京成杯","0118日経新春杯","0112シンザン記念","0111フェアリーＳ",
+               "0104中山金杯","0104京都金杯"]
+    filename = None
+    race = None
+
+    if request.method == "POST":
+        race = request.form.get("race")
+        #filename = race + ".png"
+        filename = image_files.get(race)
+
+    return render_template("index.html",
+                           options=options,
+                           filename=filename,
+                           race=race,
+                           count=count)
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+
+####チャットコーナー
+@app.route("/chat")
+def chat():
+    return render_template(
+        "chat.html",
+        FIREBASE_API_KEY=os.environ.get("FIREBASE_API_KEY"),
+        FIREBASE_AUTH_DOMAIN=os.environ.get("FIREBASE_AUTH_DOMAIN"),
+        FIREBASE_PROJECT_ID=os.environ.get("FIREBASE_PROJECT_ID")
+    )
+
