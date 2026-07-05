@@ -174,6 +174,23 @@ document.getElementById("save-btn").addEventListener("click", async () => {
     await db.collection("races").doc(raceId).update({
         isOfficial: isOfficial
     });
+
+    // ★ 対象外レースならポイント削除（ここが重要）
+    if (!isOfficial) {
+        const pointsRef = db.collection("points");
+        const usersSnap = await pointsRef.get();
+
+        usersSnap.forEach(async (userDoc) => {
+            const nickname = userDoc.id;
+
+            await pointsRef
+                .doc(nickname)
+                .collection("races")
+                .doc(raceId)
+                .delete();
+        });
+    }
+
     // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 
     document.getElementById("msg").textContent = "保存しました！";
