@@ -32,6 +32,11 @@ def calc_points(race_id):
         return jsonify({"error": "race not found"}), 404
 
     race_data = race_doc.to_dict()
+
+    # ★ 管理者が対象外にしたレースは集計しない
+    if not race_data.get("isOfficial", False):
+        return jsonify({"error": "this race is not official"}), 400
+
     grade = race_data.get("grade", "G3")
     multiplier = GRADE_MULTI.get(grade, 1)
 
@@ -79,6 +84,7 @@ def calc_points(race_id):
         final_point = base_point * multiplier * popularity
 
         # --- ⑥ レース単位の結果を保存（mark と grade も保存） ---
+        # --- ⑥ レース単位の結果を保存（mark と grade も保存） ---
         race_point_ref = (
             db.collection("points")
             .document(nickname)
@@ -91,7 +97,15 @@ def calc_points(race_id):
             "grade": grade
         })
 
-        # --- ⑦ total（全レースのポイント合計）を再計算 ---
+        # ★★★ 俊裕さんに「ここに races_ref を再取得しろ」と言ってる ★★★
+        races_ref = (
+            db.collection("points")
+            .document(nickname)
+            .collection("races")
+            .stream()
+        )
+        # ★★★ さらにもう一度 stream() を呼ぶ（これが必要） ★★★
+        # Firestore の反映遅延対策
         races_ref = (
             db.collection("points")
             .document(nickname)
@@ -99,25 +113,46 @@ def calc_points(race_id):
             .stream()
         )
 
+        # ★★★ ここからここまで ★★★
+
+        #--- ⑦ total（全レースのポイント合計）を再計算 ---
         total = 0
         for r in races_ref:
             d = r.to_dict()
-            total += d.get("point", 0)
+            raceId2 = r.id
 
-        # --- ⑧ 全レースの累積件数を再計算 ---
+            race_doc2 = db.collection("races").document(raceId2).get()
+            race_data2 = race_doc2.to_dict()
+
+            if race_data2.get("isOfficial", False):
+                total += d.get("point", 0)
+
+        # --- ⑧ 的中数再計算（★ここで races_ref を再取得する必要がある）
         races_ref = (
             db.collection("points")
             .document(nickname)
             .collection("races")
             .stream()
         )
+   
 
         hitUma = hitMaru = hitSankaku = hitBatsu = 0
         hitG1 = hitG2 = hitG3 = 0
 
         for r in races_ref:
             d = r.to_dict()
-            if d.get("point", 0) > 0:  # 当たりレースだけ
+            raceId2 = r.id
+
+            # レース情報を取得
+            race_doc2 = db.collection("races").document(raceId2).get()
+            race_data2 = race_doc2.to_dict()
+
+            # ★ 公式レースだけカウントする
+            if not race_data2.get("isOfficial", False):
+                continue
+
+            # ★ 公式レースかつ当たりレースだけ
+            if d.get("point", 0) > 0:
                 m = d.get("mark")
                 g = d.get("grade")
 
