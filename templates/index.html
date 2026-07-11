@@ -109,7 +109,18 @@
     ＪＲＡ重賞単勝当てコンテストに参加
 </button>
 
-<div id="adminMessageArea" style="margin: 20px 0; padding: 10px; background: #222; color: #fff; border-radius: 8px;">
+<!--<div id="adminMessageArea" style="margin: 20px 0; padding: 10px; background: #222; color: #fff; border-radius: 8px;">
+    <h3 style="margin-bottom: 10px;">主催者からのメッセージ</h3>
+    <div id="adminComments"></div>
+</div>-->
+
+<div id="adminMessageArea"
+     style="margin: 20px 0; padding: 10px; background: #222; color: #fff; border-radius: 8px; position:relative;">
+    
+    <div id="adminUpdatedTime"
+         style="position:absolute; top:5px; right:10px; font-size:12px; color:#ccc;">
+    </div>
+
     <h3 style="margin-bottom: 10px;">主催者からのメッセージ</h3>
     <div id="adminComments"></div>
 </div>
@@ -134,6 +145,19 @@ db.collection("admin_comments")
 
     div.textContent = data.text;
     area.appendChild(div);
+
+    // 更新日時表示
+    if (data.timestamp) {
+        const t = data.timestamp.toDate();
+        const MM = String(t.getMonth() + 1).padStart(2, "0");
+        const DD = String(t.getDate()).padStart(2, "0");
+        const hh = String(t.getHours()).padStart(2, "0");
+        const mm = String(t.getMinutes()).padStart(2, "0");
+
+        const timeStr = `${MM}/${DD} ${hh}:${mm}`;
+        document.getElementById("adminUpdatedTime").innerText = `最終更新：${timeStr}`;
+    }
+
   });
 </script>
 
