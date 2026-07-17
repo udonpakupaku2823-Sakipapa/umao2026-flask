@@ -75,7 +75,7 @@
 <table>
     <thead>
         <tr>
-            <th>No.</th>
+            <th>回</th>
             <th>グレード</th>
             <th>日程</th>
             <th>レース名</th>
@@ -92,7 +92,7 @@
     <tbody>
         {% for row in race_summary %}
         <tr>
-            <td>{{ loop.index }}</td>
+            <td>{{ loop.length - loop.index0 }}</td>
             <td class="grade-cell grade-{{ row.grade }}">{{ row.grade }}</td>
             <td>{{ row.date }}</td>
             <td>{{ row.race_name }}</td>
