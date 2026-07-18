@@ -51,6 +51,10 @@
             transform: scale(1.04);
         }
     </style>
+
+    <!-- head内に追加 -->
+    <link rel="manifest" href="/manifest.json">
+
 </head>
 
 <body style="background: linear-gradient(to bottom, #87CEFA, #E0FFFF); background-attachment: fixed;">
@@ -257,6 +261,15 @@ async function registerUser() {
         上の「登録名リセット」ボタンをクリックしてください
     </div>
 </h5>
+
+<!-- body閉じタグの直前に追加 -->
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/static/service-worker.js")
+    .then(reg => console.log("Service Worker registered:", reg))
+    .catch(err => console.error("Service Worker registration failed:", err));
+}
+</script>
 
 </body>
 </html>
