@@ -1,5 +1,5 @@
 #from google.cloud import firestore
-from flask import Flask, request, render_template, redirect, session, make_response, flash
+from flask import Flask, request, render_template, redirect, session, make_response, flash, send_from_directory
 import os
 import sys
 
@@ -65,6 +65,7 @@ def race_select():
 #image_files = {
 fixed_files = {    
     "2026年うま王": "2026年うま王.png",
+    "2026年うま王Summerコンテスト": "2026年うま王Summerコンテスト.png",
     "2026年うま王収支表単勝": "2026年うま王収支表単勝.png",
     "2026年うま王収支表馬連": "2026年うま王収支表馬連.png",
     "2026年うま王収支表三連複": "2026年うま王収支表三連複.png",
@@ -427,6 +428,12 @@ def contest_go():
         raceName=race["name"]
     )
 
+#----------------------
+# ② WEBアイコン化
+# -------------------------
+@app.route('/manifest.json')
+def manifest():
+    return send_from_directory('.', 'manifest.json')
 
 #----------------------
 # ② メイン画面装飾
@@ -497,7 +504,14 @@ def main():
     # ★★★ Firestore に存在するレースだけを options にする
     options = [race_id for race_id in race_info.keys() if race_id in image_files]
     # ★ 固定ファイルも追加
-    fixed_options = ["2026年うま王","2026年うま王収支表単勝","2026年うま王収支表馬連","2026年うま王収支表三連複"]
+    fixed_options = [
+    "2026年うま王",
+    "2026年うま王Summerコンテスト",
+    "2026年うま王収支表単勝",
+    "2026年うま王収支表馬連",
+    "2026年うま王収支表三連複"
+    ]
+
     options = fixed_options + sorted(options, reverse=True)
 
     # ★★★ 色付け
@@ -515,10 +529,11 @@ def main():
         options_with_color.append({"name": opt, "color": color})
 
     # GET のとき race を取得
-    race = request.args.get("race", None)
+    #race = request.args.get("race", None)
     # filename を1回だけ作る
+    #filename = image_files.get(race, "2026年うま王.png")
+    race = request.args.get("race") or request.form.get("race")
     filename = image_files.get(race, "2026年うま王.png")
-
 
     # ★ POST のときは race を受け取る（main.html のフォーム用）
     if request.method == "POST":
@@ -546,7 +561,8 @@ def main():
                            options=options_with_color,
                            race=race,
                            filename=filename,
-                           count=count)
+                           count=count,
+                           image_files=fixed_files)
 
 @app.route("/countup")
 def countup():
