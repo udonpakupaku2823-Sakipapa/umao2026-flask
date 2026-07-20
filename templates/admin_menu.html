@@ -5,8 +5,6 @@
     ← 戻る
 </button>
 
-
-
 <hr>
 
 
@@ -36,7 +34,7 @@
 </div>
 
 <div style="margin-top:20px;">
-    <a href="#" onclick="goMarks()">④ 印一覧を見る</a>
+    <a href="#" onclick="goMarks()">ランキングを見る</a>
 </div>
 
 <br>
@@ -96,6 +94,7 @@ function saveAdminComment() {
     console.error("Firestore 書き込みエラー:", err);
     alert("保存に失敗しました");
   });
+
 }
 </script>
 
@@ -117,8 +116,10 @@ function runCalc() {
     });
 }
 function goMarks() {
-    window.location.href = `/marks_list`;
-}
+    //window.location.href = `/marks_list`;
+    window.location.href = `/ranking`;
+
+  }
 
 </script>
 
@@ -136,4 +137,5 @@ function goMarks() {
     .catch(err => {
       console.error("最新コメント取得エラー:", err);
     });
+
 </script>
