@@ -528,6 +528,11 @@ def main():
             color = "black"
         options_with_color.append({"name": opt, "color": color})
 
+    # ★ POST のときは race を受け取る（main.html のフォーム用）
+    if request.method == "POST":
+        race = request.form.get("race")
+        return redirect(f"/main?race={race}")
+
     # GET のとき race を取得
     #race = request.args.get("race", None)
     # filename を1回だけ作る
@@ -535,10 +540,7 @@ def main():
     race = request.args.get("race") or request.form.get("race")
     filename = image_files.get(race, "2026年うま王.png")
 
-    # ★ POST のときは race を受け取る（main.html のフォーム用）
-    if request.method == "POST":
-        race = request.form.get("race")
-        return redirect(f"/main?race={race}")
+
     
     # ★ GET のときは URL から race を取得
     #race = request.args.get("race", None)
