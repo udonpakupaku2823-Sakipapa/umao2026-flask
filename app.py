@@ -1,5 +1,5 @@
 #from google.cloud import firestore
-from flask import Flask, request, render_template, redirect, session, make_response, flash, send_from_directory
+from flask import Flask, request, render_template, redirect, session, make_response, flash, send_from_directory, jsonify
 import os
 import sys
 
@@ -17,6 +17,7 @@ import os
 from firebase_admin import credentials, initialize_app
 
 from routes.calc_points import bp as calc_bp
+
 
 # Render の環境変数に Firebase 秘密鍵 JSON を入れておく
 firebase_key_json = os.environ.get("FIREBASE_KEY")
@@ -427,6 +428,96 @@ def contest_go():
         horses=horses,
         raceName=race["name"]
     )
+
+#----------------------
+# ② point獲得推移グラフ化（ルート追加）
+# -------------------------
+@app.route("/graph")
+def graph():
+    return render_template("graph.html")
+
+#----------------------
+# ② point獲得推移グラフ化
+# ----------------------
+@app.route("/api/summer_points")
+def api_summer_points():
+    db = admin_firestore.client()
+
+    races_ref = db.collection("races").order_by("date")
+    race_docs = races_ref.stream()
+
+    labels = []
+    summer_race_ids = []
+    race_id_to_name = {}
+
+    start_date = datetime.datetime(2026, 7, 1)
+    end_date   = datetime.datetime(2026, 9, 30)
+
+    for doc in race_docs:
+        data = doc.to_dict()
+        race_date = data["date"]
+
+        # ★ 文字列なら datetime に変換
+        if isinstance(race_date, str):
+            race_date = datetime.datetime.strptime(race_date, "%Y-%m-%d")
+        # ★ Timestamp なら datetime に変換
+        elif hasattr(race_date, "timestamp"):
+            race_date = race_date.replace(tzinfo=None)
+
+        # Timestamp → datetime
+        #if hasattr(race_date, "timestamp"):
+        #    race_date = race_date.replace(tzinfo=None)
+
+        if start_date <= race_date <= end_date:
+            labels.append(data["name"])
+            summer_race_ids.append(doc.id)
+
+        race_id_to_name[doc.id] = data["name"]
+
+    result = {
+        "labels": labels,
+        "points": {}
+    }
+
+    users_ref = db.collection("points")
+    users = users_ref.stream()
+
+    for user in users:
+        user_id = user.id
+        user_races_ref = db.collection("points").document(user_id).collection("races")
+        user_race_docs = user_races_ref.stream()
+
+        race_point_list = []
+
+        for doc in user_race_docs:
+            data = doc.to_dict()
+            race_id = doc.id
+
+            if race_id in summer_race_ids:
+                race_point_list.append({
+                    "race": race_id_to_name.get(race_id),
+                    "point": data.get("point", 0)
+                })
+
+        result["points"][user_id] = race_point_list
+
+    return jsonify(result)
+
+
+@app.route("/summer_graph")
+def summer_graph():
+    return render_template("graph.html")
+
+
+
+
+
+
+
+
+
+
+
 
 #----------------------
 # ② WEBアイコン化
