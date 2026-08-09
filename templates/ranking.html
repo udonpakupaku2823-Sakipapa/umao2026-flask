@@ -146,12 +146,11 @@
              background-repeat: no-repeat;">
 
 
-<h2 style="color:rgb(243, 54, 54);">勝点獲得ランキング（2026/07/1-09/30）</h2>
-<h3 style="color:rgb(136, 15, 96);">更新時刻：{{ now }}現在</h3>
 
-<button 
-    onclick="location.href='/contest'" 
-    style="
+
+<!-- グラフボタン　-->
+<style>
+.graph-btn {
         background: linear-gradient(135deg, #000000, #1a1a1a);
         color: #FFD700;
         padding: 10px 22px;
@@ -163,9 +162,24 @@
         cursor: pointer;
         box-shadow: 0 0 8px rgba(255,215,0,0.4);
         transition: all 0.25s ease;
-    ">
-    戻る
-</button>
+}
+
+.graph-btn:hover {
+    background: linear-gradient(135deg, #FFE55C, #D4B300);
+    box-shadow: 0 0 14px rgba(255,215,0,0.8);
+    transform: scale(1.05);
+}
+</style>             
+
+<h2 style="color:rgb(243, 54, 54);">勝点獲得ランキング（2026/07/1-09/30）</h2>
+<h3 style="color:rgb(136, 15, 96);">更新時刻：{{ now }}現在</h3>
+
+</div>
+<div style="display:flex; gap:12px; margin-bottom:10px;">
+  <button class="graph-btn" onclick="location.href='/contest'" >🔚 戻る</button>
+  <button class="graph-btn" onclick="location.href='/summer_graph'">📈 グラフ</button>
+</div>
+
 
 <table>
     <tr>
