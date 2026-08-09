@@ -5,8 +5,13 @@
 </div>
 
 <div style="background-color: #333; padding: 20px; border-radius: 10px;">
-  <canvas id="summerChart" style="background-color: #000;"></canvas>
+  <canvas id="summerChart" style="background-color: #000; height:600px;"></canvas>
 </div>
+
+<div class="legend-container">
+  <canvas id="summerChart"></canvas>
+</div>
+
 
 <!-- Chart.js 本体 -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1"></script>
@@ -94,8 +99,10 @@ fetch("/api/summer_points")
             position: 'right',
             labels: {
               color: '#FFD700',   // ★ 金色
-              font: { size: 16 },
-              padding: 30   // ★ ここを追加（数値は好みで調整）
+              font: { size: 12 },
+              padding: 20,   // ★ ここを追加（数値は好みで調整）
+              boxWidth: 30,
+              usePointStyle: true
             }
           },
           datalabels: {
@@ -153,5 +160,12 @@ fetch("/api/summer_points")
   .back-btn:hover {
       background: #666;
       transform: scale(1.05);
-  }    
+  }
+
+  .chart-legend {
+    max-height: 300px;     /* スマホで縦に収まる高さ */
+    overflow-y: auto;      /* 縦スクロールを許可 */
+    padding-right: 10px;   /* スクロールバーと凡例が重ならないように */
+  }
+
 </style>
