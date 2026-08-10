@@ -1,17 +1,18 @@
-<h2>2026 Summerシリーズ 推移グラフ</h2>
+<!--<h2>2026 Summerシリーズ 推移グラフ</h2>-->
+<h1>UMAO 推移グラフ</h1>
 
 <div style="display:flex; gap:12px; margin-bottom:10px;">
   <button class="back-btn" onclick="location.href='/ranking'">← ランキングへ戻る</button>
+  <!--<a href="contest_select.html" class="black-gold-btn">コンテストへ戻る</a>-->
 </div>
+
+<!--<div style="margin-top: 20px; text-align: center;">
+    <a href="history.html" class="black-gold-btn">過去大会を見る</a>
+</div>-->
 
 <div style="background-color: #333; padding: 20px; border-radius: 10px;">
-  <canvas id="summerChart" style="background-color: #000; height:600px;"></canvas>
+    <canvas id="summerChart" style="background-color: #000; height:600px;"></canvas>
 </div>
-
-<div class="legend-container">
-  <canvas id="summerChart"></canvas>
-</div>
-
 
 <!-- Chart.js 本体 -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1"></script>
@@ -141,7 +142,7 @@ fetch("/api/summer_points")
   body {
     background-color: #444;
   }
-  h2 {
+  h1 {
     color: #FFD700;
   }
   .back-btn {
