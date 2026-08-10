@@ -55,6 +55,11 @@
     <!-- head内に追加 -->
     <link rel="manifest" href="/manifest.json">
 
+    <body style="background-image: url('/static/uma18.png');
+             background-size: cover;
+             background-position: center;
+             background-repeat: no-repeat;">
+
 </head>
 
 <body style="background: linear-gradient(to bottom, #87CEFA, #E0FFFF); background-attachment: fixed;">
@@ -68,7 +73,26 @@
     </div>
 </h3>
 
-<a href="/chat" class="chat-button"
+<!--<h2>登録名を入力してください（3文字以内）</h2>
+<h3>登録済みの場合もここから入ってください</h3>-->
+
+<div style="color:yellow; font-weight:bold;">
+    <h2>新規登録 : 初めての方は３文字以内でニックネームを登録してください</h2>
+</div>
+
+<div style="display:flex; gap:10px; align-items:center;">
+    <input type="text" id="nickname" maxlength="3"
+           placeholder="うま王"
+           style="font-size:22px; padding:10px; width:90%; max-width:70px;">
+    <button id="registerBtn" class="black-gold-btn"
+            style="padding:10px 28px; font-size:20px; border-radius:8px;">
+        登録
+    </button>        
+</div>
+
+<hr>
+
+<!--<a href="/chat" class="chat-button"
    style="
       display:inline-block;
       padding:8px 16px;
@@ -80,31 +104,37 @@
       font-size:16px;
    ">
    チャットへ
-</a>
+</a>-->
+
+<div style="color:Cornsilk; font-weight:bold;">
+    <h3>１）メンバーの意見交換の場です。思ったこと遠慮なくつぶやいてください</h3>
+</div>
+
+<form action="/chat" method="GET">
+    <input type="hidden" name="nickname" id="nickname-hidden-chat">
+    <button class="black-gold-btn" onclick="
+        document.getElementById('nickname-hidden-chat').value =
+        document.getElementById('nickname').value;
+    ">
+        チャットへ
+    </button>
+</form>    
 
 <hr>
 
-<h2>登録名を入力してください（3文字以内）</h2>
-<h3>登録済みの場合もここから入ってください</h3>
+<div style="color:Cornsilk; font-weight:bold;">
+    <h3>２）元祖「うま王」の予想コーナーです。馬券検討の参考になれば幸いです。</h3>
+</div>
 
-<div style="display:flex; gap:10px; align-items:center;">
-    <input type="text" id="nickname" maxlength="3"
-           placeholder="うま王"
-           style="font-size:22px; padding:10px; width:90%; max-width:70px;">
-    <!--<button id="registerBtn"
-        style="padding:14px 28px; font-size:22px; border-radius:8px;">
-        確認
-    </button>-->
-    <form action="/main" method="GET">
-    <input type="hidden" name="nickname" id="nickname-hidden">
+<form action="/main" method="GET">
+    <input type="hidden" name="nickname" id="nickname-hidden-main">
     <button class="black-gold-btn" onclick="
-        document.getElementById('nickname-hidden').value =
+        document.getElementById('nickname-hidden-main').value =
         document.getElementById('nickname').value;
     ">
         [うま王]予想ページへ
     </button>
-</form>
-</div>
+</form>    
 
 {% if error %}
 <p style="color:red; margin-top:10px;">{{ error }}</p>
@@ -126,8 +156,8 @@
 </button>-->
 
 <h3>
-    <div style="color:blue; font-weight:bold;">
-        重賞単勝予想コンテスト
+    <div style="color:Cornsilk; font-weight:bold;">
+        ３）重賞単勝予想コンテスト
     </div>
 </h3>
 
@@ -275,7 +305,7 @@ async function registerUser() {
     }
 
     // 次の画面へ
-    window.location.href = "/main?nickname=" + encodeURIComponent(name);
+    //window.location.href = "/main?nickname=" + encodeURIComponent(name);
 }
 </script>
 
