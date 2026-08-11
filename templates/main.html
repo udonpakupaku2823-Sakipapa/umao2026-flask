@@ -82,6 +82,8 @@
     <!--<h1>うま王2026</h1>-->
     <h1>UMAO 予想ページ</h1>
 
+    <p style="font-size:18px;">登録名：{{ nickname }}</p>
+
     <a href="/" 
        style="
           display:inline-block;
@@ -110,9 +112,10 @@
        チャットへ
     </a>-->
 
-    <p style="font-size:18px;">登録名：{{ nickname }}</p>
+    <!--<p style="font-size:18px;">登録名：{{ nickname }}</p>
+    <p style="font-size:20px;">レースを選択してください</p>-->
 
-    <p style="font-size:20px;">レースを選択してください</p>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
     <form action="/main" method="GET" style="display:flex; gap:10px; align-items:center;">
 
@@ -159,7 +162,7 @@
         document.getElementById("race-img").src = "/static/" + race + ".png";
     }
 
-    </script>
+      </script>
     
     <img id="race-img" class="race-img" src="{{ url_for('static', filename=filename) }}">
 
