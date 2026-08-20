@@ -112,7 +112,7 @@
     <h3>１）メンバーの意見交換の場です。思ったこと遠慮なくつぶやいてください</h3>
 </div>
 
-<form action="/chat" method="GET">
+<form action="/chat" method="GET" onsubmit="return checkNickname();">
     <input type="hidden" name="nickname" id="nickname-hidden-chat">
     <button class="black-gold-btn" onclick="
         document.getElementById('nickname-hidden-chat').value =
@@ -129,7 +129,7 @@
     <h3>２）元祖「うま王」の予想コーナーです。馬券検討の参考になれば幸いです。</h3>
 </div>
 
-<form action="/main" method="GET">
+<form action="/main" method="GET" onsubmit="return checkNickname();"> 
     <input type="hidden" name="nickname" id="nickname-hidden-main">
     <button class="black-gold-btn" onclick="
         document.getElementById('nickname-hidden-main').value =
@@ -164,7 +164,7 @@
     </div>
 </h3>
 
-<form action="/contest" method="GET">
+<form action="/contest" method="GET" onsubmit="return checkNickname();">
     <button class="black-gold-btn">2026年Ｓｕｍｍｅｒシリーズへ</button>
 </form>
 <br>
@@ -332,6 +332,18 @@ if ("serviceWorker" in navigator) {
     .catch(err => console.error("Service Worker registration failed:", err));
 }
 </script>
+
+<script>
+function checkNickname() {
+    const nick = document.getElementById("nickname").value.trim();
+    if (nick === "") {
+        alert("ニックネームが登録されていません");
+        return false;
+    }
+    return true;
+}
+</script>
+
 
 </body>
 </html>
