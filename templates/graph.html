@@ -11,7 +11,7 @@
 </div>-->
 
 <div style="background-color: #333; padding: 20px; border-radius: 10px;">
-    <canvas id="summerChart" style="background-color: #000; height:600px;"></canvas>
+    <canvas id="summerChart" style="background-color: #000; height:1000px;"></canvas>
 </div>
 
 <!-- Chart.js 本体 -->
@@ -89,6 +89,7 @@ fetch("/api/summer_points")
       data: { labels, datasets },
       options: {
         responsive: true,
+        maintainAspectRatio: false,   // ← ここに追加！
         layout: {
           padding: {
             left: 30,   // ★ 左端の余白を広げる
