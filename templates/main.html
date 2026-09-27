@@ -59,7 +59,7 @@
         }
     </style>
 
-    <body style="background-image: url('/static/padoc.png');
+    <body style="background-image: url('/static/no1-4.png');
          background-size: cover;
          background-position: center;
          background-repeat: no-repeat;">
@@ -67,6 +67,12 @@
 </head>
 
 <body>
+
+    <div style="font-size:24px; color:red;">
+        {% for h in horses %}
+            {{ h.number }} 
+        {% endfor %}
+    </div>
         
     {% if nickname in ["うま王", "POP","どれ丸"] %}
         <div style="margin-top:30px; text-align:center;">
@@ -115,7 +121,7 @@
     <!--<p style="font-size:18px;">登録名：{{ nickname }}</p>
     <p style="font-size:20px;">レースを選択してください</p>-->
 
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
     <form action="/main" method="GET" style="display:flex; gap:10px; align-items:center;">
 

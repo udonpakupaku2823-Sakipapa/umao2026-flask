@@ -18,7 +18,13 @@
 
 <div style="margin-top:10px;">
     <a href="/admin/race">
-        ① 新規レースを登録する
+        ① 新規レースの馬名を登録する
+    </a>
+</div>
+
+<div style="margin-top:10px;">
+    <a href="/admin/race_autumn">
+        ①-1 2026Autumn 新規レースを登録する
     </a>
 </div>
 
@@ -37,12 +43,18 @@
         {% endfor %}
     </select>
 
-    <a href="#" onclick="runCalc()">集計する</a>
+    <a href="#" onclick="runCalc(); return false;">集計する</a>
+    <span id="calcStatus" style="margin-left:8px; color:red;"></span>  <!-- ★ここを追加 -->
+</div>
+
+<!--<div style="margin-top:20px;">
+    <a href="#" onclick="goMarks()">ランキングを見る</a>
 </div>
 
 <div style="margin-top:20px;">
-    <a href="#" onclick="goMarks()">ランキングを見る</a>
-</div>
+    <a href="/main">メイン画面へ</a>
+</div>-->
+
 
 <br>
 <hr>
@@ -55,6 +67,23 @@
   <button onclick="saveAdminComment()" style="margin-top:10px;">
       送信
   </button>
+
+<br><br>
+<hr>
+
+    <a href="/" 
+       style="
+          display:inline-block;
+          padding:8px 16px;
+          background:#444;
+          color:white;
+          border-radius:6px;
+          text-decoration:none;
+          margin-top:10px;
+          font-size:16px;
+       ">
+       ← ＴＯＰへ戻る
+    </a>
 
 <br><br>
 <hr>
@@ -106,22 +135,36 @@ function saveAdminComment() {
 </script>
 
 <script>
+  
 function runCalc() {
     const raceId = document.getElementById("raceId").value;
 
-    fetch(`/calc_points/${raceId}`, {
-        method: "POST"
-    })
+    // ★ 画面に「計算中…」を表示（俊裕さんの画面で見える場所）
+    document.getElementById("calcStatus").textContent = "計算中…";
+
+    
+    fetch(`/calc_points/${raceId}`, { method: "POST" })　　// ★ 2026SUMMER の集計ルートだけを使う
+    //fetch(`/calc_points_series/2026_autumn/${raceId}`, { method: "POST" })    // ★ 2026autumn の集計ルートだけを使う
+    //fetch(`/calc_points_series/2027_winter/${raceId}`, { method: "POST" })   // ★ 2027winter の集計ルートだけを使う
+
+
     .then(res => res.json())
     .then(data => {
-        alert("集計が完了しました！");
+        alert(data.message || "SUMMER 集計が完了しました！");
         console.log(data);
     })
     .catch(err => {
         console.error(err);
-        alert("集計に失敗しました");
+        alert("SUMMER 集計に失敗しました");
+    })
+    .finally(() => {
+        // ★ 終わったら消す
+        document.getElementById("calcStatus").textContent = "";
     });
 }
+
+
+
 function goMarks() {
     //window.location.href = `/marks_list`;
     window.location.href = `/ranking`;

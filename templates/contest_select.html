@@ -28,6 +28,7 @@
                 transparent 2px,
                 transparent 12px
             );
+
         }
 
         button {
@@ -114,18 +115,80 @@
     <button onclick="location.href='/'">戻る</button>
     
     <!--<h1>ＪＲＡ重賞単勝予想コンテスト</h1>-->
-    <h1>UMAO 単勝コンテスト</h1>
+    <h1>UMAO 単勝コンテスト</h1>    
 
-    <div style="margin-top:20px;">
-    <h2>【2026年下期大会】</h2>
-    <h3>【第１回Ｓｕｍｍｅｒシリーズ】　7/5北九州記念～9/27スプリンターズＳまでの２８戦</h3>
+    <br>
 
+<!--<div style="display:flex; align-items:center; gap:20px;"> 横書き-->
+<div align-items:center; gap:20px;">
 
+    <!-- シリーズ表示 -->
+    <div id="series-indicator" 
+        style="color:#00BFFF; font-weight:bold; font-size:72px;">
+    </div>
+
+    <br>
+        <h2>【2026年下期大会】</h2>
+    <h3>【第２回Ａｕｔｕｍｎシリーズ】　10/3京都大賞典～12/27有馬記念までの３４戦</h3>
+    <br>
+
+    <!-- 個人ランキングボタン -->
+    <button id="ranking-btn"
+        style="
+            background: linear-gradient(135deg, #87CEFA, #1E90FF);
+            color:#000;
+            font-weight:bold;
+            padding:12px 20px;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+            font-size:16px;
+            box-shadow:0 0 10px rgba(135,206,250,0.4);
+            width:100%;
+        ">
+        個人ランキング
+    </button>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const series = urlParams.get("series");
+
+    const indicator = document.getElementById("series-indicator");
+    const rankingBtn = document.getElementById("ranking-btn");
+
+    //★シリーズ切替ポイント★
+    if (series === "summer" || series === "2026_summer") {
+        indicator.textContent = "2026 Summer シリーズ";
+        rankingBtn.onclick = () => location.href = "/summer_ranking";
+
+    } else if (series === "autumn" || series === "2026_autumn") {
+        indicator.textContent = "2026 Autumn シリーズ";
+        rankingBtn.onclick = () => location.href = "/autumn_ranking";
+
+    } else {
+        indicator.textContent = "シリーズ未選択";
+        rankingBtn.onclick = () => alert("シリーズを選択してください");
+    }
+});
+</script>
+
+    <br>
+
+    <!--★シリーズ切替ポイント★-->
+    <div style="margin-top:20px;">
+   </div>
 
 <div style="margin-top:20px; display:flex; gap:15px;">
     <!-- レース別個人マーク（明るい緑） -->
-    <button type="button" onclick="location.href='/marks_list'"
+    {% set series_url = series.split('_')[1] if series.startswith('2026_') else series %} 
+    <button type="button"
+        {% if series_url == 'summer' %}
+            onclick="location.href='/marks_list'"
+        {% else %}
+            onclick="location.href='/marks_list_{{ series_url }}'"
+        {% endif %}
         style="
             background: linear-gradient(135deg, #7CFC00, #32CD32);
             color:#000;
@@ -142,7 +205,8 @@
     </button>
 
     <!-- 個人ランキング（明るい青） -->
-    <button type="button" onclick="location.href='/ranking'"
+    <!--<button type="button" onclick="location.href='/ranking'"-->
+    <!--<button type="button" onclick="goRanking()"
         style="
             background: linear-gradient(135deg, #87CEFA, #1E90FF);
             color:#000;
@@ -156,15 +220,32 @@
             flex:1;
         ">
         個人ランキング    
-    </button>
+    </button>-->
+
+    <script>
+    function goRanking() {
+        const series = localStorage.getItem("series");
+        if (series === "autumn") {
+            location.href = "/autumn_ranking";
+        } else {
+            location.href = "/ranking";
+        }
+    }
+    </script>
 
 </div>
 
-<br>
-     ◆◆◆次回シリーズ開催予告◆◆◆<br>
-    【第２回Ａｕｔｕｍｎシリーズ】10/4京都大賞典～12/27有馬記念　までの３４戦<br>
+<br><br>
+<hr>
 
-<br>
+
+    <!--★シリーズ切替ポイント★-->
+     ◆◆◆次回以降シリーズ開催予告◆◆◆<br>
+    【第３回Ｗｉｎｔｅｒシリーズ】１月京都金杯　　　　　　～３月高松宮記念　までの？？戦予定（ＪＲＡスケジュール未発表）<br>
+    【第４回Ｓｐｒｉｎｇシリーズ】４月チャーチルダウンズＣ～６月宝塚記念　　までの？？戦予定（ＪＲＡスケジュール未発表）<br>
+    <div style="margin-top:20px;"></div>
+
+
 <hr>
 <br>
 
@@ -215,13 +296,23 @@
         <!-- ボタンとの間を広げる -->
         <div style="height: 25px;"></div>
 
-    <form method="POST" action="/contest/go" id="raceForm">    
+    <!--<form method="POST" action="/contest/go" id="raceForm">-->
+    <!--<form method="GET" action="/contest/go" id="raceForm">-->
+    <form id="raceForm">    
+
+
+        <!-- ★ここに hidden を追加する★ -->
+        <!--<input type="hidden" id="raceIdHidden" name="raceIdHidden">
+        <input type="hidden" id="seriesHidden" name="series">
+        <input type="hidden" id="nicknameHidden" name="nickname">-->
+
             {% for r in options %}
             <div style="margin: 10px 0; display:flex; align-items:center; gap:12px;
                         color: {% if r.is_closed %}#888{% else %}#fff{% endif %};">
  
                 <!-- ラジオボタンを少し大きく -->
-                <input type="radio" id="race{{ r.id }}" name="raceId" value="{{ r.id }}"
+                <input type="radio" id="race{{ r.id }}" name="raceId"
+                       value="{{ r.id }}" data-series="{{ r.series }}"
                        style="width:26px; height:26px;">
 
                 <!-- レース名の文字を大きく -->
@@ -232,7 +323,7 @@
                     {% endif %}
                 </label>
             </div>
-       {% endfor %}
+            {% endfor %}
         
     </form>
 
@@ -243,11 +334,23 @@
             alert("レースを選択してください");
             return;
         }
+
+        const raceId = selected.value;
         const nickname = localStorage.getItem("nickname");
-        document.getElementById("raceForm").action =
-        `/contest/go?mode=marks&nickname=${nickname}`;
-        document.getElementById("raceForm").submit();
+
+        //const rawSeries = selected.dataset.series || "summer";
+        //const series = rawSeries.includes("autumn") ? "autumn" : "summer";
+        const series = selected.dataset.series || "summer";
+        //console.log("DEBUG series =", series);
+
+        //window.location.href =
+        //`/contest/go?mode=marks&raceId=${raceId}&nickname=${nickname}&series=${series}`;
+        //window.location.href = `/contest/go?mode=compare&raceId=${raceId}&series=${series}`;
+        window.location.href =
+           `/contest/go?mode=marks&raceId=${raceId}&nickname=${nickname}&series=${series}`;
     }
+
+
    
     function goCompare() {
         const selected = document.querySelector('input[name="raceId"]:checked');
@@ -255,8 +358,14 @@
             alert("レースを選択してください");
             return;
         }
-        document.getElementById("raceForm").action = "/contest/go?mode=compare";
-        document.getElementById("raceForm").submit();
+        //document.getElementById("raceForm").action = "/contest/go?mode=compare";
+        //document.getElementById("raceForm").submit();
+
+        const raceId = selected.value;
+        const series = selected.dataset.series || "summer";    
+
+        window.location.href =
+            `/contest/go?mode=compare&raceId=${raceId}&series=${series}`;    
     }
     </script>
 

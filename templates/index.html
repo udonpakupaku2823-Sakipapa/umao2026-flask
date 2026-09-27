@@ -50,12 +50,25 @@
             box-shadow: 0 0 14px rgba(255,215,0,0.8);
             transform: scale(1.04);
         }
+        .black-silver-btn {
+            background: linear-gradient(135deg, white, #1a1a1a);
+            color: black;
+            padding: 10px 22px;
+            font-size: 18px;
+            border: 2px solid silver;
+            border-radius: 8px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(255,215,0,0.4);
+            transition: all 0.25s ease;
+        }
     </style>
 
     <!-- head内に追加 -->
     <link rel="manifest" href="/manifest.json">
 
-    <body style="background-image: url('/static/uma18.png');
+    <body style="background-image: url('/static/uma18-3.png');
              background-size: cover;
              background-position: center;
              background-repeat: no-repeat;">
@@ -94,35 +107,33 @@
 <br>
 <hr>
 
-<!--<a href="/chat" class="chat-button"
-   style="
-      display:inline-block;
-      padding:8px 16px;
-      background:purple;
-      color:yellow;
-      border-radius:6px;
-      text-decoration:none;
-      margin-left:10px;
-      font-size:16px;
-   ">
-   チャットへ
-</a>-->
+<div id="adminMessageArea"
+     style="margin: 20px 0; padding: 10px; background: #222; color: #fff; border-radius: 8px; position:relative;">
+    
+    <div id="adminUpdatedTime"
+         style="position:absolute; top:5px; right:10px; font-size:12px; color:#ccc;">
+    </div>
 
-<div style="color:Cornsilk; font-weight:bold;">
-    <h3>１）メンバーの意見交換の場です。思ったこと遠慮なくつぶやいてください</h3>
+    <h3 style="margin-bottom: 10px;">[うま王からの連絡事項]</h3>
+    <div id="adminComments"></div>
 </div>
 
-<form action="/chat" method="GET" onsubmit="return checkNickname();">
-    <input type="hidden" name="nickname" id="nickname-hidden-chat">
-    <button class="black-gold-btn" onclick="
-        document.getElementById('nickname-hidden-chat').value =
-        document.getElementById('nickname').value;
-    ">
-        チャットへ
-    </button>
-</form>    
+<hr>
 
-<br>
+<h3>
+    <!--★シリーズ切替ポイント★-->
+    <div style="color:red; font-weight:bold;font-size: 24px;">
+        １）重賞単勝予想コンテスト : 新シリーズ10/4～12/27
+    </div>
+</h3>
+
+<!--★シリーズ切替ポイント★-->
+<button class="black-gold-btn"
+        onclick="if(checkNickname()) location.href='/contest?series=2026_autumn'">
+    2026年Ａｕｔｕｍｎシリーズ
+</button>
+
+<br><br>
 <hr>
 
 <div style="color:Cornsilk; font-weight:bold;">
@@ -142,31 +153,31 @@
 {% if error %}
 <p style="color:red; margin-top:10px;">{{ error }}</p>
 {% endif %}
+
 <br>
 <hr>
 
-
-
-<!--<button type="button" onclick="location.href='/contest'"
-    class="black-gold-btn"
-    style="
-        margin-top: 15px;
-        padding: 14px 28px;
-        font-size: 30px;
-        border-radius: 8px;
+<div style="color:Cornsilk; font-weight:bold;">
+    <h3>３）メンバーの意見交換の場です。思ったこと遠慮なくつぶやいてください</h3>
+</div>
+<form action="/chat" method="GET" onsubmit="return checkNickname();">
+    <input type="hidden" name="nickname" id="nickname-hidden-chat">
+    <button class="black-gold-btn" onclick="
+        document.getElementById('nickname-hidden-chat').value =
+        document.getElementById('nickname').value;
     ">
-    ＪＲＡ重賞単勝当てコンテストに参加
-</button>-->
+        チャットへ
+    </button>
+</form> 
 
-<h3>
-    <div style="color:Cornsilk; font-weight:bold;">
-        ３）重賞単勝予想コンテスト
-    </div>
-</h3>
 
-<form action="/contest" method="GET" onsubmit="return checkNickname();">
-    <button class="black-gold-btn">2026年Ｓｕｍｍｅｒシリーズへ</button>
-</form>
+<script>
+function setSeries(series) {
+    localStorage.setItem("series", series);
+}
+</script>
+
+
 <br>
 <hr>
 
@@ -176,16 +187,7 @@
     <div id="adminComments"></div>
 </div>-->
 
-<div id="adminMessageArea"
-     style="margin: 20px 0; padding: 10px; background: #222; color: #fff; border-radius: 8px; position:relative;">
-    
-    <div id="adminUpdatedTime"
-         style="position:absolute; top:5px; right:10px; font-size:12px; color:#ccc;">
-    </div>
 
-    <h3 style="margin-bottom: 10px;">ＵＭＡＯ主催者からのメッセージ</h3>
-    <div id="adminComments"></div>
-</div>
 
 
 <script>
@@ -240,7 +242,195 @@ db.collection("admin_comments")
     Copyright © 2012 OkadaGameCompany Inc. All Rights Reserved
 </div>
 
-<hr>
+
+<div style="height:3px; background:#1E90FF; box-shadow:0 0 8px rgba(30,144,255,0.7); margin:12px 0;"></div>
+
+<h3>
+    <div style="color:black; font-weight:bold;">
+        　過去のシリーズの結果
+    </div>
+</h3>
+
+<button class="black-silver-btn"
+        onclick="if(checkNickname()) location.href='/contest?series=summer'">
+    2026年Ｓｕｍｍｅｒシリーズ
+</button>
+
+<h1>
+    <div style="color:black; font-weight:bold;">
+    【王者】　シリーズチャンピオン（２位・３位）
+    </div>
+</h1>    
+
+<!-- 歴代表彰テーブル -->
+<table style="width:900px; border-collapse: collapse; margin-top:40px; background:#fff;">
+    <thead>
+        <tr style="background:#ccc; text-align:center;">
+            <th style="padding:8px; border:1px solid #999;background:greenyellow;">シリーズ</th>
+
+            <th style="padding:8px; border:1px solid #999;background:greenyellow;" colspan="2">2026 Summer</th>
+            <th style="padding:8px; border:1px solid #999;background:greenyellow;" colspan="2">2026 Autumn</th>
+            <th style="padding:8px; border:1px solid #999;background:greenyellow;" colspan="2">2027 Winter</th>
+            <th style="padding:8px; border:1px solid #999;background:greenyellow;" colspan="2">2027 Spring</th>
+        </tr>
+        <tr style="background:#000; color:#fff; text-align:center; height:10px;">
+            <th style="padding:2px; border:1px solid #999;">歴代表彰</th>
+
+            <th style="padding:2px; border:1px solid #999; width:120px;">名前</th>
+            <th style="padding:2px; border:1px solid #999; width:60px;">うまポ</th>
+
+            <th style="padding:2px; border:1px solid #999; width:120px;">名前</th>
+            <th style="padding:2px; border:1px solid #999; width:60px;">うまポ</th>
+
+            <th style="padding:2px; border:1px solid #999; width:120px;">名前</th>
+            <th style="padding:2px; border:1px solid #999; width:60px;">うまポ</th>
+
+            <th style="padding:2px; border:1px solid #999; width:120px;">名前</th>
+            <th style="padding:2px; border:1px solid #999; width:60px;">うまポ</th>
+        </tr>
+    </thead>
+
+    <tbody style="text-align:center; font-weight:bold;">
+        <tr style="font-size:24px;">
+            <td style="padding:8px; border:1px solid #999;background:gold;">優勝</td>
+            <td style="padding:6px; border:1px solid #999;background:gold;">だい</td>
+            <td style="padding:6px; border:1px solid #999;background:gold;">353</td>
+            <td style="padding:6px; border:1px solid #999;background:gold;"></td>
+            <td style="padding:6px; border:1px solid #999;background:gold;"></td>
+            <td style="padding:6px; border:1px solid #999;background:gold;"></td>
+            <td style="padding:6px; border:1px solid #999;background:gold;"></td>
+            <td style="padding:6px; border:1px solid #999;background:gold;"></td>
+            <td style="padding:6px; border:1px solid #999;background:gold;"></td>
+        </tr>
+
+        <tr>
+            <td style="padding:8px; border:1px solid #999;background:silver;">2位</td>
+            <td style="padding:6px; border:1px solid #999;background:silver;">POP</td>
+            <td style="padding:6px; border:1px solid #999;background:silver;">334</td>
+            <td style="padding:6px; border:1px solid #999;background:silver;"></td>
+            <td style="padding:6px; border:1px solid #999;background:silver;"></td>
+            <td style="padding:6px; border:1px solid #999;background:silver;"></td>
+            <td style="padding:6px; border:1px solid #999;background:silver;"></td>
+            <td style="padding:6px; border:1px solid #999;background:silver;"></td>
+            <td style="padding:6px; border:1px solid #999;background:silver;"></td>
+        </tr>
+
+        <tr>
+            <td style="padding:8px; border:1px solid #999;background:#B87333;">3位</td>
+            <td style="padding:6px; border:1px solid #999;background:#B87333;">ミル子</td>
+            <td style="padding:6px; border:1px solid #999;background:#B87333;">290</td>
+            <td style="padding:6px; border:1px solid #999;background:#B87333;"></td>
+            <td style="padding:6px; border:1px solid #999;background:#B87333;"></td>
+            <td style="padding:6px; border:1px solid #999;background:#B87333;"></td>
+            <td style="padding:6px; border:1px solid #999;background:#B87333;"></td>
+            <td style="padding:6px; border:1px solid #999;background:#B87333;"></td>
+            <td style="padding:6px; border:1px solid #999;background:#B87333;"></td>
+        </tr>
+    </tbody>
+</table>
+
+<br><br>
+
+<h1>
+    <div style="color:black; font-weight:bold;">
+    【認定】　うまポの達人（対象：100うまポ以上/1レース）
+    </div>
+</h1.>
+
+<table style="width:1200px; border-colla　pse: collapse; margin-top:40px; background:#fff;">
+     <thead style="font-size:16px;">
+        <tr style="background:#000; color:#fff; text-align:center; height:10px;">
+            <th style="padding:2px; border:1px solid #999; width:60px;">順位</th>
+            <th style="padding:2px; border:1px solid #999; width:120px;">名前</th>
+            <th style="padding:2px; border:1px solid #999; width:60px;">うまポ</th>
+            <th style="padding:2px; border:1px solid #999; width:180px;">レース名</th>
+            <th style="padding:2px; border:1px solid #999; width:60px;">グレード</th>
+            <th style="padding:2px; border:1px solid #999; width:60px;">印</th>
+            <th style="padding:2px; border:1px solid #999; width:200px;">馬名</th>
+            <th style="padding:2px; border:1px solid #999; width:60px;">人気</th>
+            <th style="padding:2px; border:1px solid #999; width:60px;">オッズ</th>
+            <th style="padding:2px; border:1px solid #999; width:100px;">日付</th>
+        </tr>
+     </thead>
+    <tbody style="text-align:center; font-weight:bold; font-size:16px;">
+        <tr style="font-size:18px;">
+            <td style="padding:8px; border:1px solid #999;background:gold;width:60px;">1位</td>
+            <td style="padding:6px; border:1px solid #999;background:gold;width:120px;">だい</td>
+            <td style="padding:6px; border:1px solid #999;background:gold;width:60px;">135</td>
+            <td style="padding:6px; border:1px solid #999;background:gold;width:180px;">スプリンターズＳ</td>
+            <td style="padding:6px; border:1px solid #999;background:gold;width:60px;";>G1</td>
+            <td style="padding:6px; border:1px solid #999;background:gold;width:60px;">〇</td>
+            <td style="padding:6px; border:1px solid #999;background:gold;width:200px;">ピューロマジック</td>
+            <td style="padding:6px; border:1px solid #999;background:gold;width:60px;">9</td>
+            <td style="padding:6px; border:1px solid #999;background:gold;width:60px;">50.6</td>
+            <td style="padding:6px; border:1px solid #999;background:gold;width:100px;">2026/9/13</td>
+        </tr>
+
+        <tr>
+            <td style="padding:8px; border:1px solid #999;background:silver;width:60px;">2位</td>
+            <td style="padding:6px; border:1px solid #999;background:silver;width:120px;">馬太郎</td>
+            <td style="padding:6px; border:1px solid #999;background:silver;width:60px;">120</td>
+            <td style="padding:6px; border:1px solid #999;background:silver;width:180px;">セントライト記念</td>
+            <td style="padding:6px; border:1px solid #999;background:silver;width:60px;">G2</td>
+            <td style="padding:6px; border:1px solid #999;background:silver;width:60px;">〇</td>
+            <td style="padding:6px; border:1px solid #999;background:silver;width:200px;">ジャスティンシカゴ</td>
+            <td style="padding:6px; border:1px solid #999;background:silver;width:60px;">12</td>
+            <td style="padding:6px; border:1px solid #999;background:silver;width:60px;">24.5</td>
+            <td style="padding:6px; border:1px solid #999;background:silver;width:100px;">2026/9/27</td>
+        </tr>
+
+        <tr>
+            <td style="padding:8px; border:1px solid #999;background:#B87333;width:60px;">3位</td>
+            <td style="padding:6px; border:1px solid #999;background:#B87333;width:120px;"></td>
+            <td style="padding:6px; border:1px solid #999;background:#B87333;width:60px;"></td>
+            <td style="padding:6px; border:1px solid #999;background:#B87333;width:180px;"></td>
+            <td style="padding:6px; border:1px solid #999;background:#B87333;width:60px;"></td>
+            <td style="padding:6px; border:1px solid #999;background:#B87333;width:60px;"></td>
+            <td style="padding:6px; border:1px solid #999;background:#B87333;width:200px;"></td>
+            <td style="padding:6px; border:1px solid #999;background:#B87333;width:60px;"></td>
+            <td style="padding:6px; border:1px solid #999;background:#B87333;width:60px;"></td>
+            <td style="padding:6px; border:1px solid #999;background:#B87333;width:100px;"></td>
+        </tr>
+    </tbody>
+
+
+</table>
+
+
+<br>
+
+
+<h1>
+    <div style="color:black; font-weight:bold;">
+    【表彰】　皆勤賞（対象全レース参加）（主催者招待除く:うま王、うまコ、POP）
+    </div>
+</h1.>
+
+<table style="width:900px; border-colla　pse: collapse; margin-top:40px; background:#fff;">
+     <thead style="font-size:16px;">
+        <tr style="background:#000; color:#fff; text-align:center; height:10px;">
+            <th style="padding:2px; border:1px solid #999; width:50px;">大会№</th>
+            <th style="padding:2px; border:1px solid #999; width:120px;">大会名</th>
+            <th style="padding:2px; border:1px solid #999; width:50px;">レース数</th>
+            <th style="padding:2px; border:1px solid #999; width:300px;">受賞者</th>
+        </tr>
+     </thead>
+
+    <tbody style="text-align:center; font-weight:bold; font-size:16px;">
+        <tr style="font-size:18px;">
+            <td style="padding:8px; border:1px solid #999;background:gold;width:50px;">第1回</td>
+            <td style="padding:6px; border:1px solid #999;background:gold;width:120px;">2026年Ｓｕｍｍｅｒ</td>
+            <td style="padding:6px; border:1px solid #999;background:gold;width:50px;">28</td>
+            <td style="padding:6px; border:1px solid #999;background:gold;width:300px;">だい、どれ丸、デカ、ミル子、勝王、馬太郎 (以上6名) </td>
+        </tr>
+    </tbody>
+
+</table>
+
+<br>
+
+
+<div style="height:3px; background:#1E90FF; box-shadow:0 0 8px rgba(30,144,255,0.7); margin:12px 0;"></div>
 
 <button onclick="resetUMAO()" style="margin-top:20px; padding:8px 16px;">
     🔄 ログイン情報をリセット

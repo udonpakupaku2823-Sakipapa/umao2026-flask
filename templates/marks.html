@@ -230,6 +230,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
 <script>
+    const series = "{{ series }}";   // ← これを追加
     const raceId = "{{ raceId }}";
     const nickname = "{{ nickname }}";
     // ① ここでレース日付を受け取る
@@ -329,7 +330,8 @@
         // ③ Firestore に保存（上書きOK）
         marks["user"] = userId;   // ← compare() が使う名前
 
-        await db.collection("races")
+        //await db.collection("races")
+        await db.collection(series === "summer" ? "races" : `races_${series}`)
             .doc(raceId)              // ← URL から取得した raceId をそのまま使う
             .collection("marks")
             .doc(userId)              // ← 俊裕の印をまとめて保存
@@ -345,7 +347,8 @@
         //const userId = "nickname";
         const userId = localStorage.getItem("nickname");
 
-        const docRef = db.collection("races")
+        //const docRef = db.collection("races")
+        const docRef = db.collection(series === "summer" ? "races" : `races_${series}`)
             .doc(raceId)
             .collection("marks")
             .doc(userId);

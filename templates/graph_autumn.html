@@ -1,8 +1,8 @@
 <!--<h2>2026 Summerシリーズ 推移グラフ</h2>-->
-<h1>UMAO 推移グラフ</h1>
+<h1>UMAO 2026Autumnシリーズ順位推移グラフ</h1>
 
 <div style="display:flex; gap:12px; margin-bottom:10px;">
-  <button class="back-btn" onclick="location.href='/summer_ranking'">← ランキングへ戻る</button>
+  <button class="back-btn" onclick="location.href='/autumn_ranking'">← ランキングへ戻る</button>
   <!--<a href="contest_select.html" class="black-gold-btn">コンテストへ戻る</a>-->
 </div>
 
@@ -11,7 +11,7 @@
 </div>-->
 
 <div style="background-color: #333; padding: 20px; border-radius: 10px;">
-    <canvas id="summerChart" style="background-color: #000; height:1000px;"></canvas>
+    <canvas id="autumnChart" style="background-color: #000; height:1000px;"></canvas>
 </div>
 
 <!-- Chart.js 本体 -->
@@ -27,7 +27,7 @@
 
 
 <script>
-fetch("/api/summer_points")
+fetch("/api/autumn_points")
   .then(response => response.json())
   .then(data => {
     const labels = data.labels;
@@ -83,7 +83,7 @@ fetch("/api/summer_points")
       });
     });
 
-    const ctx = document.getElementById('summerChart');
+    const ctx = document.getElementById('autumnChart');
     new Chart(ctx, {
       type: 'line',
       data: { labels, datasets },
