@@ -7,6 +7,13 @@ const db = firebase.firestore();
 const urlParams = new URLSearchParams(window.location.search);
 const raceId = urlParams.get("raceId");
 
+const series = urlParams.get("series") || "summer";  //デフォルトシリーズ
+const baseCollection = series === "autumn" ? "races_2026_autumn" : "races";
+//const baseCollection = series === "winter" ? "races_2027_winter" : "races";
+//const baseCollection = series === "spring" ? "races_2027_spring" : "races";
+
+
+
 if (!raceId) {
     alert("raceId が URL にありません");
     throw new Error("raceId missing");
@@ -53,7 +60,12 @@ function generateWaku(num) {
 // STEP2 初期ロード
 async function loadEntry() {
     // レース情報取得
-    const raceDoc = await db.collection("races").doc(raceId).get();
+    //シリーズ切り替え4/4
+    //2026summer
+    //const raceDoc = await db.collection("races").doc(raceId).get();
+    //2026autumn
+    //const raceDoc = await db.collection("races_2026_autumn").doc(raceId).get();
+    const raceDoc = await db.collection(baseCollection).doc(raceId).get();
     if (!raceDoc.exists) {
         alert("レースデータが存在しません");
         return;
@@ -62,13 +74,20 @@ async function loadEntry() {
     const race = raceDoc.data();
     const num = Number(race.numHorses);
 
+
     // ★ 参加者数を呼び出して反映
     if (race.participants) {
         document.getElementById("participants").value = race.participants;
     }
 
     // 既存の馬データを取得
-    const horsesSnap = await db.collection("races")
+    // レース情報取得
+    //シリーズ切り替え5/5
+    //2026summer
+    //const horsesSnap = await db.collection("races")
+    //2026autumn
+    //const horsesSnap = await db.collection("races_2026_autumn")
+    const horsesSnap = await db.collection(baseCollection)
         .doc(raceId)
         .collection("horses")
         .get();
@@ -116,7 +135,14 @@ async function loadEntry() {
 
 // 保存処理
 document.getElementById("save-btn").addEventListener("click", async () => {
-    const raceDoc = await db.collection("races").doc(raceId).get();
+  try {
+
+    //シリーズ切り替え(8/8)
+    //2026summer
+    //const raceDoc = await db.collection("races").doc(raceId).get();
+    //2026autumn
+    //const raceDoc = await db.collection("races_2026_autumn").doc(raceId).get();
+    const raceDoc = await db.collection(baseCollection).doc(raceId).get();
     const num = Number(raceDoc.data().numHorses);
 
     let wakuList = generateWaku(num);
@@ -136,7 +162,12 @@ document.getElementById("save-btn").addEventListener("click", async () => {
             const finish = document.getElementById(`finish-${horseNumber}`).value || null;
             const pop = document.getElementById(`pop-${horseNumber}`).value || null;
 
-            await db.collection("races")
+            //シリーズ切り替え6/6
+            //2026summer
+            //await db.collection("races")
+            //2026autumn
+            //await db.collection("races_2026_autumn")
+            await db.collection(baseCollection)
                 .doc(raceId)
                 .collection("horses")
                 .doc(String(horseNumber))
@@ -152,6 +183,37 @@ document.getElementById("save-btn").addEventListener("click", async () => {
         }
     }
 
+        // participants が存在するかチェック
+        const participantsEl = document.getElementById("participants");
+        if (participantsEl) {
+            const participantsValue = participantsEl.value.trim();
+            const participants = participantsValue ? Number(participantsValue) : null;
+            //シリーズ切り替え(9/9)
+            //2026summer
+            //await db.collection("races").doc(raceId).update({
+            //2026autumn
+            //await db.collection("races_2026_autumn").doc(raceId).update({
+            await db.collection(baseCollection).doc(raceId).update({
+                participants: participants
+            });
+        }
+
+        const isOfficial = document.getElementById("isOfficial").checked;
+        //シリーズ切り替え(7/7)
+        //2026summer
+        //await db.collection("races").doc(raceId).update({
+        //2026autumn
+        //await db.collection("races_2026_autumn").doc(raceId).update({
+        await db.collection(baseCollection).doc(raceId).update({
+            isOfficial: isOfficial
+        });
+
+        document.getElementById("msg").textContent = "保存しました！";
+    } catch (err) {
+        console.error("保存エラー:", err);
+        alert("保存に失敗しました");
+    }    
+
     //document.getElementById("go-marks").addEventListener("click", () => {
     //const nickname = localStorage.getItem("nickname");
     //window.location.href = `/marks/${raceId}?nickname=${nickname}`;
@@ -162,16 +224,25 @@ document.getElementById("save-btn").addEventListener("click", async () => {
     const participantsValue = document.getElementById("participants").value.trim();
     const participants = participantsValue ? Number(participantsValue) : null;
 
-    await db.collection("races").doc(raceId).update({
-        participants: participants
+    //シリーズ切り替え（10／10）
+    //2026summer
+    //await db.collection("races").doc(raceId).update({
+    //2026autumn
+    //await db.collection("races_2026_autumn").doc(raceId).update({
+    await db.collection(baseCollection).doc(raceId).update({
+
+    participants: participants
     });
-
-
 
     // ★★★ ここに追加する（公開チェック保存） ★★★
     const isOfficial = document.getElementById("isOfficial").checked;
 
-    await db.collection("races").doc(raceId).update({
+    //シリーズ切り替え(11/11)
+    //2026summer
+    //await db.collection("races").doc(raceId).update({
+    //2026autumn
+    //await db.collection("races_2026_autumn").doc(raceId).update({
+    await db.collection(baseCollection).doc(raceId).update({
         isOfficial: isOfficial
     });
 
@@ -180,7 +251,7 @@ document.getElementById("save-btn").addEventListener("click", async () => {
         const pointsRef = db.collection("points");
         const usersSnap = await pointsRef.get();
 
-        usersSnap.forEach(async (userDoc) => {
+        for (const userDoc of usersSnap.docs) {
             const nickname = userDoc.id;
 
             await pointsRef
@@ -188,7 +259,7 @@ document.getElementById("save-btn").addEventListener("click", async () => {
                 .collection("races")
                 .doc(raceId)
                 .delete();
-        });
+        }
     }
 
     // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★
