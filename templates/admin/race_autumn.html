@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>レース登録（管理者）</title>
+</head>
+<body>
+
+<!--<button onclick="history.back()">← 戻る</button>-->
+<button onclick="location.href='/admin/menu'">← 戻る</button>
+
+
+<h2>STEP1：レース登録AUTUMN</h2>
+
+<form action="/admin/race/save_autumn" method="POST">
+
+    <!--<label>レースID：</label><br>
+    <input type="text" name="raceId" required><br><br>-->
+
+    <label>レース名：</label><br>
+    <input type="text" name="raceName" required><br><br>
+
+    <label>グレード：</label><br>
+    <select name="raceGrade">
+        <option value="G1">G1</option>
+        <option value="G2">G2</option>
+        <option value="G3">G3</option>
+    </select><br><br>
+
+    <label>日付：</label><br>
+    <input type="date" name="raceDate" required><br><br>
+
+    <label>出走頭数：</label><br>
+    <input type="number" name="numHorses" min="6" max="18" required><br><br>
+
+    <button type="submit">レースを登録する</button>
+
+</form>
+
+</body>
+</html>
+
