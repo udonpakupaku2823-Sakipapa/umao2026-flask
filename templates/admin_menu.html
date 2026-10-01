@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
         {% endfor %}
     </select>
 
-    <a href="#" onclick="runCalc(); return false;">集計する</a>
+    <a href="#" onclick="runCalc('autumn'); return false;">集計する</a>
     <span id="calcStatus" style="margin-left:8px; color:red;"></span>  <!-- ★ここを追加 -->
 </div>
 
@@ -177,32 +177,27 @@ function saveAdminComment() {
 
 <script>
   
-function runCalc() {
+function runCalc(series) {
     const raceId = document.getElementById("raceId").value;
 
-    // ★ 画面に「計算中…」を表示（俊裕さんの画面で見える場所）
     document.getElementById("calcStatus").textContent = "計算中…";
 
     //★シリーズ切替ポイント★
-    //fetch(`/calc_points/${raceId}`, { method: "POST" })　　// ★ 2026SUMMER の集計ルートだけを使う
-    fetch(`/calc_points_series/2026_autumn/${raceId}`, { method: "POST" })    // ★ 2026autumn の集計ルートだけを使う
-    //fetch(`/calc_points_series/2027_winter/${raceId}`, { method: "POST" })   // ★ 2027winter の集計ルートだけを使う
-
-
+    fetch(`/calc_points_series/2026_autumn/${raceId}?series=${series}`, { method: "POST" })
     .then(res => res.json())
     .then(data => {
-        alert(data.message || "SUMMER 集計が完了しました！");
+        alert(data.message || "AUTUMN 集計が完了しました！");
         console.log(data);
     })
     .catch(err => {
         console.error(err);
-        alert("SUMMER 集計に失敗しました");
+        alert("AUTUMN 集計に失敗しました");
     })
     .finally(() => {
-        // ★ 終わったら消す
         document.getElementById("calcStatus").textContent = "";
     });
 }
+
 
 
 
