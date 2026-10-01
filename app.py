@@ -289,10 +289,14 @@ def admin_race():
 def admin_race_autumn():
     return render_template("admin/race_autumn.html")
 
+
+
 @app.route("/admin/race_autumn/entry")
 def admin_race_autumn_entry():
     race_id = request.args.get("raceId")
-    series = request.args.get("series", "summer")
+    #★シリーズ切替ポイント★
+    #series = request.args.get("series", "summer")
+    series = request.args.get("series", "autumn")
     baseCollection = "races_2026_autumn" if series == "autumn" else "races"
     #baseCollection = "races_2027_winter" if series == "winter" else "races"
     #baseCollection = "races_2027_spring" if series == "spring" else "races"
@@ -582,11 +586,11 @@ def select_race():
 #@app.route("/marks_go", methods=["POST"])
 #def marks_go():
 #    raceId = request.form["raceId"]
-    if not raceId:
-        # HTML と同じ挙動：選択してないなら戻す
-        flash("レースを選択してください")
-        return redirect("/contest")
-    return redirect(f"/marks/{raceId}")
+#    if not raceId:
+#        # HTML と同じ挙動：選択してないなら戻す
+#        flash("レースを選択してください")
+#        return redirect("/contest")
+#    return redirect(f"/marks/{raceId}")
 
 def contest_select():
     # Firestore からレース一覧を日付降順で取得
@@ -622,6 +626,7 @@ def contest_select():
 def contest_select():
     #races_ref = db.collection("races").order_by("date", direction="DESCENDING").get()
 
+    #★シリーズ切替ポイント★
     # URLパラメータからシリーズ取得（例：?series=2026_autumn）
     series = request.args.get("series", "summer")
 
@@ -1058,19 +1063,19 @@ def admin_menu():
     nickname = request.args.get("nickname")  # ← 追加
 
     #★シリーズ切替ポイント★
-    #series_list = ["2026_autumn"]
+    series_list = ["2026_autumn"]
     #series_list = ["2027_winter"]
     #series_list = ["2027_spring"]
     race_list = []
 
     # summer（初回シリーズのみ）
-    races_summer = db.collection("races").stream()
-    race_list += [r.id for r in races_summer]
+    #races_summer = db.collection("races").stream()
+    #race_list += [r.id for r in races_summer]
 
     # 各シリーズ（２回目シリーズ以降）
-    #for s in series_list:
-    #    races = db.collection(f"races_{s}").stream()
-    #    race_list += [r.id for r in races]
+    for s in series_list:
+        races = db.collection(f"races_{s}").stream()
+        race_list += [r.id for r in races]
 
     race_list = sorted(race_list, reverse=True)
 
@@ -1131,9 +1136,13 @@ def admin_entry_edit():
 def admin_marks(race_id):
     db = admin_firestore.client()
 
+    #★シリーズ切替ポイント★
     #race_ref = db.collection("races").document(race_id)
-    series = request.args.get("series", "summer")
+    #series = request.args.get("series", "summer")
+    #baseCollection = "races" if series == "summer" else f"races_{series}"
+    series = request.args.get("series", "autumn")
     baseCollection = "races" if series == "summer" else f"races_{series}"
+
     race_ref = db.collection(baseCollection).document(race_id)
 
     # --- レース情報 ---
