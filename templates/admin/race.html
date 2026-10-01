@@ -6,37 +6,86 @@
 </head>
 <body>
 
-<!--<button onclick="history.back()">← 戻る</button>-->
 <button onclick="location.href='/admin/menu'">← 戻る</button>
-
 
 <h2>STEP1：レース登録</h2>
 
-<form action="/admin/race/save" method="POST">
+<label>レース名：</label><br>
+<input type="text" id="raceName" required><br><br>
 
-    <!--<label>レースID：</label><br>
-    <input type="text" name="raceId" required><br><br>-->
+<label>グレード：</label><br>
+<select id="raceGrade">
+    <option value="G1">G1</option>
+    <option value="G2">G2</option>
+    <option value="G3">G3</option>
+</select><br><br>
 
-    <label>レース名：</label><br>
-    <input type="text" name="raceName" required><br><br>
+<label>日付：</label><br>
+<input type="date" id="raceDate" required><br><br>
 
-    <label>グレード：</label><br>
-    <select name="raceGrade">
-        <option value="G1">G1</option>
-        <option value="G2">G2</option>
-        <option value="G3">G3</option>
-    </select><br><br>
+<label>出走頭数：</label><br>
+<input type="number" id="numHorses" min="6" max="18" required><br><br>
 
-    <label>日付：</label><br>
-    <input type="date" name="raceDate" required><br><br>
+<button onclick="saveRace()">レースを登録する</button>
 
-    <label>出走頭数：</label><br>
-    <input type="number" name="numHorses" min="6" max="18" required><br><br>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
-    <button type="submit">レースを登録する</button>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyA35u3UqBqCufnf0aIUgTaRJNwk85pUrtQ",
+    authDomain: "dore-chat-base.firebaseapp.com",
+    projectId: "dore-chat-base",
+    storageBucket: "dore-chat-base.firebasestorage.app",
+    messagingSenderId: "171117636172",
+    appId: "1:171117636172:web:fc100e2d5f2d18f6c0a2e9"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+</script>
 
-</form>
+<script>
+function saveRace() {
+
+    // ★ ①で選択したシリーズを取得
+    const series = localStorage.getItem("series");
+    if (!series) {
+        alert("シリーズが選択されていません（管理者ページ①で選択してください）");
+        return;
+    }
+
+    // ★ 入力値を取得
+    const raceName = document.getElementById("raceName").value;
+    const raceGrade = document.getElementById("raceGrade").value;
+    const raceDate = document.getElementById("raceDate").value;
+    const numHorses = document.getElementById("numHorses").value;
+
+    if (!raceName || !raceDate || !numHorses) {
+        alert("未入力の項目があります");
+        return;
+    }
+
+    const raceId = `${raceDate.replace(/-/g, "")}_${raceName}`;
+
+    db.collection(`races_${series}`).doc(raceId).set({
+        name: raceName,
+        grade: raceGrade,
+        date: raceDate,
+        numHorses: Number(numHorses),
+        isOfficial: true,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    .then(() => {
+        alert("レースを登録しました");
+    })
+    .catch(err => {
+        console.error("Firestore 書き込みエラー:", err);
+        alert("保存に失敗しました");
+    });
+}
+</script>
 
 </body>
 </html>
+
 
