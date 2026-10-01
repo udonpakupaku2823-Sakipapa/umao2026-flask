@@ -14,11 +14,52 @@
 
 <hr>
 
+<div style="margin-top:10px;">
+    <label>① 対象シリーズを選択：</label><br>
+
+    <select id="seriesSelect">
+        <option value="2026_summer">2026 Summer</option>
+        <option value="2026_autumn">2026 Autumn</option>
+        <option value="2027_winter">2027 Winter</option>
+        <option value="2027_spring">2027 Spring</option>
+    </select>
+
+    <span id="seriesStatus" style="margin-left:8px; color:blue;"></span>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const select = document.getElementById("seriesSelect");
+    const status = document.getElementById("seriesStatus");
+
+    // 保存済みシリーズを読み込む
+    const saved = localStorage.getItem("series");
+    if (saved) {
+        select.value = saved;
+        const [year, name] = saved.split("_");
+        status.textContent = `選択中：${year} ${name}`;
+    } else {
+        status.textContent = "シリーズ未選択";
+    }
+
+    // 選択変更時に保存
+    select.addEventListener("change", () => {
+        const val = select.value;
+        localStorage.setItem("series", val);
+
+        const [year, name] = val.split("_");
+        status.textContent = `選択中：${year} ${name}`;
+    });
+});
+</script>
+
+
+
 
 
 <div style="margin-top:10px;">
     <a href="/admin/race">
-        ① 新規レースの馬名を登録する
+        ② 新規レース名を登録する
     </a>
 </div>
 
@@ -29,13 +70,13 @@
 </div>
 
 <div style="margin-top:10px;">
-    <a href="/admin/entry/select">
-        ② 既存レースの結果を入力する
+    <a href="/admin/entry/select?series=" + localStorage.getItem("series")>
+        ③ 登録済みレースの馬名登録と結果入力
     </a>
 </div>
 
 <div style="margin-top:10px;">
-    <label>③ 集計するレースを選択：</label>
+    <label>④ 集計するレースを選択：</label>
     <br>
     <select id="raceId">
         {% for r in race_list %}
@@ -142,9 +183,9 @@ function runCalc() {
     // ★ 画面に「計算中…」を表示（俊裕さんの画面で見える場所）
     document.getElementById("calcStatus").textContent = "計算中…";
 
-    
-    fetch(`/calc_points/${raceId}`, { method: "POST" })　　// ★ 2026SUMMER の集計ルートだけを使う
-    //fetch(`/calc_points_series/2026_autumn/${raceId}`, { method: "POST" })    // ★ 2026autumn の集計ルートだけを使う
+    //★シリーズ切替ポイント★
+    //fetch(`/calc_points/${raceId}`, { method: "POST" })　　// ★ 2026SUMMER の集計ルートだけを使う
+    fetch(`/calc_points_series/2026_autumn/${raceId}`, { method: "POST" })    // ★ 2026autumn の集計ルートだけを使う
     //fetch(`/calc_points_series/2027_winter/${raceId}`, { method: "POST" })   // ★ 2027winter の集計ルートだけを使う
 
 
