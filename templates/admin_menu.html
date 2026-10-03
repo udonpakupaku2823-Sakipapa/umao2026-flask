@@ -18,10 +18,7 @@
     <label>① 対象シリーズを選択：</label><br>
 
     <select id="seriesSelect">
-        <option value="2026_summer">2026 Summer</option>
-        <option value="2026_autumn">2026 Autumn</option>
-        <option value="2027_winter">2027 Winter</option>
-        <option value="2027_spring">2027 Spring</option>
+        <option value="autumn">2026 Autumn</option>
     </select>
 
     <span id="seriesStatus" style="margin-left:8px; color:blue;"></span>
@@ -36,8 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const saved = localStorage.getItem("series");
     if (saved) {
         select.value = saved;
-        const [year, name] = saved.split("_");
-        status.textContent = `選択中：${year} ${name}`;
+        status.textContent = `選択中：${saved}`;
     } else {
         status.textContent = "シリーズ未選択";
     }
@@ -47,8 +43,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const val = select.value;
         localStorage.setItem("series", val);
 
-        const [year, name] = val.split("_");
-        status.textContent = `選択中：${year} ${name}`;
+        status.textContent = `選択中：${val}`;
+
     });
 });
 </script>
@@ -57,23 +53,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-<div style="margin-top:10px;">
+<!--<div style="margin-top:10px;">
     <a href="/admin/race">
         ② 新規レース名を登録する
     </a>
-</div>
+</div>-->
 
+<!--★シリーズ切替ポイント★-->
 <div style="margin-top:10px;">
     <a href="/admin/race_autumn">
-        ①-1 2026Autumn 新規レースを登録する
+        ① new 新規レースを登録する
     </a>
 </div>
 
 <div style="margin-top:10px;">
-    <a href="/admin/entry/select?series=" + localStorage.getItem("series")>
+    <a id="entryLink">
         ③ 登録済みレースの馬名登録と結果入力
     </a>
 </div>
+
+<script>
+    localStorage.setItem("series", "autumn");  
+</script>
+
+<script>
+    document.getElementById("entryLink").href =
+        "/admin/entry/select?series=" + localStorage.getItem("series");
+</script>
 
 <div style="margin-top:10px;">
     <label>④ 集計するレースを選択：</label>
