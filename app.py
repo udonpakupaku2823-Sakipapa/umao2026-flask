@@ -1105,29 +1105,39 @@ def admin_entry_new():
 @app.route("/admin/entry/select")
 def admin_entry_select():
 
-    race_list = []   # ★必須
+    series = request.args.get("series", "summer")
 
-    # summer（初回シリーズ）
-    races_summer = db.collection("races").stream()
-    race_list += [r.id for r in races_summer]
+    if series == "autumn":
+        baseCollection = "races_2026_autumn"
+    else:
+        baseCollection = "races"
 
-    # ★ Autumn 以降は SUMMER に影響するので使わない
-    # series_list = ["2026_autumn", "2027_winter", "2027_spring"]
-    # for s in series_list:
-    #     races = db.collection(f"races_{s}").stream()
-    #     race_list += [r.id for r in races]
+    races = db.collection(baseCollection).stream()
+    race_list = sorted([r.id for r in races], reverse=True)
 
-    race_list = sorted(race_list, reverse=True)
-
-    return render_template("race_select.html", race_list=race_list)
+    return render_template("race_select.html", race_list=race_list, series=series)
 
 
 @app.route("/admin/entry/edit")
 def admin_entry_edit():
+    series = request.args.get("series", "summer")
+
+    # ★ ここが本丸：シリーズごとにコレクションを切り替える
+    if series == "autumn":
+        baseCollection = "races_2026_autumn"
+    else:
+        baseCollection = "races"
+
     raceId = request.args.get("raceId")
-    race_doc = db.collection("races").document(raceId).get()
+    race_doc = db.collection(baseCollection).document(raceId).get()
     race = race_doc.to_dict()
-    return render_template("admin/entry.html", race=race, raceId=raceId)
+
+    return render_template(
+        "admin/entry.html",
+        race=race,
+        raceId=raceId,
+        series=series
+    )
 
 # -------------------------
 # ② マークの結果集計
