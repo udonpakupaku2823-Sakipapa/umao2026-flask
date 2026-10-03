@@ -923,12 +923,15 @@ def main():
     #race = None
 
     # ★★★ Firestore から races を全部取得（ここに入れる）
-    #シリーズ切り替え(2/2)
+    #★シリーズ切替ポイント★
     #2026summer
-    #races_ref = db.collection("races").get()
+    summer2026_ref = db.collection("races").get()
     #2026autumn
-    #races_ref = db.collection("races_2026_autumn").get()    
-    races_ref = db.collection("races").get()
+    autumn2026_ref = db.collection("races_2026_autumn").get()    
+
+    # 合体
+    races_ref = list(summer2026_ref) + list(autumn2026_ref)
+
 
     race_info = {}
     for doc in races_ref:
