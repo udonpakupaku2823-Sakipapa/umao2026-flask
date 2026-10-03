@@ -76,9 +76,9 @@ async function loadEntry() {
 
 
     // ★ 参加者数を呼び出して反映
-    if (race.participants) {
-        document.getElementById("participants").value = race.participants;
-    }
+    //if (race.participants) {
+    //    document.getElementById("participants").value = race.participants;
+    //}
 
     // 既存の馬データを取得
     // レース情報取得
