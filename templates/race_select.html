@@ -55,7 +55,8 @@
 <div id="main-area">
     <h2>レースを選択してください</h2>
 
-    <form action="/admin/entry/edit" method="get">
+    <form action="/admin/entry/edit" method="get" onsubmit="this.series.value = localStorage.getItem('series')">
+    <input type="hidden" name="series" value="">
         <select name="raceId">
             {% for r in race_list %}
                 <option value="{{ r }}">{{ r }}</option>
