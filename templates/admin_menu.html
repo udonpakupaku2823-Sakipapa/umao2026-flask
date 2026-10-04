@@ -72,9 +72,9 @@ document.addEventListener("DOMContentLoaded", () => {
     </a>
 </div>
 
-<script>
+<!--<script>
     localStorage.setItem("series", "autumn");  
-</script>
+</script>-->
 
 <script>
     document.getElementById("entryLink").href =
@@ -90,7 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
         {% endfor %}
     </select>
 
-    <a href="#" onclick="runCalc('autumn'); return false;">集計する</a>
+    <!--★シリーズ切替ポイント★-->
+    <a href="#" onclick="runCalc('2026_autumn'); return false;">集計する</a>
     <span id="calcStatus" style="margin-left:8px; color:red;"></span>  <!-- ★ここを追加 -->
 </div>
 
@@ -182,22 +183,20 @@ function saveAdminComment() {
 </script>
 
 <script>
-  
+
+//★シリーズ切替ポイント★
 function runCalc(series) {
     const raceId = document.getElementById("raceId").value;
 
     document.getElementById("calcStatus").textContent = "計算中…";
 
-    //★シリーズ切替ポイント★
-    fetch(`/calc_points_series/2026_autumn/${raceId}?series=${series}`, { method: "POST" })
+    fetch(`/calc_points_series/${series}/${raceId}`, { method: "POST" })
     .then(res => res.json())
     .then(data => {
-        alert(data.message || "AUTUMN 集計が完了しました！");
-        console.log(data);
+        alert(data.message || `${series} 集計が完了しました！`);
     })
     .catch(err => {
-        console.error(err);
-        alert("AUTUMN 集計に失敗しました");
+        alert(`${series} 集計に失敗しました`);
     })
     .finally(() => {
         document.getElementById("calcStatus").textContent = "";
